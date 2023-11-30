@@ -1,0 +1,6 @@
+*.txt
+*.o
+*.a
+*.dSYM
+
+.vscode/
