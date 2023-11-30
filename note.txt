@@ -1,0 +1,415 @@
+Internet Relay Chat or IRC is a text-based communication protocol on the Internet.
+It offers real-time messaging that can be either public or private. Users can exchange
+direct messages and join group channels.
+IRC clients connect to IRC servers in order to join channels. IRC servers are connected
+together to form a network.
+
+Servers: (Leaf nodes)
+    * uniquely identified by their name (max 63 characters)
+        - Servers SHOULD pick a name which contains a dot character ("."), 
+            so that users can easily identify them as servers.
+    * standard port: 6667 (for plaintext)
+    * Names of IRC entities (clients, servers, channels) are casemapped
+
+Clients:
+    Users:
+        Requirements:
+            * a unique nickname (max 9 characters)
+                must not contain (' ', ',', '*', '!', '?', '@','.', '/')
+                must not start with ('$', ':', '#', '&')
+            * a username (max 10 characters)
+            * a real name (max 50 characters)
+            * a server name
+            * a server port
+        Actions:
+            * JOIN - join a channel
+            * PART - leave a channel
+
+    Operators:
+        * users with elevated privileges
+        * is identifiable by the '@' prefix in front of their nickname
+        * privileges:
+            KICK - kick users from a channel
+            INVITE - invite users to a channel
+            TOPIC - change the topic for a channel
+            MODE - change the channel mode
+                · i: Set/remove Invite-only channel
+                · t: Set/remove the restrictions of the TOPIC command to channel operators
+                · k: Set/remove the channel key (password)
+                · o: Give/take channel operator privilege
+                · l: Set/remove the user limit to channel
+
+Channels:
+A channel is created implicitly when a user joins it and is destroyed when the last user leaves it.
+The first user to join a channel becomes its operator.
+
+    * uniquely identified by their name (max 50 characters)
+        must start with ('#', '&')
+            · '#' for regular channels (seen by all users on the network)
+            · '&' for local channels (seen only by users on the same server)
+        must not contain (' ', ',', '^G')
+    * Topic
+        The topic is a line shown to all users when they join the channel.
+
+
+Clients-to-server protocol:
+    While a client is connected to a server, they send a stream of bytes to each other.
+    This stream contains messages separated by CR ('\r') and LF ('\n').
+    These messages may be sent at any time from either side, and may generate zero or more reply messages.
+
+    * Message Format:
+        An IRC message is a single line, delimited by a pair of CR ('\r') and LF ('\n') characters  
+            Only parse and process a message once you encounter the \r\n at the end of it.
+            If you encounter an empty message, silently ignore it.
+
+        +---------------------------------------------------------------------------------------------------------------+
+        | message         ::= ['@' <tags> SPACE] [':' <source> SPACE] <command> <parameters> <crlf>                     |
+        | SPACE           ::=  %x20 *( %x20 )   ; space character(s)                                                    |
+        | crlf            ::=  %x0D %x0A        ; "carriage return" "linefeed"                                          |
+        +---------------------------------------------------------------------------------------------------------------+
+        The specific parts of an IRC message are:
+            * Tags: Optional metadata on a message, starting with ('@').
+            * Source: Optional note of where the message came from, starting with (':').
+            * Command: The specific command this message represents.
+            * Parameters: If it exists, data relevant to this specific command.
+        These message parts, and parameters themselves, are separated by one or more ASCII SPACE characters (' ').
+
+        Most IRC servers limit messages to 512 bytes in length, including the trailing CR-LF characters.
+        Implementations which include message tags need to allow additional bytes for the tags section of a message;
+        clients must allow 8191 additional bytes and servers must allow 4096 additional bytes.
+
+    * Tags:
+        +---------------------------------------------------------------------------------------------------------------+
+        | <tags>          ::= <tag> [';' <tag>]*                                                                        |
+        | <tag>           ::= <key> ['=' <escaped value>]                                                               |
+        | <key>           ::= [ <client_prefix> ] [ <vendor> '/' ] <sequence of letters, digits, hyphens (`-`)>         |
+        | <client_prefix> ::= '+'                                                                                       |
+        | <escaped value> ::= <sequence of any characters except NUL, CR, LF, semicolon (`;`) and SPACE>                |
+        | <vendor>        ::= <host>                                                                                    |
+        +---------------------------------------------------------------------------------------------------------------+
+        The tags part is optional, and MUST NOT be sent unless explicitly enabled by a capability.
+
+    * Source:
+        +---------------------------------------------------------------------------------------------------------------+
+        | source          ::=  <servername> / ( <nickname> [ "!" <user> ] [ "@" <host> ] )                              |
+        | nick            ::=  <any characters except NUL, CR, LF, chantype character, and SPACE>                       |
+        |                      <possibly empty sequence of any characters except NUL, CR, LF, and SPACE>                |
+        | user            ::=  <sequence of any characters except NUL, CR, LF, and SPACE>                               |
+        +---------------------------------------------------------------------------------------------------------------+
+        The source (formerly known as prefix) is optional and starts with a (':', 0x3A) character (which is stripped from the value), and if there are no tags it MUST be the first character of the message itself.
+        The source indicates the true origin of a message.
+        
+        If the source is missing from a message, it’s is assumed to have originated from the client/server on the other end of the connection the message was received on.
+        Clients MUST NOT include a source when sending a message.
+        
+        Servers MAY include a source on any message, and MAY leave a source off of any message.
+        Clients MUST be able to process any given message the same way whether it contains a source or does not contain one.
+
+    * Command:
+        +---------------------------------------------------------------------------------------------------------------+
+        | command         ::=  letter* / 3digit                                                                         |
+        +---------------------------------------------------------------------------------------------------------------+
+        The command must either be a valid IRC command or a numeric (a three-digit number represented as text).
+
+        Information on specific commands / numerics can be found in the Client Messages and Numerics sections, respectively.
+
+    * Parameters:
+        +---------------------------------------------------------------------------------------------------------------+
+        | parameter       ::=  *( SPACE middle ) [ SPACE ":" trailing ]                                                 |
+        | nospcrlfcl      ::=  <sequence of any characters except NUL, CR, LF, colon (`:`) and SPACE>                   |
+        | middle          ::=  nospcrlfcl *( ":" / nospcrlfcl )                                                         |
+        | trailing        ::=  *( ":" / " " / nospcrlfcl )                                                              |
+        +---------------------------------------------------------------------------------------------------------------+
+        Parameters (or ‘params’) are extra pieces of information added to the end of a message.
+        These parameters generally make up the ‘data’ portion of the message. What specific parameters mean changes for every single message.
+
+        Parameters are a series of values separated by one or more ASCII SPACE characters (' ', 0x20).
+        However, this syntax is insufficient in two cases: a parameter that contains one or more spaces, and an empty parameter.
+        To permit such parameters, the final parameter can be prepended with a (':', 0x3A) character, in which case that character is stripped and the rest of the message is treated as the final parameter, including any spaces it contains.
+        Parameters that contain spaces, are empty, or begin with a ':' character MUST be sent with a preceding ':'; in other cases the use of a preceding ':' on the final parameter is OPTIONAL.
+
+        Software SHOULD AVOID sending more than 15 parameters, as older client protocol documents specified this was the maximum and some clients may have trouble reading more than this. However, clients MUST parse incoming messages with any number of them.
+
+        Here are some examples of messages and how the parameters would be represented as JSON lists:
+        +-----------------------------------------------------------------------------------+
+        | :irc.example.com CAP * LIST :         ->  ["*", "LIST", ""]                       |
+        |                                                                                   |
+        | CAP * LS :multi-prefix sasl           ->  ["*", "LS", "multi-prefix sasl"]        |
+        |                                                                                   |  
+        | CAP REQ :sasl message-tags foo        ->  ["REQ", "sasl message-tags foo"]        |
+        |                                                                                   |
+        | :dan!d@localhost PRIVMSG #chan :Hey!  ->  ["#chan", "Hey!"]                       |
+        |                                                                                   |
+        | :dan!d@localhost PRIVMSG #chan Hey!   ->  ["#chan", "Hey!"]                       |
+        |                                                                                   |
+        | :dan!d@localhost PRIVMSG #chan ::-)   ->  ["#chan", ":-)"]                        |
+        +-----------------------------------------------------------------------------------+
+        As these examples show, a trailing parameter (a final parameter with a preceding ':') has the same semantics as any other parameter, and MUST NOT be treated specially or stored separately once the ':' is stripped.
+
+    * Compatibility with incorrect software:
+        - Servers SHOULD handle single \n character, and MAY handle a single \r character, as if it was a \r\n pair, to support existing clients that might send this.
+            However, clients and servers alike MUST NOT send single \r or \n characters.
+
+        - Servers and clients SHOULD ignore empty lines.
+
+        - Servers SHOULD gracefully handle messages over the 512-bytes limit. They may:
+            · Send an error numeric back, preferably ERR_INPUTTOOLONG (417)
+            · Truncate on the 510th byte (and add \r\n at the end) or, preferably, on the last UTF-8 character or grapheme that fits.
+            · Ignore the message or close the connection – but this may be confusing to users of buggy clients.
+        
+        - Finally, clients and servers SHOULD NOT use more than one space (\x20) character as SPACE as defined in the grammar above.
+
+
+Connection Registration:
+    Immediately upon establishing a connection the client must attempt registration,
+    without waiting for any banner message from the server.
+
+    Command needed during registration:
+        1. CAP LS 302 (optional)
+        2. PASS
+        3. NICK and USER
+        4. CAP END (if CAP LS was sent)
+    The commands specified in steps 1-3 should be sent on connection.
+
+        2. The PASS command is not required for the connection to be registered,
+        but if included it MUST precede the latter of the NICK and USER commands.
+        
+        +---------------------------+
+        | Command: PASS             |
+        | Parameters: <password>    |
+        +---------------------------+
+        Command ex: PASS secretpasswordhere
+
+        If wrong password is given, the server SHOULD send ERR_PASSWDMISMATCH (464) and MAY then close the connection with ERROR.
+        Servers MUST send at least one of these two messages.
+        Numeric replies:
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_ALREADYREGISTERED (462)
+            - ERR_PASSWDMISMATCH (464)
+        
+
+        3. The NICK and USER commands are used to set the user’s nickname, username and “real name”.
+        Unless the registration is suspended by a CAP negotiation, these commands will end the registration process.
+        
+        NICK:
+        The NICK command is used to give the client a nickname or change the previous one.
+        Server must allow ([]{}\|)
+        +---------------------------+
+        | Command: NICK             |
+        | Parameters: <nickname>    |
+        +---------------------------+
+        Command ex:
+        NICK Wiz                            ; Requesting the new nick "Wiz".
+        
+        Message ex:
+        :WiZ NICK Kilroy                    ; WiZ changed his nickname to Kilroy.
+        
+        :dan-!d@localhost NICK Mamoped      ; dan- changed his nickname to Mamoped.
+        
+        Numeric replies:
+            - ERR_NONICKNAMEGIVEN (431)
+            - ERR_ERRONEUSNICKNAME (432)
+            - ERR_NICKNAMEINUSE (433)
+            - ERR_NICKCOLLISION (436)
+            - ERR_UNAVAILRESOURCE (437)
+
+        USER:
+        The USER command is used at the beginning of a connection to specify the username and realname of a new user.
+            - The minimum allowed length of the <username> is 1 character.
+            - The second and third parameters of this command SHOULD be sent as one zero ('0') and one asterisk character ('*') by the client.
+            - Clients SHOULD use the nickname as a fallback value for <username> and <realname> when they don’t have a meaningful value to use.
+            - The <realname> MUST be the last parameter, because it may contain space characters and must not be prefixed with a colon (':') character.
+            - If a client tries to send the USER command after they have already completed registration with the server,
+                the ERR_ALREADYREGISTERED reply should be sent and the attempt should fail.
+        +---------------------------------------+
+        | Command: USER                         |
+        | Parameters: <username> 0 * <realname> |
+        +---------------------------------------+
+        Command ex:
+        USER guest 0 * :Ronnie Reagan       ; No ident server
+                                            ; User gets registered with username "~guest" and real name "Ronnie Reagan"
+       
+        USER guest 0 * :Ronnie Reagan       ; Ident server gets contacted and returns the name "danp"
+                                            ; User gets registered with username "danp" and real name "Ronnie Reagan"
+        
+        USER guest 0 * :Emile Lesage
+        Numeric replies:
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_ALREADYREGISTERED (462)
+
+        OPER message:
+            The OPER command is used by a normal user to obtain operator privileges.
+            +---------------------------------------+
+            | Command: OPER                         |
+            | Parameters: <user> <password>         |
+            +---------------------------------------+
+            Numeric replies:
+                - ERR_NEEDMOREPARAMS (461)
+                - ERR_PASSWDMISMATCH (464)
+                - ERR_NOOPERHOST (491)
+                - RPL_YOUREOPER (381)
+
+            command ex:
+            OPER foo bar                    ; Attempt to register as an operator using a name of "foo" and the password "bar".
+
+        QUIT message:
+            The QUIT command is used to terminate a client’s connection to the server.
+            The server acknowledges this by replying with an ERROR message and closing the connection to the client.
+            +---------------------------------------+
+            | Command: QUIT                         |
+            | Parameters: [<Quit message>]          |
+            +---------------------------------------+
+            Numeric replies:
+                - None
+
+            command ex:
+            QUIT :Gone to have lunch        ; Client exiting from the network
+
+            message ex:
+            :dan-!d@localhost QUIT :Quit: Bye for now!
+                                            ; dan- is exiting the network with the message: "Quit: Bye for now!"
+
+Channel Operations:
+    JOIN message:
+        The JOIN command is used by a user to request to start listening to the specific channel.
+        
+        Servers MUST process the parameters of this command as lists on incoming commands from clients, 
+        with the first <key> being used for the first <channel>, the second <key> being used for the second <channel>, etc.
+        +-------------------------------------------------------+
+        | Command: JOIN                                         |
+        | Parameters: <channel>{,<channel>} [<key>{,<key>}]     |
+        | Alt Params: 0                                         |
+        +-------------------------------------------------------+
+        If a client’s JOIN command to the server is successful, the server MUST send, in this order:
+            1. A JOIN message with the client as the message <source> and the channel they have joined as the first parameter of the message.
+            
+            2. The channel’s topic (with RPL_TOPIC (332) and optionally RPL_TOPICWHOTIME (333)), and no message if the channel does not have a topic.
+            
+            3. A list of users currently joined to the channel (with one or more RPL_NAMREPLY (353) numerics followed by a single RPL_ENDOFNAMES (366) numeric).
+                These RPL_NAMREPLY messages sent by the server MUST include the requesting client that has just joined the channel.
+
+        Numeric replies:
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_NOSUCHCHANNEL (403)
+            - ERR_TOOMANYCHANNELS (405)
+            - ERR_BADCHANNELKEY (475)
+            - ERR_BANNEDFROMCHAN (474)
+            - ERR_CHANNELISFULL (471)
+            - ERR_INVITEONLYCHAN (473)
+            - ERR_BADCHANMASK (476)
+            - RPL_TOPIC (332)
+            - RPL_TOPICWHOTIME (333)
+            - RPL_NAMREPLY (353)
+            - RPL_ENDOFNAMES (366)
+
+        Command ex:
+        JOIN #foobar                        ; join channel #foobar.
+
+        JOIN &foo fubar                     ; join channel &foo using key "fubar".
+
+        JOIN #foo,&bar fubar                ; join channel #foo using key "fubar"and &bar using no key.
+
+        JOIN #foo,#bar fubar,foobar         ; join channel #foo using key "fubar". and channel #bar using key "foobar".
+
+        JOIN #foo,#bar                      ; join channels #foo and #bar.
+        
+        Message ex:
+        :WiZ JOIN #Twilight_zone            ; WiZ is joining the channel #Twilight_zone
+
+        :dan-!d@localhost JOIN #test        ; dan- is joining the channel #test
+
+    PART message:
+        The PART command removes the client from the given channel(s).
+        +-------------------------------------------------------+
+        | Command: PART                                         |
+        | Parameters: <channel>{,<channel>} [<reason>]          |
+        +-------------------------------------------------------+
+        Numeric replies:
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_NOSUCHCHANNEL (403)
+            - ERR_NOTONCHANNEL (442)
+
+        Command ex:
+        PART #twilight_zone                 ; leave channel "#twilight_zone"
+
+        PART #oz-ops,&group5                ; leave both channels "&group5" and "#oz-ops".
+
+        Message ex:
+        :dan-!d@localhost PART #test        ; dan- is leaving the channel #test
+
+    Topic message:
+        The TOPIC command is used to change or view the topic of the given channel.
+        +-------------------------------------------------------+
+        | Command: TOPIC                                        |
+        | Parameters: <channel> [<topic>]                       |
+        +-------------------------------------------------------+
+        If <topic> is not given, either RPL_TOPIC or RPL_NOTOPIC is returned specifying the current channel topic or lack of one.
+        If <topic> is an empty string, the topic for the channel will be cleared.
+
+        Numeric replies:
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_NOSUCHCHANNEL (403)
+            - ERR_NOTONCHANNEL (442)
+            - ERR_CHANOPRIVSNEEDED (482)
+            - RPL_NOTOPIC (331)
+            - RPL_TOPIC (332)
+            - RPL_TOPICWHOTIME (333)
+
+        Command ex:
+        TOPIC #test :New topic              ; Setting the topic on "#test" to "New topic".
+        
+        TOPIC #test :                       ; Clearing the topic on "#test"
+
+        TOPIC #test                         ; Checking the topic for "#test"
+
+    INVITE message:
+        The INVITE command is used to invite a user to a channel.
+        +-------------------------------------------------------+
+        | Command: INVITE                                       |
+        | Parameters: <nickname> <channel>                      |
+        +-------------------------------------------------------+
+        Numeric replies:
+            - RPL_INVITING (341)
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_NOSUCHCHANNEL (403)
+            - ERR_NOTONCHANNEL (442)
+            - ERR_CHANOPRIVSNEEDED (482)
+            - ERR_USERONCHANNEL (443)
+
+        Command ex:
+        INVITE Wiz #foo_bar                 ; Invite Wiz to #foo_bar
+
+        Message ex:
+        :dan-!d@localhost INVITE Wiz #test  ; dan- has invited Wiz to the channel #test
+
+    KICK message:
+        The KICK command can be used to request the forced removal of a user from a channel.
+        +-----------------------------------------------------------+
+        | Command: KICK                                             |
+        | Parameters: <channel> <user> *( "," <user> ) [<comment>]  |
+        +-----------------------------------------------------------+
+        If no comment is given, the server SHOULD use a default message instead.
+
+        Numeric replies:
+            - ERR_NEEDMOREPARAMS (461)
+            - ERR_NOSUCHCHANNEL (403)
+            - ERR_CHANOPRIVSNEEDED (482)
+            - ERR_USERNOTINCHANNEL (441)
+            - ERR_NOTONCHANNEL (442)
+
+        Command ex:
+        KICK #Finnish Matthew               ; Command to kick Matthew from #Finnish
+
+        KICK &Melbourne Matthew             ; Command to kick Matthew from &Melbourne
+
+        KICK #Finnish John :Speaking English
+                                            ; Command to kick John from #Finnish using "Speaking English" as the reason (comment).
+
+        :WiZ!jto@tolsun.oulu.fi KICK #Finnish John
+                                        ; KICK message on channel #Finnish from WiZ to remove John from channel
+
+
+
+WEECHAT:
+/server add ircserv 172.17.0.1/6667
+/connect ircserv
