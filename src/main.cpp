@@ -15,7 +15,7 @@
 //     return (0);
 // }
 
-#include "../include/NumericReplies.hpp"
+#include "NumericReplies.hpp"
 #include <iostream>
 #include <string>
 
