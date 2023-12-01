@@ -39,27 +39,27 @@ Client::~Client()
     
 }
 
-std::string     Client::getNick()
+std::string     Client::getNick() const
 {
     return (_nick);
 }
 
-std::string     Client::getUser()
+std::string     Client::getUser() const
 {
     return (_user);
 }
 
-int             Client::getSocket()
+int             Client::getSocket() const
 {
     return (_socket);
 }
 
-Server      Client::getServer()
+Server      Client::getServer() const
 {
     return (_server);
 }
 
-bool            Client::isRegistered()
+bool            Client::isRegistered() const
 {
     return (_registered);
 }

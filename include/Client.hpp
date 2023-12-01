@@ -23,11 +23,11 @@ class Client
         Client& operator=(Client const& rhs);
         ~Client();
 
-        std::string     getNick();
-        std::string     getUser();
-        int             getSocket();
-        Server          getServer();
-        bool            isRegistered();
+        std::string     getNick() const;
+        std::string     getUser() const;
+        int             getSocket() const;
+        Server          getServer() const;
+        bool            isRegistered() const;
 
         void            setNick(std::string nick);
         void            setUser(std::string user);

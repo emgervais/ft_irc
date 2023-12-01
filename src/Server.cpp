@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "NumericReplies.hpp"
 
 // -- init --
 Server::Server(int argc, char *argv[])
@@ -127,49 +128,90 @@ void Server::serverQueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 }
 
-void Server::writeToClient(int fd) {
-    // Implement writing to the client with file descriptor fd
+void Server::writeToClient(int socket) {
+    // Implement writing to the client with file descriptor socket
     // Example:
-    // send(fd, dataBuffer, dataSize, 0);
+    // send(socket, dataBuffer, dataSize, 0);
 }
 
-void Server::readFromClient(int fd) {
-    // Implement reading from the client with file descriptor fd
-    // Example:
-    // char buffer[1024];
-    // int bytesRead = recv(fd, buffer, sizeof(buffer), 0);
-    // Handle received data...
+void Server::readFromClient(int socket)
+{
+    char _buffer[BUFF_SIZE];
+    ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
+    if (bytesRead <= 0)
+    {
+        close(socket);
+        return;
+    }
+    _buffer[bytesRead] = '\0';
+    std::string data(_buffer);
+
+    /* Plutôt que de retourner une string, parser le message et agir avec.
+       Concernant registerNewClient, je crois qu'on devrait créer un client quelconque avec son socket.
+       Ensuite, readFromClient devra remplir les informations du client.
+
+       On devrait avoir une map (socket: Client)
+        et peut-être une map (nickname: socket)
+    */
+
+    // Exemple de parsing IRC
+    // ...
+    // if (data.substr(0, 4) == "PING")
+    // {
+    //     std::string pingMessage = data.substr(5);
+    //     send(fd, "PONG " + pingMessage + "\r\n",  // Sending PONG response
+    //          strlen(("PONG " + pingMessage + "\r\n")), 0);
+    // }
+
+    // if PASS != _pass: disconnect
 }
 
 void Server::registerNewClient() {
-    // Accept a new client connection
     sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
-    if (clientSocket == -1) {
-        // Handle error while accepting client connection
+    if (clientSocket == -1)
+    {
         std::cerr << "Error accepting client connection" << std::endl;
         return;
     }
-
-    // Add the new client to the kqueue for event monitoring
     EV_SET(_events, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1) {
-        // Handle error adding client to kqueue
+    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+    {
         std::cerr << "Error adding client to kqueue" << std::endl;
-        close(clientSocket); // Close the client socket in case of error
+        close(clientSocket);
         return;
+    }    
+    Client newClient(clientSocket, *this);
+    _clients.insert(std::make_pair(clientSocket, newClient));
+}
+
+bool Server::isNicknameTaken(const std::string& nickname)
+{
+    std::map<int, Client>::iterator it;
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        const Client& client = it->second;
+        if (client.getNick() == nickname)
+            return true;
     }
-
-
-    Client newClient(clientSocket, "nickname", "username", *this);
-    _clients.insert(std::pair<std::string, Client>(newClient.getNick(), newClient));
-    std::cout << "New client: " << newClient.getNick() << std::endl;
+    return false;
 }
 
 
+void Server::sendErrorMessageToClient(int clientSocket, const std::string& errorMessage)
+{
+    const char* message = errorMessage.c_str();
+    write(clientSocket, message, strlen(message));
+}
 
 // ----
 Server::~Server()
 {
+    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        int socket = it->first;
+        close(socket);
+    }
+    close(_socket);    
 }
