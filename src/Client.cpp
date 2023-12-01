@@ -2,19 +2,19 @@
 #include "Server.hpp"
 
 Client::Client(int socket, Server &server)
-    : _socket(socket), _server(server)
+    : _socket(socket), _server(server), _registered(false)
 {
 
 }
 
 Client::Client(int socket, std::string nick, std::string user, Server &server)
-    : _socket(socket), _nick(nick), _user(user), _server(server)
+    : _socket(socket), _nick(nick), _user(user), _server(server), _registered(false)
 {
     
 }
 
 Client::Client(Client const& rhs)
-    : _socket(rhs._socket), _nick(rhs._nick), _user(rhs._user), _server(rhs._server)
+    : _socket(rhs._socket), _nick(rhs._nick), _user(rhs._user), _server(rhs._server), _registered(false)
 {
     
 }

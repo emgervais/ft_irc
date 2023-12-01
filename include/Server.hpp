@@ -7,6 +7,7 @@
 #include <exception>
 #include <map>
 #include <vector>
+#include "NumericReplies.hpp"
 #include "CHeaders.hpp"
 #include "Client.hpp"
 
@@ -28,10 +29,8 @@ class Server
 
         void    setParams(int argc, char **argv);
         void    initSocket();
-        void    initFdSet();
         void    initKqueue();
         
-        void    serverLoop();
         void    serverQueue();
         void    registerNewClient();
         bool    isNicknameTaken(const std::string& nickname);

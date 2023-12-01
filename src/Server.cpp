@@ -71,10 +71,6 @@ void Server::initKqueue()
 
 }
 
-void    Server::initFdSet()
-{
-}
-
 Server& Server::operator=(const Server& rhs)
 {
     if (this != &rhs)
@@ -95,13 +91,7 @@ Server& Server::operator=(const Server& rhs)
 
 
 // -- run --
-
 void Server::run()
-{
-    serverLoop();
-}
-
-void Server::serverLoop()
 {
     while (true)
     {
@@ -128,7 +118,29 @@ void Server::serverQueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 }
 
-void Server::writeToClient(int socket) {
+void Server::registerNewClient()
+{
+    sockaddr_in clientAddr;
+    socklen_t clientLen = sizeof(clientAddr);
+    int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
+    if (clientSocket == -1)
+    {
+        std::cerr << "Error accepting client connection" << std::endl;
+        return;
+    }
+    EV_SET(_events, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+    {
+        std::cerr << "Error adding client to kqueue" << std::endl;
+        close(clientSocket);
+        return;
+    }    
+    Client newClient(clientSocket, *this);
+    _clients.insert(std::make_pair(clientSocket, newClient));
+}
+
+void Server::writeToClient(int socket)
+{
     // Implement writing to the client with file descriptor socket
     // Example:
     // send(socket, dataBuffer, dataSize, 0);
@@ -166,25 +178,7 @@ void Server::readFromClient(int socket)
     // if PASS != _pass: disconnect
 }
 
-void Server::registerNewClient() {
-    sockaddr_in clientAddr;
-    socklen_t clientLen = sizeof(clientAddr);
-    int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
-    if (clientSocket == -1)
-    {
-        std::cerr << "Error accepting client connection" << std::endl;
-        return;
-    }
-    EV_SET(_events, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-    {
-        std::cerr << "Error adding client to kqueue" << std::endl;
-        close(clientSocket);
-        return;
-    }    
-    Client newClient(clientSocket, *this);
-    _clients.insert(std::make_pair(clientSocket, newClient));
-}
+
 
 bool Server::isNicknameTaken(const std::string& nickname)
 {
