@@ -1,12 +1,12 @@
 #include "Server.hpp"
 
-// ----
-Server::Server(int argc, char **argv)
+// -- init --
+Server::Server(int argc, char *argv[])
     : _maxClients(MAX_CLIENTS)
 {
     try
     {
-        checkParam(argc, argv);
+        setParams(argc, argv);
         initSocket();
         initKqueue();
     }
@@ -20,17 +20,18 @@ Server::Server(int argc, char **argv)
         std::cerr << e.what() << std::endl;
         exit(1);
     }
-    // std::cout << "Port: " << _port << std::endl;
-    // std::cout << "Password: " << _pass << std::endl;
-    // std::cout << "Server is listening on port " << _port << std::endl;
+
+    std::cout << "Port: " << _port << std::endl;
+    std::cout << "Password: " << _pass << std::endl;
+    std::cout << "Server is listening on port " << _port << std::endl;
 }
 
-void    Server::checkParam(int argc, char **argv)
+void    Server::setParams(int argc, char *argv[])
 {
     if (argc != 3)
         throw std::invalid_argument("Error: wrong number of arguments");
     std::stringstream ss(argv[1]);
-    ss >> std::noskipws >> _port;
+    ss >> _port;
     if (ss.fail() || !ss.eof() || _port < 0 || _port > 65535)
         throw std::invalid_argument("Error: wrong port number");
     ss.str(argv[2]);
@@ -68,7 +69,12 @@ void Server::initKqueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 
 }
-// ----
+
+void    Server::initFdSet()
+{
+}
+
+// -- run --
 
 void Server::run()
 {
@@ -102,8 +108,21 @@ void Server::serverQueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 }
 
+void Server::writeToClient(int fd)
+{
+}
+
+void Server::readFromClient(int fd)
+{
+}
+
+void Server::registerNewClient()
+{
+}
+
+
+
 // ----
 Server::~Server()
 {
-    closeServer();
 }

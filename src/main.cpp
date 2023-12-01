@@ -16,12 +16,15 @@
 // }
 
 #include "NumericReplies.hpp"
+#include "Server.hpp"
 #include <iostream>
 #include <string>
 
-int main()
+int main(int argc, char *argv[])
 {
-    std::cout << std::string(ERR_NEEDMOREPARAMS("Emile")) << std::endl;
-    std::cout << std::string(ERR_NEEDMOREPARAMS("Emile")) << std::endl;
+
+    Server s(argc, argv);
+    // std::cout << std::string(ERR_NEEDMOREPARAMS("Emile")) << std::endl;
+    // std::cout << std::string(ERR_NEEDMOREPARAMS("Emile")) << std::endl;
 
 }

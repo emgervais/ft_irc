@@ -27,7 +27,7 @@ class Server
         int                         _kqueue;
         char                        _buffer[BUFF_SIZE];
 
-        void    checkParam(int argc, char **argv);
+        void    setParams(int argc, char **argv);
         void    initSocket();
         void    initFdSet();
         void    initKqueue();
@@ -37,10 +37,9 @@ class Server
         void    registerNewClient();
         void    readFromClient(int fd);
         void    writeToClient(int fd);
-        void    closeServer();
 
     public:
-        Server(int argc, char **argv);
+        Server(int argc, char *arvg[]);
         ~Server();
         void    run();
 };
