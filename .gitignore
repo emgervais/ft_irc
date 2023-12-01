@@ -1,0 +1,10 @@
+*.txt
+*.o
+*.d
+*.a
+*.dSYM
+
+.DS_Store
+.vscode/
+
+ircserv

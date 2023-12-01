@@ -1,34 +1,48 @@
 NAME = ircserv
 
-CC = clang++
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -g3 -fsanitize=address
+CXX = clang++
 INCLUDES = -I./include
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 
-SRCS_DIR = ./src/
-SRCS_FILES = main.cpp Server.cpp Client.cpp
-SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILES))
-
-OBJS_DIR = ./objs/
-OBJS_FILES = $(SRCS_FILES:.cpp=.o)
-OBJS = $(addprefix $(OBJS_DIR), $(OBJS_FILES))
+SRC_DIR = ./src/
+OBJ_DIR = ./objs/
+SRC = Client.cpp \
+	main.cpp \
+	Server.cpp
+OBJS = $(SRC:.cpp=.o)
+OBJS := $(addprefix $(OBJ_DIR), $(OBJS))
+DEPS = $(OBJS:.o=.d)
 
 all: $(NAME)
 
-$(NAME): $(OBJS_DIR) $(OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
+debug: CXXFLAGS += -O0 -g3
+debug: re
 
-$(OBJS_DIR):
-	mkdir -p $(OBJS_DIR)
+sanit: CXXFLAGS += -O0 -g3 -fsanitize=address
+sanit: re
 
-$(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+undefined: CXXFLAGS += -O0 -g3 -fsanitize=undefined
+undefined: re
+
+noerr: CXXFLAGS := $(filter-out -Werror,$(CXXFLAGS))
+noerr: re
+
+$(NAME): $(OBJ_DIR) $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 clean:
-	rm -rf $(OBJS_DIR)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all debug sanit undefined noerr clean fclean re
+-include $(DEPS)

@@ -1,18 +1,45 @@
 #include "Server.hpp"
+#include "NumericReplies.hpp"
 
-void    Server::checkParam(int argc, char **argv)
+// -- init --
+Server::Server(int argc, char *argv[])
+    : _maxClients(MAX_CLIENTS)
+{
+    try
+    {
+        setParams(argc, argv);
+        initSocket();
+        initKqueue();
+    }
+    catch (const std::invalid_argument &e)
+    {
+        std::cerr << e.what() << std::endl << USAGE << std::endl;
+        exit(1);
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
+
+    std::cout << "Port: " << _port << std::endl;
+    std::cout << "Password: " << _pass << std::endl;
+    std::cout << "Server is listening on port " << _port << std::endl;
+}
+
+void    Server::setParams(int argc, char *argv[])
 {
     if (argc != 3)
-        throw std::runtime_error("Error: wrong number of arguments");
+        throw std::invalid_argument("Error: wrong number of arguments");
     std::stringstream ss(argv[1]);
-    ss >> std::noskipws >> _port;
+    ss >> _port;
     if (ss.fail() || !ss.eof() || _port < 0 || _port > 65535)
-        throw std::runtime_error("Error: wrong port number");
+        throw std::invalid_argument("Error: wrong port number");
     ss.str(argv[2]);
     ss.clear();
     ss >> _pass;
     if (ss.fail() || !ss.eof())
-        throw std::runtime_error("Error: wrong password");
+        throw std::invalid_argument("Error: wrong password");
 }
 
 void Server::initSocket()
@@ -33,7 +60,6 @@ void Server::initSocket()
         throw std::runtime_error("Error: socket listen failed");
 }
 
-
 void Server::initKqueue()
 {
     _kqueue = kqueue();
@@ -45,48 +71,27 @@ void Server::initKqueue()
 
 }
 
-void Server::serverInit(int argc, char **argv)
+Server& Server::operator=(const Server& rhs)
 {
-    try
+    if (this != &rhs)
     {
-        checkParam(argc, argv);
+        _socket = rhs._socket;
+        _port = rhs._port;
+        _maxClients = rhs._maxClients;
+        _pass = rhs._pass;
+        _addr = rhs._addr;
+        _readFdSet = rhs._readFdSet;
+        _writeFdSet = rhs._writeFdSet;
+        _clients = rhs._clients;
+        memcpy(_events, rhs._events, sizeof(_events));
+        memcpy(_buffer, rhs._buffer, sizeof(_buffer));
     }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl << USAGE << std::endl;
-        exit(1);
-    }
-    try 
-    {
-        initSocket();
-        initKqueue();
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl;
-        exit(1);
-    }
-    // std::cout << "Port: " << _port << std::endl;
-    // std::cout << "Password: " << _pass << std::endl;
-    // std::cout << "Server is listening on port " << _port << std::endl;
+    return *this;
 }
 
-Server::Server(int argc, char **argv) : _maxClients(MAX_CLIENTS)
-{
-    serverInit(argc, argv);
-}
 
-Server::~Server()
-{
-    closeServer();
-}
-
+// -- run --
 void Server::run()
-{
-    serverLoop();
-}
-
-void Server::serverLoop()
 {
     while (true)
     {
@@ -111,4 +116,96 @@ void Server::serverQueue()
     ret = kevent(_kqueue, NULL, 0, _events, MAX_EVENTS, NULL);
     if (ret == -1)
         throw std::runtime_error("Error: kqueue event creation failed");
+}
+
+void Server::registerNewClient()
+{
+    sockaddr_in clientAddr;
+    socklen_t clientLen = sizeof(clientAddr);
+    int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
+    if (clientSocket == -1)
+    {
+        std::cerr << "Error accepting client connection" << std::endl;
+        return;
+    }
+    EV_SET(_events, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+    {
+        std::cerr << "Error adding client to kqueue" << std::endl;
+        close(clientSocket);
+        return;
+    }    
+    Client newClient(clientSocket, *this);
+    _clients.insert(std::make_pair(clientSocket, newClient));
+}
+
+void Server::writeToClient(int socket)
+{
+    // Implement writing to the client with file descriptor socket
+    // Example:
+    // send(socket, dataBuffer, dataSize, 0);
+}
+
+void Server::readFromClient(int socket)
+{
+    char _buffer[BUFF_SIZE];
+    ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
+    if (bytesRead <= 0)
+    {
+        close(socket);
+        return;
+    }
+    _buffer[bytesRead] = '\0';
+    std::string data(_buffer);
+
+    /* Plutôt que de retourner une string, parser le message et agir avec.
+       Concernant registerNewClient, je crois qu'on devrait créer un client quelconque avec son socket.
+       Ensuite, readFromClient devra remplir les informations du client.
+
+       On devrait avoir une map (socket: Client)
+        et peut-être une map (nickname: socket)
+    */
+
+    // Exemple de parsing IRC
+    // ...
+    // if (data.substr(0, 4) == "PING")
+    // {
+    //     std::string pingMessage = data.substr(5);
+    //     send(fd, "PONG " + pingMessage + "\r\n",  // Sending PONG response
+    //          strlen(("PONG " + pingMessage + "\r\n")), 0);
+    // }
+
+    // if PASS != _pass: disconnect
+}
+
+
+
+bool Server::isNicknameTaken(const std::string& nickname)
+{
+    std::map<int, Client>::iterator it;
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        const Client& client = it->second;
+        if (client.getNick() == nickname)
+            return true;
+    }
+    return false;
+}
+
+
+void Server::sendErrorMessageToClient(int clientSocket, const std::string& errorMessage)
+{
+    const char* message = errorMessage.c_str();
+    write(clientSocket, message, strlen(message));
+}
+
+// ----
+Server::~Server()
+{
+    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        int socket = it->first;
+        close(socket);
+    }
+    close(_socket);    
 }
