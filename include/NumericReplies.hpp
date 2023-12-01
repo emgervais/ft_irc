@@ -6,6 +6,10 @@
 
 const std::string SERVER_NAME = ":localhost ";
 
+// à vérifier
+typedef void (*cmdHandler) (const std::string&, const std::string&, const std::string&);
+
+// transformer en map (CMD: cmdHandler)
 const char * const CMDS[] = {
     "PASS",
     "NICK",

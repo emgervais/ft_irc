@@ -12,8 +12,8 @@ class Client
         std::string     _nick;
         std::string     _user;
         std::string     _hostname;
-        bool            _registered;
         Server          &_server; // maybe not useful..
+        bool            _registered;
         Client(void);
 
     public:

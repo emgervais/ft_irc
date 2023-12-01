@@ -155,7 +155,6 @@ void Server::registerNewClient()
     sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
-    SOCKET_LIST.push_back(clientSocket);
     if (clientSocket == -1)
     {
         std::cerr << "Error accepting client connection" << std::endl;
@@ -170,6 +169,7 @@ void Server::registerNewClient()
     }    
     Client newClient(clientSocket, *this);
     std::cout << "New client: " << clientSocket << std::endl;
+    SOCKET_LIST.push_back(clientSocket);
     _clients.insert(std::make_pair(clientSocket, newClient));
 }
 
