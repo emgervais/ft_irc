@@ -1,18 +1,43 @@
 #include "Server.hpp"
 
+// ----
+Server::Server(int argc, char **argv)
+    : _maxClients(MAX_CLIENTS)
+{
+    try
+    {
+        checkParam(argc, argv);
+        initSocket();
+        initKqueue();
+    }
+    catch (const std::invalid_argument &e)
+    {
+        std::cerr << e.what() << std::endl << USAGE << std::endl;
+        exit(1);
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
+    // std::cout << "Port: " << _port << std::endl;
+    // std::cout << "Password: " << _pass << std::endl;
+    // std::cout << "Server is listening on port " << _port << std::endl;
+}
+
 void    Server::checkParam(int argc, char **argv)
 {
     if (argc != 3)
-        throw std::runtime_error("Error: wrong number of arguments");
+        throw std::invalid_argument("Error: wrong number of arguments");
     std::stringstream ss(argv[1]);
     ss >> std::noskipws >> _port;
     if (ss.fail() || !ss.eof() || _port < 0 || _port > 65535)
-        throw std::runtime_error("Error: wrong port number");
+        throw std::invalid_argument("Error: wrong port number");
     ss.str(argv[2]);
     ss.clear();
     ss >> _pass;
     if (ss.fail() || !ss.eof())
-        throw std::runtime_error("Error: wrong password");
+        throw std::invalid_argument("Error: wrong password");
 }
 
 void Server::initSocket()
@@ -33,7 +58,6 @@ void Server::initSocket()
         throw std::runtime_error("Error: socket listen failed");
 }
 
-
 void Server::initKqueue()
 {
     _kqueue = kqueue();
@@ -44,42 +68,7 @@ void Server::initKqueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 
 }
-
-void Server::serverInit(int argc, char **argv)
-{
-    try
-    {
-        checkParam(argc, argv);
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl << USAGE << std::endl;
-        exit(1);
-    }
-    try 
-    {
-        initSocket();
-        initKqueue();
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl;
-        exit(1);
-    }
-    // std::cout << "Port: " << _port << std::endl;
-    // std::cout << "Password: " << _pass << std::endl;
-    // std::cout << "Server is listening on port " << _port << std::endl;
-}
-
-Server::Server(int argc, char **argv) : _maxClients(MAX_CLIENTS)
-{
-    serverInit(argc, argv);
-}
-
-Server::~Server()
-{
-    closeServer();
-}
+// ----
 
 void Server::run()
 {
@@ -111,4 +100,10 @@ void Server::serverQueue()
     ret = kevent(_kqueue, NULL, 0, _events, MAX_EVENTS, NULL);
     if (ret == -1)
         throw std::runtime_error("Error: kqueue event creation failed");
+}
+
+// ----
+Server::~Server()
+{
+    closeServer();
 }

@@ -31,7 +31,6 @@ class Server
         void    initSocket();
         void    initFdSet();
         void    initKqueue();
-        void    serverInit(int argc, char **argv);
         
         void    serverLoop();
         void    serverQueue();
