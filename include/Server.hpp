@@ -40,6 +40,7 @@ class Server
         Server(void);
 
     public:
+        void cmdHandler(const std::string& data); // public for testing purposes
         Server(int argc, char *arvg[]);
         Server& operator=(const Server& rhs);
         ~Server();

@@ -22,9 +22,9 @@ Server::Server(int argc, char *argv[])
         exit(1);
     }
 
-    std::cout << "Port: " << _port << std::endl;
-    std::cout << "Password: " << _pass << std::endl;
-    std::cout << "Server is listening on port " << _port << std::endl;
+    // std::cout << "Port: " << _port << std::endl;
+    // std::cout << "Password: " << _pass << std::endl;
+    // std::cout << "Server is listening on port " << _port << std::endl;
 }
 
 void    Server::setParams(int argc, char *argv[])
@@ -98,6 +98,7 @@ void Server::run()
         serverQueue();
         for (int i = 0; i < MAX_EVENTS; i++)
         {
+            std::cout << "loop" << i << std::endl;
             if (_events[i].flags == 0)
                 continue;
             if ((int) _events[i].ident == _socket)
@@ -136,6 +137,7 @@ void Server::registerNewClient()
         return;
     }    
     Client newClient(clientSocket, *this);
+    std::cout << "New client: " << clientSocket << std::endl;
     _clients.insert(std::make_pair(clientSocket, newClient));
 }
 
@@ -148,8 +150,10 @@ void Server::writeToClient(int socket)
 
 void Server::readFromClient(int socket)
 {
+    std::cout << "readFromClient..." << std::endl;
     char _buffer[BUFF_SIZE];
     ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
+    std::cout << "apres recv..." << std::endl;
     if (bytesRead <= 0)
     {
         close(socket);
@@ -157,6 +161,7 @@ void Server::readFromClient(int socket)
     }
     _buffer[bytesRead] = '\0';
     std::string data(_buffer);
+    std::cout << "data: " << data << std::endl;
 
     /* Plutôt que de retourner une string, parser le message et agir avec.
        Concernant registerNewClient, je crois qu'on devrait créer un client quelconque avec son socket.
@@ -177,8 +182,6 @@ void Server::readFromClient(int socket)
 
     // if PASS != _pass: disconnect
 }
-
-
 
 bool Server::isNicknameTaken(const std::string& nickname)
 {

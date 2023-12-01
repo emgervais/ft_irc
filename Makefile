@@ -8,7 +8,8 @@ SRC_DIR = ./src/
 OBJ_DIR = ./objs/
 SRC = Client.cpp \
 	main.cpp \
-	Server.cpp
+	Server.cpp \
+	ServerCmdHandler.cpp
 OBJS = $(SRC:.cpp=.o)
 OBJS := $(addprefix $(OBJ_DIR), $(OBJS))
 DEPS = $(OBJS:.o=.d)
