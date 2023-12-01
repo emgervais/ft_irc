@@ -74,6 +74,25 @@ void    Server::initFdSet()
 {
 }
 
+Server& Server::operator=(const Server& rhs)
+{
+    if (this != &rhs)
+    {
+        _socket = rhs._socket;
+        _port = rhs._port;
+        _maxClients = rhs._maxClients;
+        _pass = rhs._pass;
+        _addr = rhs._addr;
+        _readFdSet = rhs._readFdSet;
+        _writeFdSet = rhs._writeFdSet;
+        _clients = rhs._clients;
+        memcpy(_events, rhs._events, sizeof(_events));
+        memcpy(_buffer, rhs._buffer, sizeof(_buffer));
+    }
+    return *this;
+}
+
+
 // -- run --
 
 void Server::run()
@@ -108,16 +127,44 @@ void Server::serverQueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 }
 
-void Server::writeToClient(int fd)
-{
+void Server::writeToClient(int fd) {
+    // Implement writing to the client with file descriptor fd
+    // Example:
+    // send(fd, dataBuffer, dataSize, 0);
 }
 
-void Server::readFromClient(int fd)
-{
+void Server::readFromClient(int fd) {
+    // Implement reading from the client with file descriptor fd
+    // Example:
+    // char buffer[1024];
+    // int bytesRead = recv(fd, buffer, sizeof(buffer), 0);
+    // Handle received data...
 }
 
-void Server::registerNewClient()
-{
+void Server::registerNewClient() {
+    // Accept a new client connection
+    sockaddr_in clientAddr;
+    socklen_t clientLen = sizeof(clientAddr);
+    int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
+    if (clientSocket == -1) {
+        // Handle error while accepting client connection
+        std::cerr << "Error accepting client connection" << std::endl;
+        return;
+    }
+
+    // Add the new client to the kqueue for event monitoring
+    EV_SET(_events, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1) {
+        // Handle error adding client to kqueue
+        std::cerr << "Error adding client to kqueue" << std::endl;
+        close(clientSocket); // Close the client socket in case of error
+        return;
+    }
+
+
+    Client newClient(clientSocket, "nickname", "username", *this);
+    _clients.insert(std::pair<std::string, Client>(newClient.getNick(), newClient));
+    std::cout << "New client: " << newClient.getNick() << std::endl;
 }
 
 

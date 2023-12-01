@@ -15,17 +15,17 @@
 class Server
 {
     private:
-        int                         _socket;
-        int                         _port;
-        int                         _maxClients;
-        std::string                 _pass;
-        sockaddr_in                 _addr;
-        fd_set                      _readFdSet;
-        fd_set                      _writeFdSet;
-        // std::map<int, Client>       _clients;
-        struct kevent               _events[MAX_EVENTS];
-        int                         _kqueue;
-        char                        _buffer[BUFF_SIZE];
+        int                             _socket;
+        int                             _port;
+        int                             _maxClients;
+        std::string                     _pass;
+        sockaddr_in                     _addr;
+        fd_set                          _readFdSet;
+        fd_set                          _writeFdSet;
+        std::map<std::string, Client>   _clients;
+        struct kevent                   _events[MAX_EVENTS];
+        int                             _kqueue;
+        char                            _buffer[BUFF_SIZE];
 
         void    setParams(int argc, char **argv);
         void    initSocket();
@@ -40,6 +40,7 @@ class Server
 
     public:
         Server(int argc, char *arvg[]);
+        Server& operator=(const Server& rhs);
         ~Server();
         void    run();
 };

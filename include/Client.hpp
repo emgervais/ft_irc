@@ -1,7 +1,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "Server.hpp"
+#include <string>
 
 class Server;
 
@@ -14,10 +14,13 @@ class Client
         std::string     _hostname;
         bool            _registered;
         Server          &_server;
+        Client(void);
 
     public:
         Client(int socket, Server &server);
         Client(int socket, std::string nick, std::string user, Server &server);
+        Client(Client const& rhs);
+        Client& operator=(Client const& rhs);
         ~Client();
 
         std::string     getNick();

@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 {
 
     Server s(argc, argv);
+    s.run();
     // std::cout << std::string(ERR_NEEDMOREPARAMS("Emile")) << std::endl;
     // std::cout << std::string(ERR_NEEDMOREPARAMS("Emile")) << std::endl;
 
