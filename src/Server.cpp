@@ -1,5 +1,34 @@
 #include "Server.hpp"
 #include "NumericReplies.hpp"
+#include <signal.h>
+
+std::vector<int> SOCKET_LIST;
+
+void	sigint_handler(int sig)
+{
+    std::cout << std::endl << "SIGINT received" << std::endl;
+    (void)sig;
+    for (size_t i = 0; i < SOCKET_LIST.size(); i++)
+    {
+        if (SOCKET_LIST[i] != -1)
+            close(SOCKET_LIST[i]);
+    }
+    exit(0);
+}
+
+void	init_signals()
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = sigint_handler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+	{
+		std::cerr << "Error: sigaction failed" << std::endl;
+		exit(1);
+	}
+}
 
 // -- init --
 Server::Server(int argc, char *argv[])
@@ -10,6 +39,7 @@ Server::Server(int argc, char *argv[])
         setParams(argc, argv);
         initSocket();
         initKqueue();
+        init_signals();
     }
     catch (const std::invalid_argument &e)
     {
@@ -45,6 +75,7 @@ void    Server::setParams(int argc, char *argv[])
 void Server::initSocket()
 {
     _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    SOCKET_LIST.push_back(_socket);
     if (_socket == -1)
         throw std::runtime_error("Error: socket creation failed");
     
@@ -63,12 +94,12 @@ void Server::initSocket()
 void Server::initKqueue()
 {
     _kqueue = kqueue();
+
     if (_kqueue == -1)
         throw std::runtime_error("Error: kqueue creation failed");
     EV_SET(&_events[0], _socket, EVFILT_READ, EV_ADD, 0, 0, NULL);
     if (kevent(_kqueue, &_events[0], 1, NULL, 0, NULL) == -1)
         throw std::runtime_error("Error: kqueue event creation failed");
-
 }
 
 Server& Server::operator=(const Server& rhs)
@@ -123,6 +154,7 @@ void Server::registerNewClient()
     sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
+    SOCKET_LIST.push_back(clientSocket);
     if (clientSocket == -1)
     {
         std::cerr << "Error accepting client connection" << std::endl;
@@ -202,10 +234,9 @@ void Server::sendErrorMessageToClient(int clientSocket, const std::string& error
 // ----
 Server::~Server()
 {
-    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    for (size_t i = 0; i < SOCKET_LIST.size(); i++)
     {
-        int socket = it->first;
-        close(socket);
+        if (SOCKET_LIST[i] != -1)
+            close(SOCKET_LIST[i]);
     }
-    close(_socket);    
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francoma <francoma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ele-sage <ele-sage@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 14:13:44 by francoma          #+#    #+#             */
-/*   Updated: 2023/12/01 15:54:33 by francoma         ###   ########.fr       */
+/*   Updated: 2023/12/01 16:30:23 by ele-sage         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ void parseAndHandleCommands(const std::string& data) {
 
 int main(int argc, char *argv[])
 {
-    parseAndHandleCommands(":soso PASS fasfa");
-    // Server s(argc, argv);
-    // s.run();
+//     parseAndHandleCommands(":soso PASS fasfa");
+    Server s(argc, argv);
+    s.run();
     return 0;
 }

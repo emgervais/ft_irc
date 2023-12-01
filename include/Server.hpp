@@ -11,7 +11,6 @@
 #include "CHeaders.hpp"
 #include "Client.hpp"
 
-
 class Server
 {
     private:

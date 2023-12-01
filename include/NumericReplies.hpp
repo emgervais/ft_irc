@@ -2,6 +2,7 @@
 #define NUMERICSREPLIES_HPP
 
 #include <string>
+#include <vector>
 
 const std::string SERVER_NAME = ":localhost ";
 
