@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCmdHandler.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francoma <francoma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ele-sage <ele-sage@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 16:17:29 by francoma          #+#    #+#             */
-/*   Updated: 2023/12/01 16:57:16 by francoma         ###   ########.fr       */
+/*   Updated: 2023/12/02 02:44:16 by ele-sage         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@
 #include "Server.hpp"
 #include "NumericReplies.hpp"
 
-static void handleIRCCommand(const std::string& command)
-{
-    std::cout << "Received IRC command: " << command << std::endl;
-}
+// static void handleIRCCommand(const std::string& command)
+// {
+//     std::cout << "Received IRC command: " << command << std::endl;
+// }
 
 void Server::handleMsg(const std::string& data)
 {

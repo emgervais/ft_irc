@@ -7,6 +7,7 @@
 #include <exception>
 #include <map>
 #include <vector>
+#include "IRC.hpp"
 #include "NumericReplies.hpp"
 #include "CHeaders.hpp"
 #include "Client.hpp"
@@ -14,6 +15,7 @@
 class Server
 {
     private:
+        static Server           *_instance;
         int                     _socket;
         int                     _port;
         int                     _maxClients;
@@ -36,14 +38,20 @@ class Server
         void    sendErrorMessageToClient(int clientSocket, const std::string& errorMessage);
         void    readFromClient(int socket);
         void    writeToClient(int socket);
+
         Server(void);
 
     public:
         void handleMsg(const std::string& data); // public for testing purposes
         Server(int argc, char *arvg[]);
         Server& operator=(const Server& rhs);
+        Server(const Server& rhs);
         ~Server();
+
+        static Server* getInstance();
+
         void    run();
 };
+void    initSignals();
 
 #endif

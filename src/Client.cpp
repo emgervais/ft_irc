@@ -54,11 +54,6 @@ int             Client::getSocket() const
     return (_socket);
 }
 
-Server      Client::getServer() const
-{
-    return (_server);
-}
-
 bool            Client::isRegistered() const
 {
     return (_registered);

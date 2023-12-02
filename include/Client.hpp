@@ -26,7 +26,6 @@ class Client
         std::string     getNick() const;
         std::string     getUser() const;
         int             getSocket() const;
-        Server          getServer() const;
         bool            isRegistered() const;
 
         void            setNick(std::string nick);

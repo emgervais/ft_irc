@@ -2,52 +2,9 @@
 #define NUMERICSREPLIES_HPP
 
 #include <string>
-#include <vector>
+#include "IRC.hpp"
 
 const std::string SERVER_NAME = ":localhost ";
-
-// à vérifier
-typedef void (*cmdHandler) (const std::string&, const std::string&, const std::string&);
-
-// transformer en map (CMD: cmdHandler)
-const char * const CMDS[] = {
-    "PASS",
-    "NICK",
-    "USER",
-    "PING",
-    "PONG",
-    "OPER",
-    "QUIT",
-    "ERROR",
-    "JOIN",
-    "PART",
-    "TOPIC",
-    "NAMES",
-    "LIST",
-    "INVITE",
-    "KICK",
-    "MODE",
-    "PRIVMSG",
-};
-
-#define CREATION_DATE "2023-11-30"
-
-#define BUFF_SIZE 1024
-#define USAGE "Wrong usage : ./ircserv <port>(0-65535) <password>"
-
-#define MAX_CLIENTS 10
-#define MAX_EVENTS 128
-
-#define MSG_MAX_LEN 512
-#define CRLF "\r\n"
-
-#define NICK_NOT_CONTAIN " ,.*!?@/"
-#define NICK_NOT_START "0123456789$:#&"
-#define NICK_MAX_LEN 9
-
-#define CHANNEL_MUST_START "&#"
-#define CHANNEL_NOT_CONTAIN " ,^G"
-#define CHANNEL_MAX_LEN 50
 
 // Welcome replies
 #define RPL_WELCOME(nick, user, host) SERVER_NAME + "001 " + nick + " :Welcome to the Internet Relay Network " + user + "!" + user + "@" + host
