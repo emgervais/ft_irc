@@ -4,12 +4,17 @@ CXX = clang++
 INCLUDES = -I./include
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 
-SRC_DIR = ./src/
-OBJ_DIR = ./objs/
-SRC = main.cpp Server.cpp ServerCmdHandler.cpp UnixSignals.cpp Client.cpp ClientRegistration.cpp Command.cpp
-OBJS = $(SRC:.cpp=.o)
-OBJS := $(addprefix $(OBJ_DIR), $(OBJS))
-DEPS = $(OBJS:.o=.d)
+SRC = Server/Server.cpp Server/ServerCmdHandler.cpp Server/UnixSignals.cpp\
+	Client/Client.cpp Client/ClientRegistration.cpp \
+	Commands/Command.cpp Commands/Registration.cpp \
+	main.cpp \
+
+SRC_DIR = src/
+OBJ_DIR = obj/
+
+SRC := $(addprefix $(SRC_DIR), $(SRC))
+OBJ := $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
+DEP := $(OBJ:%.o=%.d)
 
 all: $(NAME)
 
@@ -25,22 +30,26 @@ undefined: re
 noerr: CXXFLAGS := $(filter-out -Werror,$(CXXFLAGS))
 noerr: re
 
-$(NAME): $(OBJ_DIR) $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+
+$(NAME): $(OBJ)
+	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
+	@echo "\033[32m$(NAME) created\033[0m"
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/Server $(OBJ_DIR)/Client $(OBJ_DIR)/Commands
+	@echo "\033[33mCompiling $<\033[0m"
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)
+	@rm -rf $(OBJ_DIR)
+	@echo "\033[31m$(NAME) objects deleted\033[0m"
 
 fclean: clean
-	rm -rf $(NAME)
+	@rm -f $(NAME)
+	@echo "\033[31m$(NAME) deleted\033[0m"
 
 re: fclean all
 
-.PHONY: all debug sanit undefined noerr clean fclean re
--include $(DEPS)
+.PHONY: all clean fclean re
+
+-include $(DEP)

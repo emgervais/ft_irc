@@ -410,9 +410,6 @@ Channel Operations:
 
 
 
-WEECHAT:
-/server add ircserv 172.17.0.1/6667
-/connect ircserv
 
 
 // -- Connecting to irc Server using nc :  --
