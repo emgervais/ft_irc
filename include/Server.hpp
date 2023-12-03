@@ -11,6 +11,7 @@
 #include "NumericReplies.hpp"
 #include "CHeaders.hpp"
 #include "Client.hpp"
+#include "Command.hpp"
 
 class Server
 {
@@ -23,7 +24,7 @@ class Server
         sockaddr_in             _addr;
         fd_set                  _readFdSet;
         fd_set                  _writeFdSet;
-        std::map<int, Client>   _clients;
+        std::map<int, Client*>  _clients;
         struct kevent           _events[MAX_EVENTS];
         int                     _kqueue;
         char                    _buffer[BUFF_SIZE];
@@ -34,7 +35,6 @@ class Server
         
         void    serverQueue();
         void    registerNewClient();
-        bool    isNicknameTaken(const std::string& nickname);
         void    sendErrorMessageToClient(int clientSocket, const std::string& errorMessage);
         void    readFromClient(int socket);
         void    writeToClient(int socket);
@@ -48,7 +48,9 @@ class Server
         Server(const Server& rhs);
         ~Server();
 
-        static Server* getInstance();
+        std::string     getPass() const;
+        bool            isNicknameTaken(const std::string& nickname);
+        static Server*  getInstance();
 
         void    run();
 };

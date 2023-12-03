@@ -7,9 +7,7 @@
 // à vérifier
 
 // transformer en map (CMD: cmdHandler)
-//const char * const CMDS[] = {"PASS","NICK","USER","PING","PONG","OPER","QUIT","ERROR","JOIN","PART","TOPIC","NAMES","LIST","INVITE","KICK","MODE","PRIVMSG",};
-
-typedef void (*cmdHandler) (const std::string&, const std::string&, const std::string&);
+//typedef void (*cmdHandler) (const std::string&, const std::string&, const std::string&);
 
 // const std::map<std::string, cmdHandler> CMDS = {
 //     {"PASS", cmdPass},
@@ -45,6 +43,10 @@ typedef void (*cmdHandler) (const std::string&, const std::string&, const std::s
 #define NICK_NOT_CONTAIN " ,.*!?@/"
 #define NICK_NOT_START "0123456789$:#&"
 #define NICK_MAX_LEN 9
+
+#define USER_MAX_LEN 50
+#define REALNAME_MAX_LEN 50
+#define HOST_MAX_LEN 50
 
 #define CHANNEL_MUST_START "&#"
 #define CHANNEL_NOT_CONTAIN " ,^G"

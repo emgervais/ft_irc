@@ -143,19 +143,34 @@ void Server::registerNewClient()
         close(clientSocket);
         return;
     }    
-    Client newClient(clientSocket, *this);
+    Client *newClient = new Client(clientSocket, *this);
     std::cout << "New client: " << clientSocket << std::endl;
     _clients.insert(std::make_pair(clientSocket, newClient));
+    std::cout << _clients[clientSocket]->getNick() << std::endl;
 }
 
 void Server::writeToClient(int socket)
 {
-    (void)socket;
-    std::cout << "writeToClient..." << std::endl;
-
-    // Implement writing to the client with file descriptor socket
-    // Example:
-    // send(socket, dataBuffer, dataSize, 0);
+    ssize_t bytesWritten = send(socket, _buffer, strlen(_buffer), 0);
+    
+    if (bytesWritten == -1)
+    {
+        std::cerr << "Error writing to client" << std::endl;
+        return;
+    }
+    else if (bytesWritten == 0)
+    {
+        std::cout << "Client disconnected" << std::endl;
+        delete _clients[socket];
+        _clients.erase(socket);
+        close(socket);
+        return;
+    }
+    else if (bytesWritten > MSG_MAX_LEN)
+    {
+        std::cerr << "Error: sent message is too long" << std::endl;
+        return;
+    }
 }
 
 void Server::readFromClient(int socket)
@@ -169,20 +184,34 @@ void Server::readFromClient(int socket)
     else if (bytesRead == 0)
     {
         std::cout << "Client disconnected" << std::endl;
+        delete _clients[socket];
         _clients.erase(socket);
         close(socket);
         return;
     }
-    else if (bytesRead > MSG_MAX_LEN)
-    {
-        std::cerr << "Error: received message is too long" << std::endl;
-        return;
-    }
     _buffer[bytesRead] = '\0';
-    std::string data(_buffer);
-    handleMsg(data);
 
-    
+    try
+    {
+        Command cmd(*_clients[socket], *this, _buffer);
+        cmd.exec();
+    }
+    catch (std::invalid_argument &e)
+    {
+        std::cout << e.what() << std::endl;
+        // send error message to client
+        
+        // delete _clients[socket];
+        // _clients.erase(socket);
+        // close(socket);
+    }
+    if (_clients[socket]->isNewlyRegistered())
+    {
+        _clients[socket]->setNewlyRegistered(false);
+        // send welcome message
+        std::cout << "New client registered" << std::endl;
+    }
+
     /* Plutôt que de retourner une string, parser le message et agir avec.
        Concernant registerNewClient, je crois qu'on devrait créer un client quelconque avec son socket.
        Ensuite, readFromClient devra remplir les informations du client.
@@ -206,11 +235,10 @@ void Server::readFromClient(int socket)
 
 bool Server::isNicknameTaken(const std::string& nickname)
 {
-    std::map<int, Client>::iterator it;
+    std::map<int, Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        const Client& client = it->second;
-        if (client.getNick() == nickname)
+        if (it->second->getNick() == nickname)
             return true;
     }
     return false;
@@ -220,7 +248,11 @@ bool Server::isNicknameTaken(const std::string& nickname)
 void Server::sendErrorMessageToClient(int clientSocket, const std::string& errorMessage)
 {
     const char* message = errorMessage.c_str();
-    write(clientSocket, message, strlen(message));
+    ssize_t bytesWritten = send(clientSocket, message, strlen(message), 0);
+    if (bytesWritten == -1)
+        std::cerr << "Error sending error message to client" << std::endl;
+    else if (bytesWritten == 0)
+        std::cout << "Client disconnected" << std::endl;    
 }
 
 // ----
@@ -234,7 +266,15 @@ Server::~Server()
             continue;
         close(_events[i].ident);
     }
+    for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+        delete it->second;
+    _clients.clear();
     close(_socket);
+}
+
+std::string Server::getPass() const
+{
+    return (_pass);
 }
 
 

@@ -1,37 +1,48 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
+static std::string    getHostName(int socket)
+{
+    struct sockaddr_in  addr;
+    socklen_t           len = sizeof(addr);
+    char                hostname[NI_MAXHOST];
+
+    if (getpeername(socket, (struct sockaddr *)&addr, &len) == -1)
+        return ("");
+    if (getnameinfo((struct sockaddr *)&addr, len, hostname, sizeof(hostname), NULL, 0, 0) == -1)
+        return ("");
+    return (std::string(hostname));
+}
+
 Client::Client(int socket, Server &server)
-    : _socket(socket), _server(server), _registered(false)
+    : _socket(socket), _nick("NICK"), _user("USER"), _realname("RealName"), _hostname("HostName"), _server(server), _registrationStep(0)
 {
-
+    _reply = "";
+    _newlyRegistered = false;
 }
 
-Client::Client(int socket, std::string nick, std::string user, Server &server)
-    : _socket(socket), _nick(nick), _user(user), _server(server), _registered(false)
-{
+// // Probably not useful
+// Client::Client(Client const& rhs)
+//     : _socket(rhs._socket), _nick(rhs._nick), _user(rhs._user), _server(rhs._server), _registrationStep(rhs._registrationStep)
+// {
     
-}
+// }
 
-Client::Client(Client const& rhs)
-    : _socket(rhs._socket), _nick(rhs._nick), _user(rhs._user), _server(rhs._server), _registered(false)
-{
-    
-}
-
-Client& Client::operator=(const Client& rhs)
-{
-    if (this != &rhs)
-    {
-        _socket = rhs._socket;
-        _nick = rhs._nick;
-        _user = rhs._user;
-        _hostname = rhs._hostname;
-        _registered = rhs._registered;
-        _server = rhs._server;
-    }
-    return *this;
-}
+// // Probably not useful
+// Client& Client::operator=(const Client& rhs)
+// {
+//     if (this != &rhs)
+//     {
+//         _socket = rhs._socket;
+//         _nick = rhs._nick;
+//         _user = rhs._user;
+//         _hostname = rhs._hostname;
+//         _realname = rhs._realname;
+//         _registrationStep = rhs._registrationStep;
+//         _server = rhs._server;
+//     }
+//     return *this;
+// }
 
 
 Client::~Client()
@@ -56,20 +67,71 @@ int             Client::getSocket() const
 
 bool            Client::isRegistered() const
 {
-    return (_registered);
+    return (_registrationStep == 3);
 }
 
-void            Client::setNick(std::string nick)
+bool            Client::setNick(const std::string& nick)
 {
-    _nick = nick;
+    if (isNickValid(nick))
+    {
+        _nick = nick;
+        _registrationStep++;
+        return (true);
+    }
+    return (false);
 }
 
-void            Client::setUser(std::string user)
+bool            Client::setUser(std::vector<std::string> params)
 {
-    _user = user;
+    if (isUserValid(params))
+    {
+        _user = params[1];
+        _realname = params[4];
+        _hostname = getHostName(_socket);
+        _registrationStep++;
+        return (true);
+    }
+    return (false);
 }
 
-void            Client::setRegistered(bool registered)
+bool            Client::setRealname(std::string realname)
 {
-    _registered = registered;
+    _realname = realname;
+    return (true);
+}
+
+bool            Client::setHostname(std::string hostname)
+{
+    _hostname = hostname;
+    return (true);
+}
+
+bool            Client::checkPassword(std::string password)
+{
+    if (isPassValid(password))
+    {
+        _registrationStep++;
+        return (true);
+    }
+    return (false);
+}
+
+std::string     Client::getReply(void)
+{
+    std::string tmp = _reply;
+
+    if (_reply.empty())
+        tmp = "No reply";
+    _reply = "";
+    return (tmp);
+}
+
+void        Client::setNewlyRegistered(bool newlyRegistered)
+{
+    _newlyRegistered = newlyRegistered;
+}
+
+bool        Client::isNewlyRegistered() const
+{
+    return (_newlyRegistered);
 }

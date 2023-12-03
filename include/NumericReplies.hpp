@@ -7,22 +7,22 @@
 const std::string SERVER_NAME = ":localhost ";
 
 // Welcome replies
-#define RPL_WELCOME(nick, user, host) SERVER_NAME + "001 " + nick + " :Welcome to the Internet Relay Network " + user + "!" + user + "@" + host
-#define RPL_YOURHOST(nick) SERVER_NAME + "002 " + nick + " :Your host is " + SERVER_NAME + ", running version ircserv-0.0.1"
-#define RPL_CREATED(nick) SERVER_NAME + "003 " + nick + " :This server was created " + CREATION_DATE
-#define RPL_MYINFO(nick) SERVER_NAME + "004 " + nick + " " + SERVER_NAME + " ircserv 0.0.1 o itkol"
-#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " PREFIX=(ov)@+ CHANTYPES=#& CHANMODES=,,NICKLEN=9 CHANNELLEN=50 :are supported by this server"
+#define RPL_WELCOME(nick, user, host) SERVER_NAME + "001 " + nick + " :Welcome to the Internet Relay Network " + user + "!" + user + "@" + host + CRLF
+#define RPL_YOURHOST(nick) SERVER_NAME + "002 " + nick + " :Your host is " + SERVER_NAME + ", running version ircserv-0.0.1" + CRLF
+#define RPL_CREATED(nick) SERVER_NAME + "003 " + nick + " :This server was created " + CREATION_DATE + CRLF
+#define RPL_MYINFO(nick) SERVER_NAME + "004 " + nick + " " + SERVER_NAME + " ircserv 0.0.1 o itkol" + CRLF
+#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " PREFIX=(ov)@+ CHANTYPES=#& CHANMODES=,,NICKLEN=9 CHANNELLEN=50 :are supported by this server" + CRLF
 
 // PASS replies
-#define ERR_NEEDMOREPARAMS(nick) SERVER_NAME + "461 " + nick + " PASS :Not enough parameters"
-#define ERR_ALREADYREGISTRED(nick) SERVER_NAME + "462 " + nick + " :You may not reregister"
-#define ERR_PASSWDMISMATCH(nick) SERVER_NAME + "464 " + nick + " :Password incorrect"
+#define ERR_NEEDMOREPARAMS(nick, command) SERVER_NAME + "461 " + nick + " " + command + " :Not enough parameters" + CRLF
+#define ERR_ALREADYREGISTRED(nick) SERVER_NAME + "462 " + nick + " :You may not reregister" + CRLF
+#define ERR_PASSWDMISMATCH(nick) SERVER_NAME + "464 " + nick + " :Password incorrect" + CRLF
 
 // NICK replies
-#define ERR_NONICKNAMEGIVEN(nick) SERVER_NAME + "431 " + nick + " :No nickname given"
-#define ERR_ERRONEUSNICKNAME(nick) SERVER_NAME + "432 " + nick + " :Erroneous nickname"
-#define ERR_NICKNAMEINUSE(nick) SERVER_NAME + "433 " + nick + " :Nickname is already in use"
-#define ERR_NICKCOLLISION(nick, user, host) SERVER_NAME + "436 " + nick + " :Nickname collision KILL from " + user + "@" + host
+#define ERR_NONICKNAMEGIVEN(nick) SERVER_NAME + "431 " + nick + " :No nickname given" + CRLF
+#define ERR_ERRONEUSNICKNAME(nick) SERVER_NAME + "432 " + nick + " :Erroneous nickname" + CRLF
+#define ERR_NICKNAMEINUSE(nick) SERVER_NAME + "433 " + nick + " :Nickname is already in use" + CRLF
+#define ERR_NICKCOLLISION(nick, user, host) SERVER_NAME + "436 " + nick + " :Nickname collision KILL from " + user + "@" + host + CRLF
 
 // USER replies
 // ERR_NEEDMOREPARAMS 461

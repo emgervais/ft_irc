@@ -413,3 +413,80 @@ Channel Operations:
 WEECHAT:
 /server add ircserv 172.17.0.1/6667
 /connect ircserv
+
+
+// -- Connecting to irc Server using nc :  --
+
+❯ nc irc.freenode.net 6667
+:*.freenode.net NOTICE * :*** Looking up your ident...
+:*.freenode.net NOTICE * :*** Looking up your hostname...
+:*.freenode.net NOTICE * :*** Could not resolve your hostname: Domain not found; using your IP address (68.67.36.227) instead.
+
+NICK emile
+USER ele-sage 0 * :Emile Lesage
+PING :ceUNgN@MSt
+:*.freenode.net NOTICE emile :*** Ident lookup timed out, using ~ele-sage instead.
+PONG ceUNgN@MSt
+
+:*.freenode.net 001 emile :Welcome to the freenode IRC Network emile!~ele-sage@68.67.36.227
+:*.freenode.net 002 emile :Your host is *.freenode.net, running version InspIRCd-3
+:*.freenode.net 003 emile :This server was created 20:25:40 Jan 19 2023
+:*.freenode.net 004 emile *.freenode.net InspIRCd-3 BDHILRSTWcdghikorswxz ABCDEFIJKLMNOPQRSTUWXYZbcdefhijklmnoprstuvwz :BEFIJLWXYZbdefhjklovw
+:*.freenode.net 005 emile ACCEPT=30 AWAYLEN=200 BOT=B CALLERID=g CASEMAPPING=ascii CHANLIMIT=#:20 CHANMODES=IXZbew,k,BEFJLWdfjl,ACDKMNOPQRSTUcimnprstuz CHANNELLEN=64 CHANTYPES=# ELIST=CMNTU ESILENCE=CcdiNnPpTtx EXCEPTS=e :are supported by this server
+:*.freenode.net 005 emile EXTBAN=,ACNOQRSTUacjmnpruwz HOSTLEN=64 INVEX=I KEYLEN=32 KICKLEN=255 LINELEN=512 MAXLIST=I:100,X:100,b:100,e:100,w:100 MAXTARGETS=20 MODES=20 MONITOR=30 NAMELEN=128 NAMESX NETWORK=freenode :are supported by this server
+:*.freenode.net 005 emile NICKLEN=30 PREFIX=(Yohv)!@%+ REMOVE SAFELIST SECURELIST=60 SILENCE=32 STATUSMSG=!@%+ TOPICLEN=390 UHNAMES USERIP USERLEN=10 USERMODES=,,s,BDHILRSTWcdghikorwxz VBANLIST :are supported by this server
+:*.freenode.net 005 emile VLIST=b WATCH=32 WHOX :are supported by this server
+
+// -- Connecting to same irc Server while already connected :  --
+
+❯ nc irc.freenode.net 6667
+:*.freenode.net NOTICE * :*** Looking up your ident...
+:*.freenode.net NOTICE * :*** Looking up your hostname...
+:*.freenode.net NOTICE * :*** Could not resolve your hostname: Domain not found; using your IP address (68.67.36.227) instead.
+NICK emile
+:*.freenode.net 433 * emile :Nickname is already in use.
+ERROR :Closing link: (208BEUJX9@68.67.36.227) [Registration timeout]
+
+
+// -- IRC Server Messages :  --
+JOIN #emileChannel
+:emile!~ele-sage@freenode-g2q.k15.7sskld.IP JOIN :#emileChannel
+:*.freenode.net 353 emile = #emileChannel :@emile
+:*.freenode.net 366 emile #emileChannel :End of /NAMES list.
+
+TOPIC #emileChannel :IRC servers
+:emile!~ele-sage@freenode-g2q.k15.7sskld.IP TOPIC #emileChannel :IRC servers
+
+TOPIC #emileChannel
+:*.freenode.net 332 emile #emileChannel :IRC servers
+:*.freenode.net 333 emile #emileChannel emile!~ele-sage@freenode-g2q.k15.7sskld.IP :1701557522
+
+TOPIC #emileChannel :
+:emile!~ele-sage@freenode-g2q.k15.7sskld.IP TOPIC #emileChannel :
+
+TOPIC #emileChannel
+:*.freenode.net 331 emile #emileChannel :No topic is set..
+
+NAMES #emileChannel
+:*.freenode.net 353 emile = #emileChannel :@emile
+:*.freenode.net 366 emile #emileChannel :End of /NAMES list.
+
+NAMES #emileChannel
+:*.freenode.net 353 emile = #emileChannel :@emile
+:*.freenode.net 366 emile #emileChannel :End of /NAMES list.
+
+KICK #emileChannel emile
+:emile!~ele-sage@freenode-g2q.k15.7sskld.IP KICK #emileChannel emile :emile
+
+WHO emile
+:*.freenode.net 352 emile * ~ele-sage freenode-g2q.k15.7sskld.IP *.freenode.net emile H :0 Emile Lesage
+:*.freenode.net 315 emile emile :End of /WHO list.
+
+WHO #emileChannel
+:*.freenode.net 315 emile #emileChannel :End of /WHO list.
+
+NAMES #emileChannel
+:*.freenode.net 366 emile #emileChannel :End of /NAMES list.
+
+QUIT
+ERROR :Closing link: (~ele-sage@68.67.36.227) [Client exited]

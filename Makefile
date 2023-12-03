@@ -6,11 +6,7 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 
 SRC_DIR = ./src/
 OBJ_DIR = ./objs/
-SRC = Client.cpp \
-	main.cpp \
-	Server.cpp \
-	ServerCmdHandler.cpp \
-	UnixSignals.cpp 
+SRC = main.cpp Server.cpp ServerCmdHandler.cpp UnixSignals.cpp Client.cpp ClientRegistration.cpp Command.cpp
 OBJS = $(SRC:.cpp=.o)
 OBJS := $(addprefix $(OBJ_DIR), $(OBJS))
 DEPS = $(OBJS:.o=.d)
