@@ -1,65 +1,85 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
+static std::string    getHostName(int socket)
+{
+    struct sockaddr_in  addr;
+    socklen_t           len = sizeof(addr);
+    char                hostname[NI_MAXHOST];
+
+    if (getpeername(socket, (struct sockaddr *)&addr, &len) == -1)
+        return ("");
+    if (getnameinfo((struct sockaddr *)&addr, len, hostname, sizeof(hostname), NULL, 0, 0) == -1)
+        return ("");
+    return (std::string(hostname));
+}
+
 static bool isStrPrint(const std::string& str)
 {
     for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
     {
-        if (!isprint(*it))
+        if (!isprint(*it) && *it != '\r' && *it != '\n')
+        {
+            std::cout << "Char not printable: " << *it << " (" << (int)*it << ")" << std::endl;
             return (false);
+        }
     }
     return (true);
 }
 
-bool    Client::isNickValid(const std::string& nick)
-{   
-    if (_registrationStep != 1)
-        return (false);
-    else if (nick.empty())
-        _reply = ERR_NONICKNAMEGIVEN(_nick);
+void            Client::setNick(const std::string& nick)
+{
+    if (nick.empty())
+        throw std::invalid_argument(ERR_NONICKNAMEGIVEN(_nick)); // Need to add a reply for this. Not in IRC RFC
     else if (nick.size() > NICK_MAX_LEN)
-        _reply = ERR_ERRONEUSNICKNAME(nick.substr(0, NICK_MAX_LEN) + "...");
-    else if (!_server.isNicknameTaken(nick))
-        _reply = ERR_NICKNAMEINUSE(nick);
+        throw std::invalid_argument(ERR_ERRONEUSNICKNAME(nick.substr(0, NICK_MAX_LEN) + "..."));
+    else if (_server.isNicknameTaken(nick))
+        throw std::invalid_argument(ERR_NICKNAMEINUSE(nick));
     else if (nick.find_first_of(NICK_NOT_CONTAIN) != std::string::npos)
-        _reply = ERR_ERRONEUSNICKNAME(nick);
+        throw std::invalid_argument(ERR_ERRONEUSNICKNAME(nick));
     else if (nick.find_first_of(NICK_NOT_START) == 0)
-        _reply = ERR_ERRONEUSNICKNAME(nick);
+        throw std::invalid_argument(ERR_ERRONEUSNICKNAME(nick));
     else if (!isStrPrint(nick))
-        _reply = ERR_ERRONEUSNICKNAME(nick);
+        throw std::invalid_argument(ERR_ERRONEUSNICKNAME(nick));
+    else if (isStrPrint(nick))
+        _nick = nick;
     else
-        return (true);
-    return (false);
+        throw std::invalid_argument(ERR_ERRONEUSNICKNAME(nick));
 }
 
 // NO documentation on caracter that can be used in username
 // Or reply to send if username is invalid
-bool    Client::isUserValid(const std::vector<std::string>& params)
+void            Client::setUser(std::vector<std::string> params)
 {
     if (isRegistered())
-        _reply = ERR_ALREADYREGISTRED(_nick);
+        throw std::invalid_argument(ERR_ALREADYREGISTRED(_nick));
     else if (params.size() < 4)
-        _reply = ERR_NEEDMOREPARAMS(_nick, "USER");
-    else if (params[1].size() > USER_MAX_LEN || params[1].empty())
-        _reply = ""; // ERR_ERRONUSERNAME(params[1]); // Need to add a reply for this. Not in IRC RFC
-    else if (params[2].size() > USER_MAX_LEN || params[2].empty())
-        _reply = ""; // ERR_ERRONUSERNAME(params[2]);
-    else if (params[3].size() > USER_MAX_LEN || params[3].empty())
-        _reply = ""; // ERR_ERRONUSERNAME(params[3]);
-    else if (isStrPrint(params[1]) && isStrPrint(params[2]) && isStrPrint(params[3]))
-        return (true);
-    return (false);
+        throw std::invalid_argument(ERR_NEEDMOREPARAMS(_nick, "USER"));
+    else if (params[0].size() > USER_MAX_LEN || params[0].empty())
+        throw std::invalid_argument(""); // ERR_ERRONUSERNAME(params[1]); // Need to add a reply for this. Not in IRC RFC
+    else if (params[3].size() > REALNAME_MAX_LEN || params[3].empty())
+        throw std::invalid_argument(""); // ERR_ERRONUSERNAME(params[3]);
+    else if (isStrPrint(params[0]) && isStrPrint(params[3]))
+    {
+        _user = params[0];
+        _realname = params[3];
+        _hostname = getHostName(_socket);
+        _registered = true;
+    }
+    else
+        throw std::invalid_argument(""); // ERR_ERRONUSERNAME(params[1]);
 }
 
-bool    Client::isPassValid(const std::string& password)
+void            Client::checkPassword(std::string password)
 {
-    if (isRegistered())
-        _reply = ERR_ALREADYREGISTRED(_nick);
+    static bool     pass = false;
+
+    if (isRegistered() || pass)
+        throw std::invalid_argument(ERR_ALREADYREGISTRED(_nick));
     else if (password.empty())
-        _reply = ERR_NEEDMOREPARAMS(_nick, "PASS");
+        throw std::invalid_argument(ERR_NEEDMOREPARAMS(_nick, "PASS"));
     else if (password.compare(_server.getPass()) != 0)
-        _reply = ERR_PASSWDMISMATCH(_nick);
+        throw std::invalid_argument(ERR_PASSWDMISMATCH(_nick));
     else
-        return (true);
-    return (false);
+        pass = true;
 }

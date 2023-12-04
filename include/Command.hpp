@@ -26,41 +26,21 @@ class Command
         std::string                 _prefix;
         std::string                 _raw;
         
+        std::string                 _reply;
+
         Command(void);
         Command(Command const& rhs);
         Command& operator=(Command const& rhs);
 
-        static std::map<const std::string, void (Command::*)()> createCmdHandler()
-        {
-            std::map<const std::string, void (Command::*)()> cmdHandler;
-
-            cmdHandler["PASS"] = &Command::cmdPass;
-            cmdHandler["NICK"] = &Command::cmdNick;
-            cmdHandler["USER"] = &Command::cmdUser;
-            // cmdHandler["PING"] = &Command::cmdPing;
-            // cmdHandler["PONG"] = &Command::cmdPong;
-            // cmdHandler["OPER"] = &Command::cmdOper;
-            // cmdHandler["QUIT"] = &Command::cmdQuit;
-            // cmdHandler["ERROR"] = &Command::cmdError;
-            // cmdHandler["JOIN"] = &Command::cmdJoin;
-            // cmdHandler["PART"] = &Command::cmdPart;
-            // cmdHandler["TOPIC"] = &Command::cmdTopic;
-            // cmdHandler["NAMES"] = &Command::cmdNames;
-            // cmdHandler["LIST"] = &Command::cmdList;
-            // cmdHandler["INVITE"] = &Command::cmdInvite;
-            // cmdHandler["KICK"] = &Command::cmdKick;
-            // cmdHandler["MODE"] = &Command::cmdMode;
-            // cmdHandler["PRIVMSG"] = &Command::cmdPrivmsg;
-            return cmdHandler;
-        }
-
+        static std::map<const std::string, void (Command::*)()> createCmdHandler();
+        
         void    cmdPass();
         void    cmdNick();
         void    cmdUser();
         // void    cmdPing();
         // void    cmdPong();
         // void    cmdOper();
-        // void    cmdQuit();
+        void    cmdQuit();
         // void    cmdError();
         // void    cmdJoin();
         // void    cmdPart();
@@ -73,6 +53,9 @@ class Command
         // void    cmdPrivmsg();
 
     public:
+        std::string getReply() const;
+
+        std::string contcatParams() const;
         Command(Client &client, Server &server, const std::string raw);
         ~Command();
 

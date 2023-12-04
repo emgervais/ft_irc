@@ -1,6 +1,30 @@
 #include "Command.hpp"
 
-const char * const VALID_CMDS[] = {"PASS","NICK","USER","PING","PONG","OPER","QUIT","ERROR","JOIN","PART","TOPIC","NAMES","LIST","INVITE","KICK","MODE","PRIVMSG",};
+const std::string VALID_CMDS[] = {"PASS","NICK","USER","QUIT"}; //,"HELP","PING","PONG","OPER","ERROR","JOIN","PART","TOPIC","NAMES","LIST","INVITE","KICK","MODE","PRIVMSG",};
+
+std::map<const std::string, void (Command::*)()> Command::createCmdHandler()
+{
+    std::map<const std::string, void (Command::*)()> cmdHandler;
+
+    cmdHandler["PASS"] = &Command::cmdPass;
+    cmdHandler["NICK"] = &Command::cmdNick;
+    cmdHandler["USER"] = &Command::cmdUser;
+    // cmdHandler["PING"] = &Command::cmdPing;
+    // cmdHandler["PONG"] = &Command::cmdPong;
+    // cmdHandler["OPER"] = &Command::cmdOper;
+    cmdHandler["QUIT"] = &Command::cmdQuit;
+    // cmdHandler["ERROR"] = &Command::cmdError;
+    // cmdHandler["JOIN"] = &Command::cmdJoin;
+    // cmdHandler["PART"] = &Command::cmdPart;
+    // cmdHandler["TOPIC"] = &Command::cmdTopic;
+    // cmdHandler["NAMES"] = &Command::cmdNames;
+    // cmdHandler["LIST"] = &Command::cmdList;
+    // cmdHandler["INVITE"] = &Command::cmdInvite;
+    // cmdHandler["KICK"] = &Command::cmdKick;
+    // cmdHandler["MODE"] = &Command::cmdMode;
+    // cmdHandler["PRIVMSG"] = &Command::cmdPrivmsg;
+    return (cmdHandler);
+}
 
 Command::Command(Client &client, Server &server, const std::string raw) : _client(client), _server(server), _raw(raw)
 {
@@ -11,15 +35,14 @@ Command::~Command()
 {
 }
 
+
+
 void    Command::splitRawCommand()
 {
     std::stringstream ss(_raw);
-    std::string::size_type pos = _raw.find_first_of(" \r\n");
 
-    if (pos == std::string::npos)
-        throw std::invalid_argument("Invalid command: not terminated by \\r\\n");
-    if (pos >= MSG_MAX_LEN)
-        throw std::invalid_argument("Invalid command: too long");
+    if (_raw.length() > MSG_MAX_LEN)
+        throw std::invalid_argument(ERR_INPUTTOOLONG(_client.getNick()));
     if (_raw[0] == ':')
     {
         ss.ignore(1);
@@ -27,15 +50,21 @@ void    Command::splitRawCommand()
     }
     ss >> _cmd;
     if (std::find(std::begin(VALID_CMDS), std::end(VALID_CMDS), _cmd) == std::end(VALID_CMDS))
-        throw std::invalid_argument("Invalid command: not a valid command");
+        throw std::invalid_argument(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
     std::string param;
+
     while (ss >> param)
     {
         if (param[0] == ':')
         {
-            param.erase(0, 1);
-            param += ss.str().substr(ss.tellg());
-            _params.push_back(param);
+            std::string lastParam;
+            if (param[1] == ' ')
+                lastParam = param.substr(2);
+            else
+                lastParam = param.substr(1);
+            std::getline(ss, param);
+            lastParam += param;
+            _params.push_back(lastParam);
             break;
         }
         _params.push_back(param);
@@ -52,6 +81,24 @@ void    Command::exec()
     }
     catch (std::invalid_argument &e)
     {
-        std::cout << e.what() << std::endl;
+        throw std::invalid_argument(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
     }
+}
+
+std::string Command::getReply() const
+{
+    return (_reply);
+}
+
+std::string Command::contcatParams() const
+{
+    std::string params;
+
+    for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
+    {
+        params += *it;
+        if (it + 1 != _params.end())
+            params += " ";
+    }
+    return (params);
 }

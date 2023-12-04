@@ -420,7 +420,7 @@ Channel Operations:
 :*.freenode.net NOTICE * :*** Could not resolve your hostname: Domain not found; using your IP address (68.67.36.227) instead.
 
 NICK emile
-USER ele-sage 0 * :Emile Lesage
+USER ele-sage 0 * Emile Lesage
 PING :ceUNgN@MSt
 :*.freenode.net NOTICE emile :*** Ident lookup timed out, using ~ele-sage instead.
 PONG ceUNgN@MSt

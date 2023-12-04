@@ -35,14 +35,16 @@ class Server
         
         void    serverQueue();
         void    registerNewClient();
-        void    sendErrorMessageToClient(int clientSocket, const std::string& errorMessage);
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-
+        void    writeToClient(int socket, const char *msg);
+        void    writeToClient(int socket, const std::string& msg);
+        void    closeClient(int socket);
+        void    handleMsg(int socket, ssize_t bytesRead);
         Server(void);
 
     public:
-        void handleMsg(const std::string& data); // public for testing purposes
+        void    welcomeNewClient(int socket);
         Server(int argc, char *arvg[]);
         Server& operator=(const Server& rhs);
         Server(const Server& rhs);

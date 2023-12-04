@@ -1,6 +1,4 @@
-#include "Server.hpp"
-#include "NumericReplies.hpp"
-#include "IRC.hpp"
+#include "Command.hpp"
 
 // TODO:
 // cmdJoin

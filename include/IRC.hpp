@@ -4,30 +4,17 @@
 #include <string>
 #include <map>
 
-// à vérifier
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define YELLOW "\033[33m"
+#define BLUE "\033[34m"
+#define RESET "\033[0m"
 
-// transformer en map (CMD: cmdHandler)
-//typedef void (*cmdHandler) (const std::string&, const std::string&, const std::string&);
+#define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET << msg << std::endl
+#define FROM_CLIENT(msg) std::cout << YELLOW + std::string("Client: ") + RESET << msg << std::endl
 
-// const std::map<std::string, cmdHandler> CMDS = {
-//     {"PASS", cmdPass},
-//     {"NICK", cmdNick},
-//     {"USER", cmdUser},
-//     {"PING", cmdPing},
-//     {"PONG", cmdPong},
-//     {"OPER", cmdOper},
-//     {"QUIT", cmdQuit},
-//     {"ERROR", cmdError},
-//     {"JOIN", cmdJoin},
-//     {"PART", cmdPart},
-//     {"TOPIC", cmdTopic},
-//     {"NAMES", cmdNames},
-//     {"LIST", cmdList},
-//     {"INVITE", cmdInvite},
-//     {"KICK", cmdKick},
-//     {"MODE", cmdMode},
-//     {"PRIVMSG", cmdPrivmsg},
-// };
+#define NEW_CONNECTION(socket) std::cout << GREEN + std::string("New connection on socket ") + std::to_string(socket) + RESET << std::endl
+#define CLOSE_CONNECTION(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET << std::endl
 
 #define CREATION_DATE "2023-11-30"
 

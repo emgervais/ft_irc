@@ -18,11 +18,9 @@ class Client
         std::string     _user;
         std::string     _realname;
         std::string     _hostname;
-        Server          &_server; // maybe not useful..
-        int             _registrationStep;
+        Server          &_server; // maybe not useful...
+        bool            _registered;
 
-        std::string     _reply;
-        bool            _newlyRegistered;
     public:
         //Client(void);
         Client(int socket, Server &server);
@@ -33,22 +31,14 @@ class Client
         std::string     getNick() const;
         std::string     getUser() const;
         int             getSocket() const;
-        std::string     getReply();
+        std::string     getRealname() const;
+        std::string     getHostname() const;
         
         bool            isRegistered() const;
 
-        bool            isNickValid(const std::string& nick);
-        bool            isUserValid(const std::vector<std::string>& params);
-        bool            isPassValid(const std::string& password);
-
-        bool            setNick(const std::string& nick);
-        bool            setUser(std::vector<std::string> params);
-        bool            setRealname(std::string realname);
-        bool            setHostname(std::string hostname);
-        bool            checkPassword(std::string password);
-
-        void            setNewlyRegistered(bool newlyRegistered);
-        bool            isNewlyRegistered() const;
+        void            setNick(const std::string& nick);
+        void            setUser(std::vector<std::string> params);
+        void            checkPassword(std::string password);
 };
 
 #endif

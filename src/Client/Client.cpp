@@ -1,24 +1,10 @@
 #include "Client.hpp"
 #include "Server.hpp"
 
-static std::string    getHostName(int socket)
-{
-    struct sockaddr_in  addr;
-    socklen_t           len = sizeof(addr);
-    char                hostname[NI_MAXHOST];
-
-    if (getpeername(socket, (struct sockaddr *)&addr, &len) == -1)
-        return ("");
-    if (getnameinfo((struct sockaddr *)&addr, len, hostname, sizeof(hostname), NULL, 0, 0) == -1)
-        return ("");
-    return (std::string(hostname));
-}
-
 Client::Client(int socket, Server &server)
-    : _socket(socket), _nick("NICK"), _user("USER"), _realname("RealName"), _hostname("HostName"), _server(server), _registrationStep(0)
+    : _socket(socket), _nick("NICK"), _user("USER"), _realname("RealName"), _hostname("HostName"), _server(server), _registered(false)
 {
-    _reply = "";
-    _newlyRegistered = false;
+
 }
 
 // // Probably not useful
@@ -60,6 +46,16 @@ std::string     Client::getUser() const
     return (_user);
 }
 
+std::string     Client::getRealname() const
+{
+    return (_realname);
+}
+
+std::string     Client::getHostname() const
+{
+    return (_hostname);
+}
+
 int             Client::getSocket() const
 {
     return (_socket);
@@ -67,71 +63,5 @@ int             Client::getSocket() const
 
 bool            Client::isRegistered() const
 {
-    return (_registrationStep == 3);
-}
-
-bool            Client::setNick(const std::string& nick)
-{
-    if (isNickValid(nick))
-    {
-        _nick = nick;
-        _registrationStep++;
-        return (true);
-    }
-    return (false);
-}
-
-bool            Client::setUser(std::vector<std::string> params)
-{
-    if (isUserValid(params))
-    {
-        _user = params[1];
-        _realname = params[4];
-        _hostname = getHostName(_socket);
-        _registrationStep++;
-        return (true);
-    }
-    return (false);
-}
-
-bool            Client::setRealname(std::string realname)
-{
-    _realname = realname;
-    return (true);
-}
-
-bool            Client::setHostname(std::string hostname)
-{
-    _hostname = hostname;
-    return (true);
-}
-
-bool            Client::checkPassword(std::string password)
-{
-    if (isPassValid(password))
-    {
-        _registrationStep++;
-        return (true);
-    }
-    return (false);
-}
-
-std::string     Client::getReply(void)
-{
-    std::string tmp = _reply;
-
-    if (_reply.empty())
-        tmp = "No reply";
-    _reply = "";
-    return (tmp);
-}
-
-void        Client::setNewlyRegistered(bool newlyRegistered)
-{
-    _newlyRegistered = newlyRegistered;
-}
-
-bool        Client::isNewlyRegistered() const
-{
-    return (_newlyRegistered);
+    return (_registered);
 }

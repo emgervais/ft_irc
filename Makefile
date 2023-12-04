@@ -1,20 +1,25 @@
 NAME = ircserv
 
-CXX = clang++
 INCLUDES = -I./include
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
-
-SRC = Server/Server.cpp Server/ServerCmdHandler.cpp Server/UnixSignals.cpp\
-	Client/Client.cpp Client/ClientRegistration.cpp \
-	Commands/Command.cpp Commands/Registration.cpp \
-	main.cpp \
-
 SRC_DIR = src/
 OBJ_DIR = obj/
+
+CXX = c++
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
+
+SRC = Server/Server.cpp Server/UnixSignals.cpp Server/ServerLoop.cpp \
+	Client/Client.cpp Client/ClientRegistration.cpp \
+	Commands/Command.cpp Commands/Registration.cpp Commands/Connection.cpp \
+	main.cpp \
 
 SRC := $(addprefix $(SRC_DIR), $(SRC))
 OBJ := $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP := $(OBJ:%.o=%.d)
+
+GREEN = "\033[32m
+YELLOW = "\033[33m
+RED = "\033[31m
+RESET = \033[0m"
 
 all: $(NAME)
 
@@ -33,20 +38,20 @@ noerr: re
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
-	@echo "\033[32m$(NAME) created\033[0m"
+	@echo $(GREEN) $(NAME) created $(RESET)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/Server $(OBJ_DIR)/Client $(OBJ_DIR)/Commands
-	@echo "\033[33mCompiling $<\033[0m"
+	@echo $(YELLOW) Compiling $< $(RESET)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	@rm -rf $(OBJ_DIR)
-	@echo "\033[31m$(NAME) objects deleted\033[0m"
+	@echo $(RED) $(NAME) objects deleted $(RESET)
 
 fclean: clean
 	@rm -f $(NAME)
-	@echo "\033[31m$(NAME) deleted\033[0m"
+	@echo $(RED) $(NAME) deleted $(RESET)
 
 re: fclean all
 
