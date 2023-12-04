@@ -30,7 +30,8 @@ void    initSignals()
         || sigaction(SIGTERM, &sa, NULL) == -1
         || sigaction(SIGHUP, &sa, NULL) == -1
         || sigaction(SIGQUIT, &sa, NULL) == -1
-        || sigaction(SIGUSR1, &sa, NULL) == -1
-        || sigaction(SIGUSR2, &sa, NULL) == -1)
+        // || sigaction(SIGUSR1, &sa, NULL) == -1
+        // || sigaction(SIGUSR2, &sa, NULL) == -1)
+    )
         throw std::runtime_error("Error: sigaction failed");
 }
