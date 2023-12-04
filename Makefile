@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 SRC = Server/Server.cpp Server/UnixSignals.cpp Server/ServerLoop.cpp \
 	Client/Client.cpp Client/ClientRegistration.cpp \
 	Commands/Command.cpp Commands/Registration.cpp Commands/Connection.cpp \
-	main.cpp \
+	main.cpp
 
 SRC := $(addprefix $(SRC_DIR), $(SRC))
 OBJ := $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
@@ -19,7 +19,7 @@ DEP := $(OBJ:%.o=%.d)
 GREEN = "\033[32m
 YELLOW = "\033[33m
 RED = "\033[31m
-RESET = \033[0m"
+NO_COLOR = \033[0m"
 
 all: $(NAME)
 
@@ -38,20 +38,20 @@ noerr: re
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
-	@echo $(GREEN) $(NAME) created $(RESET)
+	@echo $(GREEN) $(NAME) created $(NO_COLOR)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/Server $(OBJ_DIR)/Client $(OBJ_DIR)/Commands
-	@echo $(YELLOW) Compiling $< $(RESET)
+	@echo $(YELLOW) Compiling $< $(NO_COLOR)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	@rm -rf $(OBJ_DIR)
-	@echo $(RED) $(NAME) objects deleted $(RESET)
+	@echo $(RED) $(NAME) objects deleted $(NO_COLOR)
 
 fclean: clean
 	@rm -f $(NAME)
-	@echo $(RED) $(NAME) deleted $(RESET)
+	@echo $(RED) $(NAME) deleted $(NO_COLOR)
 
 re: fclean all
 
