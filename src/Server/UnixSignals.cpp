@@ -2,13 +2,13 @@
 #include <signal.h>
 
 // -- Singleton --
-Server* Server::_lastInstance = NULL;
+Server* Server::_instance = NULL;
 
 Server* Server::getInstance()
 {
-    if (_lastInstance == NULL)
+    if (_instance == NULL)
         throw std::runtime_error("Error: Server instance not created");
-    return _lastInstance;
+    return _instance;
 }
 
 // -- Unix signals --

@@ -14,7 +14,9 @@
 
 class Server;
 class Client;
+class Command;
 
+typedef void (Command::*cmdFunc)(void);
 
 class Command
 {
@@ -28,11 +30,13 @@ class Command
         
         std::string                 _reply;
 
+
         Command(void);
         Command(Command const& rhs);
         Command& operator=(Command const& rhs);
 
-        static std::map<const std::string, void (Command::*)()> createCmdHandler();
+        std::map<const std::string, cmdFunc> _cmdHandler;
+        void initCmdHandler();
         
         void    cmdPass();
         void    cmdNick();

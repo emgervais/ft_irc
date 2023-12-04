@@ -16,7 +16,7 @@
 class Server
 {
     private:
-        static Server           *_lastInstance;
+        static Server           *_instance;
         int                     _socket;
         int                     _port;
         int                     _maxClients;

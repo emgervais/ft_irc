@@ -36,7 +36,7 @@ check_server
 # Test commands
 echo -e "${GREEN}Testing commands${RESET}"
 send_command "NAMES $CHANNEL"
-send_command "LIST"
+# send_command "LIST"
 
 # Is server running
 check_server

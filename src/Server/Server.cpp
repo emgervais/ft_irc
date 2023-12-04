@@ -23,7 +23,7 @@ Server::Server(int argc, char *argv[])
         std::cerr << e.what() << std::endl;
         exit(1);
     }
-    _lastInstance = this;
+    _instance = this;
 }
 
 Server::Server(const Server& rhs)

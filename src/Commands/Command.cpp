@@ -1,33 +1,29 @@
 #include "Command.hpp"
 
-const std::string VALID_CMDS[] = {"PASS","NICK","USER","QUIT"}; //,"HELP","PING","PONG","OPER","ERROR","JOIN","PART","TOPIC","NAMES","LIST","INVITE","KICK","MODE","PRIVMSG",};
-
-std::map<const std::string, void (Command::*)()> Command::createCmdHandler()
+void Command::initCmdHandler()
 {
-    std::map<const std::string, void (Command::*)()> cmdHandler;
-
-    cmdHandler["PASS"] = &Command::cmdPass;
-    cmdHandler["NICK"] = &Command::cmdNick;
-    cmdHandler["USER"] = &Command::cmdUser;
-    // cmdHandler["PING"] = &Command::cmdPing;
-    // cmdHandler["PONG"] = &Command::cmdPong;
-    // cmdHandler["OPER"] = &Command::cmdOper;
-    cmdHandler["QUIT"] = &Command::cmdQuit;
-    // cmdHandler["ERROR"] = &Command::cmdError;
-    // cmdHandler["JOIN"] = &Command::cmdJoin;
-    // cmdHandler["PART"] = &Command::cmdPart;
-    // cmdHandler["TOPIC"] = &Command::cmdTopic;
-    // cmdHandler["NAMES"] = &Command::cmdNames;
-    // cmdHandler["LIST"] = &Command::cmdList;
-    // cmdHandler["INVITE"] = &Command::cmdInvite;
-    // cmdHandler["KICK"] = &Command::cmdKick;
-    // cmdHandler["MODE"] = &Command::cmdMode;
-    // cmdHandler["PRIVMSG"] = &Command::cmdPrivmsg;
-    return (cmdHandler);
+    _cmdHandler["PASS"] = &Command::cmdPass;
+    _cmdHandler["NICK"] = &Command::cmdNick;
+    _cmdHandler["USER"] = &Command::cmdUser;
+    // _cmdHandler["PING"] = &Command::cmdPing;
+    // _cmdHandler["PONG"] = &Command::cmdPong;
+    // _cmdHandler["OPER"] = &Command::cmdOper;
+    _cmdHandler["QUIT"] = &Command::cmdQuit;
+    // _cmdHandler["ERROR"] = &Command::cmdError;
+    // _cmdHandler["JOIN"] = &Command::cmdJoin;
+    // _cmdHandler["PART"] = &Command::cmdPart;
+    // _cmdHandler["TOPIC"] = &Command::cmdTopic;
+    // _cmdHandler["NAMES"] = &Command::cmdNames;
+    // _cmdHandler["LIST"] = &Command::cmdList;
+    // _cmdHandler["INVITE"] = &Command::cmdInvite;
+    // _cmdHandler["KICK"] = &Command::cmdKick;
+    // _cmdHandler["MODE"] = &Command::cmdMode;
+    // _cmdHandler["PRIVMSG"] = &Command::cmdPrivmsg;
 }
 
 Command::Command(Client &client, Server &server, const std::string raw) : _client(client), _server(server), _raw(raw)
 {
+    initCmdHandler();
     splitRawCommand();
 }
 
@@ -35,12 +31,9 @@ Command::~Command()
 {
 }
 
-
-
 void    Command::splitRawCommand()
 {
     std::stringstream ss(_raw);
-
     if (_raw.length() > MSG_MAX_LEN)
         throw std::invalid_argument(ERR_INPUTTOOLONG(_client.getNick()));
     if (_raw[0] == ':')
@@ -49,19 +42,13 @@ void    Command::splitRawCommand()
         ss >> _prefix;
     }
     ss >> _cmd;
-    if (std::find(std::begin(VALID_CMDS), std::end(VALID_CMDS), _cmd) == std::end(VALID_CMDS))
-        throw std::invalid_argument(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
+   
     std::string param;
-
     while (ss >> param)
     {
         if (param[0] == ':')
         {
-            std::string lastParam;
-            if (param[1] == ' ')
-                lastParam = param.substr(2);
-            else
-                lastParam = param.substr(1);
+            std::string lastParam = param.substr(1);
             std::getline(ss, param);
             lastParam += param;
             _params.push_back(lastParam);
@@ -73,16 +60,13 @@ void    Command::splitRawCommand()
 
 void    Command::exec()
 {
-    std::map<const std::string, void (Command::*)()> cmdHandler = createCmdHandler();
+    // (this->*_cmdHandler[_cmd])();
 
-    try
-    {
-        (this->*cmdHandler[_cmd])();
-    }
-    catch (std::invalid_argument &e)
-    {
+    cmdFunc f = _cmdHandler[_cmd];
+    if (f)
+        (this->*f)();
+    else
         throw std::invalid_argument(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
-    }
 }
 
 std::string Command::getReply() const
