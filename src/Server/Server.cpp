@@ -23,7 +23,7 @@ Server::Server(int argc, char *argv[])
         std::cerr << e.what() << std::endl;
         exit(1);
     }
-    _instance = this;
+    _lastInstance = this;
 }
 
 Server::Server(const Server& rhs)
@@ -70,7 +70,6 @@ void Server::initSocket()
     _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (_socket == -1)
         throw std::runtime_error("Error: socket creation failed");
-    
 
     int opt = 1;
     // Setsockopt Explanation at the end of this file (may be removed later)

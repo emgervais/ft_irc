@@ -2,17 +2,17 @@
 #include <signal.h>
 
 // -- Singleton --
-Server* Server::_instance = 0;
+Server* Server::_lastInstance = NULL;
 
 Server* Server::getInstance()
 {
-    if (_instance == 0)
+    if (_lastInstance == NULL)
         throw std::runtime_error("Error: Server instance not created");
-    return _instance;
+    return _lastInstance;
 }
 
 // -- Unix signals --
-void    handleSigInt(int sig)
+static void    handleSignal(int sig)
 {
     (void)sig;
     std::cout << std::endl << "Server is shutting down..." << std::endl;
@@ -23,9 +23,14 @@ void    handleSigInt(int sig)
 void    initSignals()
 {
     struct sigaction sa;
-    sa.sa_handler = handleSigInt;
+    sa.sa_handler = handleSignal;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = 0;
-    if (sigaction(SIGINT, &sa, NULL) == -1)
+    if (sigaction(SIGINT, &sa, NULL) == -1
+        || sigaction(SIGTERM, &sa, NULL) == -1
+        || sigaction(SIGHUP, &sa, NULL) == -1
+        || sigaction(SIGQUIT, &sa, NULL) == -1
+        || sigaction(SIGUSR1, &sa, NULL) == -1
+        || sigaction(SIGUSR2, &sa, NULL) == -1)
         throw std::runtime_error("Error: sigaction failed");
 }
