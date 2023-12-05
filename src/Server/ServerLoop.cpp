@@ -51,6 +51,21 @@ void Server::registerNewClient()
     _clients.insert(std::make_pair(clientSocket, newClient));
 }
 
+void Server::readFromClient(int socket)
+{
+    ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
+    if (bytesRead == -1)
+        std::cerr << "Error: reading from client" << std::endl;
+    else if (bytesRead == 0)
+        closeClient(socket);
+    else
+    {
+        _buffer[bytesRead] = '\0';
+        FROM_CLIENT(std::string(_buffer));
+        handleMsg(socket, bytesRead);
+    }
+}
+
 void Server::handleMsg(int socket, ssize_t bytesRead)
 {
     // So that we can use nc without having to type \r\n
@@ -80,20 +95,6 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
     _buffer[0] = '\0';
 }
 
-void Server::readFromClient(int socket)
-{
-    ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
-    if (bytesRead == -1)
-        std::cerr << "Error: reading from client" << std::endl;
-    else if (bytesRead == 0)
-        closeClient(socket);
-    else
-    {
-        _buffer[bytesRead] = '\0';
-        FROM_CLIENT(std::string(_buffer));
-        handleMsg(socket, bytesRead);
-    }
-}
 
 // -- send ----
 void Server::writeToClient(int socket)

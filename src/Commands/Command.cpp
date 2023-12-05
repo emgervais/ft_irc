@@ -1,5 +1,12 @@
 #include "Command.hpp"
 
+// -- init ----
+Command::Command(Client &client, Server &server, const std::string raw) : _client(client), _server(server), _raw(raw)
+{
+    initCmdHandler();
+    splitRawCommand();
+}
+
 void Command::initCmdHandler()
 {
     _cmdHandler["PASS"] = &Command::cmdPass;
@@ -21,16 +28,6 @@ void Command::initCmdHandler()
     // _cmdHandler["PRIVMSG"] = &Command::cmdPrivmsg;
 }
 
-Command::Command(Client &client, Server &server, const std::string raw) : _client(client), _server(server), _raw(raw)
-{
-    initCmdHandler();
-    splitRawCommand();
-}
-
-Command::~Command()
-{
-}
-
 void    Command::splitRawCommand()
 {
     std::stringstream ss(_raw);
@@ -49,7 +46,7 @@ void    Command::splitRawCommand()
         if (param[0] == ':')
         {
             std::string lastParam = param.substr(1);
-            std::getline(ss, param);
+            std::getline(ss, param); // doesn't handle multiline params
             lastParam += param;
             _params.push_back(lastParam);
             break;
@@ -58,10 +55,9 @@ void    Command::splitRawCommand()
     }
 }
 
+// -- exec ----
 void    Command::exec()
 {
-    // (this->*_cmdHandler[_cmd])();
-
     cmdFunc f = _cmdHandler[_cmd];
     if (f)
         (this->*f)();
@@ -69,6 +65,7 @@ void    Command::exec()
         throw std::invalid_argument(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
 }
 
+// -- misc ----
 std::string Command::getReply() const
 {
     return (_reply);
@@ -85,4 +82,9 @@ std::string Command::contcatParams() const
             params += " ";
     }
     return (params);
+}
+
+// -- end ----
+Command::~Command()
+{
 }
