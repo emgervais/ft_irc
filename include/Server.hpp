@@ -38,9 +38,9 @@ class Server
         void    writeToClient(int socket);
         void    writeToClient(int socket, const std::string& msg);
     public:
-        void    writeToClients(std::vector<int> sockets = std::vector<int>(), const std::string& msg);
+        void    writeToClients(std::vector<int> sockets, const std::string& msg);
     private:
-        void    closeClient(int socket, bool erase);
+        void    closeClient(int socket, bool erase=true);
         // void    closeServer();
         void    handleMsg(int socket, ssize_t bytesRead);
         Server(void);

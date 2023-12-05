@@ -100,7 +100,7 @@ Server::~Server()
     close(_socket);
 }
 
-void Server::closeClient(int socket, bool erase=true)
+void Server::closeClient(int socket, bool erase)
 {
     CLOSE_CONNECTION_MSG(socket);
     delete _clients[socket];
