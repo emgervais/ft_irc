@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: francoma <francoma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ele-sage <ele-sage@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 14:13:44 by francoma          #+#    #+#             */
-/*   Updated: 2023/12/04 16:38:16 by francoma         ###   ########.fr       */
+/*   Updated: 2023/12/04 17:19:40 by ele-sage         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Process ID (PID): " << getpid() << std::endl;
+    //std::cout << "Process ID (PID): " << getpid() << std::endl;
     Server s(argc, argv);
     s.run();
     return 0;

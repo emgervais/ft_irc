@@ -16,7 +16,6 @@
 class Server
 {
     private:
-        static Server           *_instance;
         int                     _socket;
         int                     _port;
         int                     _maxClients;
@@ -37,14 +36,14 @@ class Server
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-        void    writeToClient(int socket, const char *msg);
         void    writeToClient(int socket, const std::string& msg);
         void    closeClient(int socket);
+        void    closeServer();
         void    handleMsg(int socket, ssize_t bytesRead);
         Server(void);
 
     public:
-        void    welcomeNewClient(int socket);
+        void    sendToClients(const std::string& msg, std::vector<int> sockets = std::vector<int>());
         Server(int argc, char *arvg[]);
         Server& operator=(const Server& rhs);
         Server(const Server& rhs);

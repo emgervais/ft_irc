@@ -63,15 +63,10 @@ void Server::writeToClient(int socket)
     _buffer[0] = '\0';
 }
 
-void Server::writeToClient(int socket, const char *msg)
-{
-    strncpy(_buffer, msg, sizeof(_buffer) - 1);
-    writeToClient(socket);
-}
-
 void Server::writeToClient(int socket, const std::string& msg)
 {
-    writeToClient(socket, msg.c_str());
+    strncpy(_buffer, msg.c_str(), msg.size());
+    writeToClient(socket);
 }
 
 void Server::handleMsg(int socket, ssize_t bytesRead)

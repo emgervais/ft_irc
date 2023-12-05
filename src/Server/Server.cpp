@@ -11,7 +11,6 @@ Server::Server(int argc, char *argv[])
         setParams(argc, argv);
         initSocket();
         initKqueue();
-        initSignals();
     }
     catch (const std::invalid_argument &e)
     {
@@ -23,7 +22,6 @@ Server::Server(int argc, char *argv[])
         std::cerr << e.what() << std::endl;
         exit(1);
     }
-    _instance = this;
 }
 
 Server::Server(const Server& rhs)
@@ -97,15 +95,14 @@ void Server::initKqueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 }
 
-// ----
 Server::~Server()
 {
     std::map<int, Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         CLOSE_CONNECTION(it->first);
-        delete it->second;
         close(it->first);
+        delete it->second;
     }
     _clients.clear();
     close(_socket);
@@ -117,6 +114,12 @@ void Server::closeClient(int socket)
     delete _clients[socket];
     _clients.erase(socket);
     close(socket);
+}
+
+void Server::closeServer()
+{
+    std::cout << "Closing server..." << std::endl;
+    exit(0);
 }
 
 std::string Server::getPass() const
@@ -134,6 +137,16 @@ bool Server::isNicknameTaken(const std::string& nickname)
             return true;
     }
     return false;
+}
+
+void    Server::sendToClients(const std::string& msg, std::vector<int> sockets)
+{
+    std::map<int, Client*>::iterator it;
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
+            writeToClient(it->first, msg);
+    }
 }
 
 // Setsockopt Explanation

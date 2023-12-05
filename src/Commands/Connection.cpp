@@ -1,11 +1,10 @@
 #include "Command.hpp"
 
 // TODO:
+// cmdJoin
+// cmdPart
 // cmdPing
 // cmdPong
-// cmdOper
-// cmdError
-
 
 void    Command::cmdQuit()
 {

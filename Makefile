@@ -3,13 +3,15 @@ NAME = ircserv
 INCLUDES = -I./include
 SRC_DIR = src/
 OBJ_DIR = obj/
+OBJ_SUBDIRS = Server Client Commands Channel
 
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 
-SRC = Server/Server.cpp Server/UnixSignals.cpp Server/ServerLoop.cpp \
-	Client/Client.cpp Client/ClientRegistration.cpp \
+SRC = Server/Server.cpp Server/ServerLoop.cpp \
+	Client/Client.cpp Client/ClientRegistration.cpp Client/ClientConnection.cpp \
 	Commands/Command.cpp Commands/Registration.cpp Commands/Connection.cpp \
+	Channel/Channel.cpp \
 	main.cpp
 
 SRC := $(addprefix $(SRC_DIR), $(SRC))
@@ -41,7 +43,7 @@ $(NAME): $(OBJ)
 	@echo $(GREEN) $(NAME) created $(NO_COLOR)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
-	@mkdir -p $(OBJ_DIR) $(OBJ_DIR)/Server $(OBJ_DIR)/Client $(OBJ_DIR)/Commands
+	@mkdir -p $(OBJ_DIR) $(addprefix $(OBJ_DIR), $(OBJ_SUBDIRS))
 	@echo $(YELLOW) Compiling $< $(NO_COLOR)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 

@@ -7,30 +7,6 @@ Client::Client(int socket, Server &server)
 
 }
 
-// // Probably not useful
-// Client::Client(Client const& rhs)
-//     : _socket(rhs._socket), _nick(rhs._nick), _user(rhs._user), _server(rhs._server), _registrationStep(rhs._registrationStep)
-// {
-    
-// }
-
-// // Probably not useful
-// Client& Client::operator=(const Client& rhs)
-// {
-//     if (this != &rhs)
-//     {
-//         _socket = rhs._socket;
-//         _nick = rhs._nick;
-//         _user = rhs._user;
-//         _hostname = rhs._hostname;
-//         _realname = rhs._realname;
-//         _registrationStep = rhs._registrationStep;
-//         _server = rhs._server;
-//     }
-//     return *this;
-// }
-
-
 Client::~Client()
 {
     
