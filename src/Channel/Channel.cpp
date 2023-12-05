@@ -80,5 +80,5 @@ void    Channel::sendMessage(const std::string& msg)
     {
         sockets.push_back((*it)->getSocket());
     }
-    _server.sendToClients(msg, sockets);
+    _server.writeToClients(sockets, msg);
 }

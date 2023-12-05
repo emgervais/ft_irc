@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-// -- run --
+// -- loop --
 void Server::run()
 {
     while (true)
@@ -28,6 +28,7 @@ void Server::serverQueue()
         throw std::runtime_error("Error: kqueue event creation failed");
 }
 
+// -- receive ----
 void Server::registerNewClient()
 {
     sockaddr_in clientAddr;
@@ -46,27 +47,8 @@ void Server::registerNewClient()
         return;
     }    
     Client *newClient = new Client(clientSocket, *this);
-    NEW_CONNECTION(clientSocket);
+    NEW_CONNECTION_MSG(clientSocket);
     _clients.insert(std::make_pair(clientSocket, newClient));
-}
-
-void Server::writeToClient(int socket)
-{
-    ssize_t bytesSent = send(socket, _buffer, strlen(_buffer), 0);
-
-    if (bytesSent == -1)
-        std::cerr << "Error: sending message to client" << std::endl;
-    else if (bytesSent == 0)
-        closeClient(socket);
-    else
-        FROM_SERVER(std::string(_buffer));
-    _buffer[0] = '\0';
-}
-
-void Server::writeToClient(int socket, const std::string& msg)
-{
-    strncpy(_buffer, msg.c_str(), msg.size());
-    writeToClient(socket);
 }
 
 void Server::handleMsg(int socket, ssize_t bytesRead)
@@ -110,5 +92,35 @@ void Server::readFromClient(int socket)
         _buffer[bytesRead] = '\0';
         FROM_CLIENT(std::string(_buffer));
         handleMsg(socket, bytesRead);
+    }
+}
+
+// -- send ----
+void Server::writeToClient(int socket)
+{
+    ssize_t bytesSent = send(socket, _buffer, strlen(_buffer), 0);
+
+    if (bytesSent == -1)
+        std::cerr << "Error: sending message to client" << std::endl;
+    else if (bytesSent == 0) // when does this happen? Doesn't readFromClient handle this?
+        closeClient(socket);
+    else
+        FROM_SERVER(std::string(_buffer));
+    _buffer[0] = '\0';
+}
+
+void Server::writeToClient(int socket, const std::string& msg)
+{
+    strncpy(_buffer, msg.c_str(), msg.size());
+    writeToClient(socket);
+}
+
+void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
+{
+    std::map<int, Client*>::iterator it;
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
+            writeToClient(it->first, msg);
     }
 }

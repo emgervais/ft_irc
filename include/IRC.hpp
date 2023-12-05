@@ -13,8 +13,8 @@
 #define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET << msg << std::endl
 #define FROM_CLIENT(msg) std::cout << YELLOW + std::string("Client: ") + RESET << msg << std::endl
 
-#define NEW_CONNECTION(socket) std::cout << GREEN + std::string("New connection on socket ") + std::to_string(socket) + RESET << std::endl
-#define CLOSE_CONNECTION(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET << std::endl
+#define NEW_CONNECTION_MSG(socket) std::cout << GREEN + std::string("New connection on socket ") + std::to_string(socket) + RESET << std::endl
+#define CLOSE_CONNECTION_MSG(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET << std::endl
 
 #define CREATION_DATE "2023-11-30"
 

@@ -37,16 +37,18 @@ class Server
         void    readFromClient(int socket);
         void    writeToClient(int socket);
         void    writeToClient(int socket, const std::string& msg);
+    public:
+        void    writeToClients(std::vector<int> sockets = std::vector<int>(), const std::string& msg);
+    private:
         void    closeClient(int socket);
-        void    closeServer();
+        // void    closeServer();
         void    handleMsg(int socket, ssize_t bytesRead);
         Server(void);
+        Server(const Server& rhs);
+        Server& operator=(const Server& rhs);
 
     public:
-        void    sendToClients(const std::string& msg, std::vector<int> sockets = std::vector<int>());
         Server(int argc, char *arvg[]);
-        Server& operator=(const Server& rhs);
-        Server(const Server& rhs);
         ~Server();
 
         std::string     getPass() const;
