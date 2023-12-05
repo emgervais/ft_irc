@@ -2,7 +2,7 @@
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-RESET='\033[0m'
+RESET_COLOR='\033[0m'
 
 SERVER="localhost"
 PORT="6669"
@@ -15,7 +15,7 @@ CHANNEL="#test"
 function check_server {
     if ! pgrep ircserv > /dev/null;
     then
-        echo -e "${RED}Server is not running${RESET}"
+        echo -e "${RED}Server is not running${RESET_COLOR}"
         exit 1
     fi
 }
@@ -34,7 +34,7 @@ check_server
 
 
 # Test commands
-echo -e "${GREEN}Testing commands${RESET}"
+echo -e "${GREEN}Testing commands${RESET_COLOR}"
 send_command "NAMES $CHANNEL"
 # send_command "LIST"
 
@@ -42,7 +42,7 @@ send_command "NAMES $CHANNEL"
 check_server
 
 # Stop server
-echo -e "${GREEN}Stopping server${RESET}"
+echo -e "${GREEN}Stopping server${RESET_COLOR}"
 kill -9 $(pgrep ircserv)
 sleep 1
 

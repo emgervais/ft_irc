@@ -85,20 +85,20 @@ std::string Command::contcatParams() const
     return (params);
 }
 
-bool Command::isCmd(std::string const& msg)
-{
-    if (!msg.size())
-        return false;
-    size_t cmdIndex = 0;
-    if (msg[0] == ':')
-    {
-        cmdIndex = msg.find(" ");
-        if (cmdIndex == std::string::npos)
-            return false;
-        ++cmdIndex;
-    }
-    return msg[cmdIndex] == '/';
-}
+// bool Command::isCmd(std::string const& msg)
+// {
+//     if (!msg.size())
+//         return false;
+//     size_t cmdIndex = 0;
+//     if (msg[0] == ':')
+//     {
+//         cmdIndex = msg.find(" ");
+//         if (cmdIndex == std::string::npos)
+//             return false;
+//         ++cmdIndex;
+//     }
+//     return msg[cmdIndex] == '/';
+// }
 
 // -- end ----
 Command::~Command()

@@ -8,13 +8,13 @@
 #define GREEN "\033[32m"
 #define YELLOW "\033[33m"
 #define BLUE "\033[34m"
-#define RESET "\033[0m"
+#define RESET_COLOR "\033[0m"
 
-#define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET << msg << std::endl
-#define FROM_CLIENT(msg) std::cout << YELLOW + std::string("Client: ") + RESET << msg << std::endl
+#define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET_COLOR << msg << std::endl
+#define FROM_CLIENT(msg) std::cout << YELLOW + std::string("Client: ") + RESET_COLOR << msg << std::endl
 
-#define NEW_CONNECTION_MSG(socket) std::cout << GREEN + std::string("New connection on socket ") + std::to_string(socket) + RESET << std::endl
-#define CLOSE_CONNECTION_MSG(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET << std::endl
+#define NEW_CONNECTION_MSG(socket) std::cout << GREEN + std::string("New connection on socket ") + std::to_string(socket) + RESET_COLOR << std::endl
+#define CLOSE_CONNECTION_MSG(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET_COLOR << std::endl
 
 #define CREATION_DATE "2023-11-30"
 

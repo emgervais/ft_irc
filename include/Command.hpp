@@ -65,7 +65,7 @@ class Command
 
         void    splitRawCommand();
         void    exec();
-        static bool isCmd(std::string const& msg);
+        // static bool isCmd(std::string const& msg);
 };
 
 

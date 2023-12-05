@@ -75,11 +75,11 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
     _buffer[0] = '\0';
     try
     {
-        if (!Command::isCmd(msg))
-        {
+        // if (!Command::isCmd(msg))
+        // {
             // if not a cmd, write to everyone in channel
-            return;
-        }
+            // return;
+        // }
         Command cmd(*_clients[socket], *this, msg);
         cmd.exec();
         if (!cmd.getReply().empty())
