@@ -10,6 +10,7 @@ Server::Server(int argc, char *argv[])
         setParams(argc, argv);
         initSocket();
         initKqueue();
+        Command::initCmdHandler();
     }
     catch (const std::invalid_argument &e)
     {

@@ -4,10 +4,11 @@
 Command::Command(Client &client, Server &server, std::string const&raw)
     : _client(client), _server(server), _raw(raw)
 {
-    initCmdHandler();
     splitRawCommand();
 }
 
+
+std::map<const std::string, cmdFunc> Command::_cmdHandler;
 void Command::initCmdHandler()
 {
     _cmdHandler["PASS"] = &Command::cmdPass;

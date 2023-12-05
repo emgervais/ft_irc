@@ -35,8 +35,7 @@ class Command
         Command(Command const& rhs);
         Command& operator=(Command const& rhs);
 
-        std::map<const std::string, cmdFunc> _cmdHandler;
-        void initCmdHandler();
+        static std::map<const std::string, cmdFunc> _cmdHandler;
         
         void    cmdPass();
         void    cmdNick();
@@ -57,6 +56,7 @@ class Command
         // void    cmdPrivmsg();
 
     public:
+        static void initCmdHandler();
         std::string getReply() const;
 
         std::string contcatParams() const;
