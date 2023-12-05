@@ -45,7 +45,7 @@ void Server::registerNewClient()
         std::cerr << "Error: adding client to kqueue" << std::endl;
         close(clientSocket);
         return;
-    }    
+    }
     Client *newClient = new Client(clientSocket, *this);
     NEW_CONNECTION_MSG(clientSocket);
     _clients.insert(std::make_pair(clientSocket, newClient));
