@@ -60,11 +60,13 @@ class Command
         std::string getReply() const;
 
         std::string contcatParams() const;
-        Command(Client &client, Server &server, const std::string raw);
+        Command(Client &client, Server &server, std::string const&raw);
         ~Command();
 
         void    splitRawCommand();
         void    exec();
+        static bool isCmd(std::string const& msg);
 };
+
 
 #endif

@@ -1,7 +1,8 @@
 #include "Command.hpp"
 
 // -- init ----
-Command::Command(Client &client, Server &server, const std::string raw) : _client(client), _server(server), _raw(raw)
+Command::Command(Client &client, Server &server, std::string const&raw)
+    : _client(client), _server(server), _raw(raw)
 {
     initCmdHandler();
     splitRawCommand();
@@ -82,6 +83,21 @@ std::string Command::contcatParams() const
             params += " ";
     }
     return (params);
+}
+
+bool Command::isCmd(std::string const& msg)
+{
+    if (!msg.size())
+        return false;
+    size_t cmdIndex = 0;
+    if (msg[0] == ':')
+    {
+        cmdIndex = msg.find(" ");
+        if (cmdIndex == std::string::npos)
+            return false;
+        ++cmdIndex;
+    }
+    return msg[cmdIndex] == '/';
 }
 
 // -- end ----

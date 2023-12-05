@@ -66,34 +66,30 @@ void Server::readFromClient(int socket)
     }
 }
 
+
 void Server::handleMsg(int socket, ssize_t bytesRead)
 {
-    // So that we can use nc without having to type \r\n
-    // if (_buffer[bytesRead - 2] != '\r' || _buffer[bytesRead - 1] != '\n')
-    //     throw std::invalid_argument("Invalid command: not terminated by \\r\\n");
-
-    // Will be removed when we use a real client
-    if (!(_buffer[bytesRead - 1] != '\n' || _buffer[0] == '\n'))
-    {
-        if (_buffer[bytesRead - 1] == '\r')
-            _buffer[bytesRead - 1] = '\0';
-        else
-            _buffer[bytesRead] = '\0';
-        try
-        {
-            Command cmd(*_clients[socket], *this, _buffer);
-            cmd.exec();
-            // if not a cmd, write to everyone in channel
-            if (!cmd.getReply().empty())
-                writeToClient(socket, cmd.getReply());
-        }
-        catch (std::invalid_argument &e)
-        {
-            std::cerr << "Error: handling message from client" << std::endl;
-            writeToClient(socket, e.what());
-        } 
-    }
+    if (_buffer[bytesRead - 2] != '\r' || _buffer[bytesRead - 1] != '\n')
+        throw std::invalid_argument("Invalid command: not terminated by \\r\\n");
+    std::string msg = _buffer;
     _buffer[0] = '\0';
+    try
+    {
+        if (!Command::isCmd(msg))
+        {
+            // if not a cmd, write to everyone in channel
+            return;
+        }
+        Command cmd(*_clients[socket], *this, msg);
+        cmd.exec();
+        if (!cmd.getReply().empty())
+            writeToClient(socket, cmd.getReply());
+    }
+    catch (std::invalid_argument &e)
+    {
+        std::cerr << "Error: handling message from client" << std::endl;
+        writeToClient(socket, e.what());
+    } 
 }
 
 

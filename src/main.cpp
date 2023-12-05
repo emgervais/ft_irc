@@ -6,7 +6,7 @@
 /*   By: francoma <francoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 14:13:44 by francoma          #+#    #+#             */
-/*   Updated: 2023/12/05 10:56:19 by francoma         ###   ########.fr       */
+/*   Updated: 2023/12/05 14:11:13 by francoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,15 @@
 int main(int argc, char *argv[])
 {
     //std::cout << "Process ID (PID): " << getpid() << std::endl;
-    Server s(argc, argv);
-    s.run();
+    try
+    {
+        Server s(argc, argv);
+        s.run();
+    }
+    catch (std::exception const& e)
+    {
+        std::cerr << "ça chié dans pelle!" << std::endl
+            << e.what() << std::endl;
+    }
     return 0;
 }
