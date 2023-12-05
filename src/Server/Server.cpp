@@ -95,20 +95,18 @@ Server::~Server()
     std::map<int, Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        closeClient(it->first);
-        // CLOSE_CONNECTION_MSG(it->first);
-        // close(it->first);
-        // delete it->second;
+        closeClient(it->first, false);
     }
     close(_socket);
 }
 
-void Server::closeClient(int socket)
+void Server::closeClient(int socket, bool erase=true)
 {
     CLOSE_CONNECTION_MSG(socket);
     delete _clients[socket];
-    _clients.erase(socket);
     close(socket);
+    if (erase)
+        _clients.erase(socket);
 }
 
 // void Server::closeServer()

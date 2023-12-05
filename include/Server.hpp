@@ -40,7 +40,7 @@ class Server
     public:
         void    writeToClients(std::vector<int> sockets = std::vector<int>(), const std::string& msg);
     private:
-        void    closeClient(int socket);
+        void    closeClient(int socket, bool erase);
         // void    closeServer();
         void    handleMsg(int socket, ssize_t bytesRead);
         Server(void);

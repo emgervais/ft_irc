@@ -83,6 +83,7 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
         {
             Command cmd(*_clients[socket], *this, _buffer);
             cmd.exec();
+            // if not a cmd, write to everyone in channel
             if (!cmd.getReply().empty())
                 writeToClient(socket, cmd.getReply());
         }
