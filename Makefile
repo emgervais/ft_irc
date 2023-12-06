@@ -34,16 +34,16 @@ NO_COLOR = \033[0m"
 all: $(NAME)
 
 debug: CXXFLAGS += -O0 -g3
-debug: re
+debug: all
 
 sanit: CXXFLAGS += -O0 -g3 -fsanitize=address
-sanit: re
+sanit: all
 
 undefined: CXXFLAGS += -O0 -g3 -fsanitize=undefined
-undefined: re
+undefined: all
 
 noerr: CXXFLAGS := $(filter-out -Werror,$(CXXFLAGS))
-noerr: re
+noerr: all
 
 
 $(NAME): $(OBJ)

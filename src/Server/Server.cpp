@@ -71,6 +71,8 @@ Server::~Server()
 
 void Server::closeClient(int socket, bool erase)
 {
+    editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read to kqueue");
+    editKevent(socket, EVFILT_WRITE, EV_DELETE, "deleting client write to kqueue");    
     CLOSE_CONNECTION_MSG(socket);
     delete _clients[socket];
     close(socket);
@@ -134,4 +136,3 @@ void Server::removeChannel(const std::string& name)
         }
     }
 }
-

@@ -54,13 +54,9 @@ void            Client::removeReply()
 
 std::string     Client::getReply() const
 {
-    std::cout << "before--------------------" << std::endl;
     if (_sendQueue.empty())
     {
-        std::cout << "jambon in--------------------" << std::endl;
         return ("");
-
     }
-    std::cout << "jambon--------------------" << std::endl;
     return _sendQueue.front();
 }

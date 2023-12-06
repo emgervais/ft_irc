@@ -31,7 +31,8 @@ void Server::registerNewClient()
         std::cerr << "Error: accepting new client" << std::endl;
         return;
     }
-    editKevent(clientSocket, EVFILT_READ, EV_ADD, "adding client to kqueue");
+    editKevent(clientSocket, EVFILT_READ, EV_ADD, "adding client read to kqueue");
+    editKevent(clientSocket, EVFILT_WRITE, EV_ADD, "adding client write to kqueue");
     Client *newClient = new Client(clientSocket, *this);
     NEW_CONNECTION_MSG(clientSocket);
     _clients.insert(std::make_pair(clientSocket, newClient));
@@ -61,8 +62,6 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
     _buffer[0] = '\0';
     Command cmd(*_clients[socket], *this, msg);
     cmd.exec();
-    if (_clients[socket]->getReply().size() > 0)
-        editKevent(socket, EVFILT_WRITE, EV_ADD, "adding client to kqueue");
 }
 
 // -- send ----
@@ -83,8 +82,6 @@ void Server::writeToClient(int socket)
     {
         FROM_SERVER(std::string(msg));
         _clients[socket]->removeReply();
-        if (_clients[socket]->getReply().size() == 0)
-            editKevent(socket, EVFILT_WRITE, EV_DELETE, "removing client from kqueue");
     }
 }
 
@@ -96,7 +93,6 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
         if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
         {
             it->second->addReply(msg);
-            editKevent(it->first, EVFILT_WRITE, EV_ADD, "adding client to kqueue");
         }
     }
 }
