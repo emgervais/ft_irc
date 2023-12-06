@@ -69,7 +69,8 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
 void Server::writeToClient(int socket)
 {
     std::string msg = _clients[socket]->getReply();
-
+    if(msg.empty()) // A verifier Emile Le Sage 
+        return ;
     ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
     if (bytesSent == -1)
         std::cerr << "Error: sending to client" << std::endl;
