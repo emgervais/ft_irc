@@ -41,7 +41,7 @@ void    Client::partChannel(const std::string& channel, const std::string& reaso
     {
         if (_channels.find(channel) != _channels.end())
         {
-            chan->removeClient(this);
+            chan->removeClient(this, reason);
             addReply(RPL_PART(_nick, _user, _hostname, channel, reason));
         }
         else

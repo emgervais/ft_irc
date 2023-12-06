@@ -109,4 +109,15 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_INPUTTOOLONG(nick) SERVER_NAME + "417 " + nick + " :Input line too long" + CRLF
 
 // PRIVMSG replies
+// ERR_NOSUCHNICK
+#define ERR_NOSUCHSERVER(nick, server) SERVER_NAME + "402 " + nick + " " + server + " :No such server" + CRLF
+#define ERR_CANNOTSENDTOCHAN(nick, channel) SERVER_NAME + "404 " + nick + " " + channel + " :Cannot send to channel" + CRLF
+#define ERR_TOOMANYTARGETS(nick, command) SERVER_NAME + "407 " + nick + " " + command + " :Too many recipients" + CRLF
+#define ERR_NORECIPIENT(nick, command) SERVER_NAME + "411 " + nick + " " + command + " :No recipient given (" + command + ")" + CRLF
+#define ERR_NOTEXTTOSEND(nick) SERVER_NAME + "412 " + nick + " :No text to send" + CRLF
+#define ERR_NOTOPLEVEL(nick, mask) SERVER_NAME + "413 " + nick + " " + mask + " :No toplevel domain specified" + CRLF
+#define ERR_WILDTOPLEVEL(nick, mask) SERVER_NAME + "414 " + nick + " " + mask + " :Wildcard in toplevel domain" + CRLF
+#define RPL_AWAY(nick, user, host, target, message) SERVER_NAME + "301 " + nick + " " + target + " :" + message + CRLF
+
+// PRIVMSG replies
 #endif

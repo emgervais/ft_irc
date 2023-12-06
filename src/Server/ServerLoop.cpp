@@ -80,6 +80,7 @@ void Server::writeToClient(int socket)
     }
     else
     {
+        FROM_SERVER(std::string(msg));
         _clients[socket]->removeReply();
         if (_clients[socket]->getReply().size() == 0)
             editKevent(socket, EVFILT_WRITE, EV_DELETE, "removing client from kqueue");

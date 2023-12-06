@@ -14,15 +14,17 @@ Channel::~Channel()
 void    Channel::addClient(Client *client)
 {
     _clients.push_back(client);
+    sendMessage(RPL_JOIN(client->getNick(), client->getUser(), client->getHostname(), _name));
 }
 
-void    Channel::removeClient(Client *client)
+void    Channel::removeClient(Client *client, const std::string& reason)
 {
     std::vector<Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         if (*it == client)
         {
+            sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason));
             _clients.erase(it);
             if (_clients.size() == 0)
                 _server.removeChannel(_name);
