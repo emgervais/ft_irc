@@ -1,54 +1,34 @@
 #include "Server.hpp"
 #include "NumericReplies.hpp"
 
-// -- singleton --
-Server* Server::_instance = NULL;
-
 // -- init --
-Server::Server(int argc, char *argv[])
-    : _maxClients(MAX_CLIENTS)
+Server& Server::getInstance(int port, std::string const& password)
+{
+    static Server instance(port, password);
+    if (port != instance._port || password != instance._pass)
+        throw std::runtime_error("Only one server instance can exist.");
+    return instance;
+}
+
+Server::Server(int port, std::string const& password)
+    : _port(port), _pass(password), _maxClients(MAX_CLIENTS)
 {
     try
     {
-        setParams(argc, argv);
         initSocket();
         initKqueue();
         Command::initCmdHandler();
     }
-    catch (const std::invalid_argument &e)
-    {
-        std::cerr << e.what() << std::endl << USAGE << std::endl;
-        exit(1);
-    }
+
     catch (const std::runtime_error &e)
     {
         std::cerr << e.what() << std::endl;
         exit(1);
     }
-    if (_instance == NULL)
-        _instance = this;
-    else
-        throw std::runtime_error("Error: Server already exists");
-}
-
-void    Server::setParams(int argc, char *argv[])
-{
-    if (argc != 3)
-        throw std::invalid_argument("Error: wrong number of arguments");
-    std::stringstream ss(argv[1]);
-    ss >> _port;
-    if (ss.fail() || !ss.eof() || _port < 0 || _port > 65535)
-        throw std::invalid_argument("Error: wrong port number");
-    ss.str(argv[2]);
-    ss.clear();
-    ss >> _pass;
-    if (ss.fail() || !ss.eof())
-        throw std::invalid_argument("Error: wrong password");
 }
 
 void Server::initSocket()
 {
-
     _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (_socket == -1)
         throw std::runtime_error("Error: socket creation failed");

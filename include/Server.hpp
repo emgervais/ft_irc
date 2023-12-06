@@ -20,11 +20,10 @@ class Channel;
 class Server
 {
     private:
-        static Server*          _instance;
         int                     _socket;
         int                     _port;
-        int                     _maxClients;
         std::string             _pass;
+        int                     _maxClients;
         sockaddr_in             _addr;
         fd_set                  _readFdSet;
         fd_set                  _writeFdSet;
@@ -43,30 +42,24 @@ class Server
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-    public:
-        void    writeToClients(std::vector<int> sockets, const std::string& msg);
-    private:
         void    closeClient(int socket, bool erase=true);
-        // void    closeServer();
         void    handleMsg(int socket, ssize_t bytesRead);
+
         Server(void);
         Server(const Server& rhs);
         Server& operator=(const Server& rhs);
-
+        Server(int port, std::string const& password);
     public:
-        Server(int argc, char *arvg[]);
+        static Server& getInstance(int port, std::string const& password);
+        void    run();
         ~Server();
 
+        void            writeToClients(std::vector<int> sockets, const std::string& msg);
         std::string     getPass() const;
-
         Channel*        getChannel(const std::string& name) const;
         void            createChannel(const std::string& name, const Client& client, const std::string& key);
         void            removeChannel(const std::string& name);
-
         bool            isNicknameTaken(const std::string& nickname);
-
-        void    run();
 };
-void    initSignals();
 
 #endif
