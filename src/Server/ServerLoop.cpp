@@ -70,47 +70,49 @@ void Server::readFromClient(int socket)
 void Server::handleMsg(int socket, ssize_t bytesRead)
 {
     if (_buffer[bytesRead - 2] != '\r' || _buffer[bytesRead - 1] != '\n')
-        throw std::invalid_argument("Invalid command: not terminated by \\r\\n");
+        return;
     std::string msg = _buffer;
     _buffer[0] = '\0';
     try
     {
-        // if (!Command::isCmd(msg))
-        // {
-            // if not a cmd, write to everyone in channel
-            // return;
-        // }
         Command cmd(*_clients[socket], *this, msg);
         cmd.exec();
-        if (!cmd.getReply().empty())
-            writeToClient(socket, cmd.getReply());
+        if (_clients[socket]->getReply().size() > 0)
+        {
+            EV_SET(_events, socket, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+            if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+                std::cerr << "Error: adding client to kqueue" << std::endl;
+        }
     }
     catch (std::invalid_argument &e)
     {
-        std::cerr << "Error: handling message from client" << std::endl;
-        writeToClient(socket, e.what());
-    } 
+        std::cerr << "Error: " << e.what() << std::endl;
+        closeClient(socket);
+    }
 }
 
 
 // -- send ----
 void Server::writeToClient(int socket)
 {
-    ssize_t bytesSent = send(socket, _buffer, strlen(_buffer), 0);
-
+    std::string msg = _clients[socket]->getReply();
+    std::cout << "Sending to client: " << socket << std::endl;
+    ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
     if (bytesSent == -1)
-        std::cerr << "Error: sending message to client" << std::endl;
-    else if (bytesSent == 0) // when does this happen? Doesn't readFromClient handle this?
+        std::cerr << "Error: sending to client" << std::endl;
+    else if (bytesSent == 0)
         closeClient(socket);
     else
-        FROM_SERVER(std::string(_buffer));
-    _buffer[0] = '\0';
-}
-
-void Server::writeToClient(int socket, const std::string& msg)
-{
-    strncpy(_buffer, msg.c_str(), msg.size());
-    writeToClient(socket);
+    {
+        _clients[socket]->removeReply();
+        FROM_SERVER(msg);
+        if (_clients[socket]->getReply().size() == 0)
+        {
+            EV_SET(_events, socket, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+            if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+                std::cerr << "Error: adding client to kqueue" << std::endl;
+        }
+    }
 }
 
 void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
@@ -119,6 +121,11 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
-            writeToClient(it->first, msg);
+        {
+            it->second->addReply(msg);
+            EV_SET(_events, it->first, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+            if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+                std::cerr << "Error: adding client to kqueue" << std::endl;
+        }
     }
 }

@@ -12,7 +12,7 @@ void Command::initCmdHandler()
     // _cmdHandler["OPER"] = &Command::cmdOper;
     _cmdHandler["QUIT"] = &Command::cmdQuit;
     // _cmdHandler["ERROR"] = &Command::cmdError;
-    // _cmdHandler["JOIN"] = &Command::cmdJoin;
+    _cmdHandler["JOIN"] = &Command::cmdJoin;
     // _cmdHandler["PART"] = &Command::cmdPart;
     // _cmdHandler["TOPIC"] = &Command::cmdTopic;
     // _cmdHandler["NAMES"] = &Command::cmdNames;
@@ -67,11 +67,6 @@ void    Command::exec()
 }
 
 // -- misc ----
-std::string Command::getReply() const
-{
-    return (_reply);
-}
-
 std::string Command::contcatParams() const
 {
     std::string params;
@@ -84,21 +79,6 @@ std::string Command::contcatParams() const
     }
     return (params);
 }
-
-// bool Command::isCmd(std::string const& msg)
-// {
-//     if (!msg.size())
-//         return false;
-//     size_t cmdIndex = 0;
-//     if (msg[0] == ':')
-//     {
-//         cmdIndex = msg.find(" ");
-//         if (cmdIndex == std::string::npos)
-//             return false;
-//         ++cmdIndex;
-//     }
-//     return msg[cmdIndex] == '/';
-// }
 
 // -- end ----
 Command::~Command()

@@ -61,6 +61,7 @@ const std::string SERVER_NAME = ":ircServer ";
 #define RPL_TOPICWHOTIME(nick, channel, user, host, time) SERVER_NAME + "333 " + nick + " " + channel + " " + user + "!" + user + "@" + host + " " + time + CRLF
 #define RPL_NAMREPLY(nick, channel, users) SERVER_NAME + "353 " + nick + " = " + channel + " :" + users + CRLF //See https://modern.ircdocs.horse/#rplnamreply-353
 #define RPL_ENDOFNAMES(nick, channel) SERVER_NAME + "366 " + nick + " " + channel + " :End of /NAMES list" + CRLF
+#define RPL_JOIN(nick, user, host, channel) ":" + nick + "!" + user + "@" + host + " JOIN " + channel + CRLF
 
 // PART replies
 // ERR_NEEDMOREPARAMS 461

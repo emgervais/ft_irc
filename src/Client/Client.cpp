@@ -41,3 +41,20 @@ bool            Client::isRegistered() const
 {
     return (_registered);
 }
+
+void            Client::addReply(std::string const& reply)
+{
+    _sendQueue.push(reply);
+}
+
+void            Client::removeReply()
+{
+    _sendQueue.pop();
+}
+
+std::string     Client::getReply() const
+{
+    if (_sendQueue.empty())
+        return ("");
+    return (_sendQueue.front());
+}

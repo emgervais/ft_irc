@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <map>
 #include "IRC.hpp"
 #include "Server.hpp"
@@ -25,6 +26,7 @@ class Client
         bool                            _registered;
         std::map<std::string, Channel*> _channels;
 
+        std::queue<std::string>         _sendQueue;
     public:
         //Client(void);
         Client(int socket, Server &server);
@@ -37,23 +39,23 @@ class Client
         int             getSocket() const;
         std::string     getRealname() const;
         std::string     getHostname() const;
+        std::string     getReply() const;
         std::vector<Channel*>   getChannels() const;
 
         bool            isOnChannel(const std::string& channel) const;
-        bool            isOnChannel(const Channel& channel) const;
         bool            isRegistered() const;
 
         void            setNick(const std::string& nick);
         void            setUser(std::vector<std::string> params);
         void            checkPassword(std::string password);
 
-        void            joinChannel(const std::string& channel);
-        void            joinChannel(Channel *channel);
+        void            joinChannel(const std::string& channel, const std::string& key);
         void            partChannel(const std::string& channel);
-        void            partChannel(Channel *channel);
+
         void            sendMessage(const std::string& msg, const std::string& channel);
 
-        
+        void            addReply(const std::string& reply);
+        void            removeReply();
 };
 
 #endif

@@ -12,6 +12,10 @@
 #include "CHeaders.hpp"
 #include "Client.hpp"
 #include "Command.hpp"
+#include "Channel.hpp"
+
+class Client;
+class Channel;
 
 class Server
 {
@@ -24,6 +28,7 @@ class Server
         fd_set                  _readFdSet;
         fd_set                  _writeFdSet;
         std::map<int, Client*>  _clients;
+        std::map<std::string, Channel*> _channels;
         struct kevent           _events[MAX_EVENTS];
         int                     _kqueue;
         char                    _buffer[BUFF_SIZE];
@@ -36,7 +41,6 @@ class Server
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-        void    writeToClient(int socket, const std::string& msg);
     public:
         void    writeToClients(std::vector<int> sockets, const std::string& msg);
     private:
@@ -52,8 +56,13 @@ class Server
         ~Server();
 
         std::string     getPass() const;
+
+        Channel*        getChannel(const std::string& name) const;
+        void            createChannel(const std::string& name, const Client& client, const std::string& key);
+        void            removeChannel(const std::string& name);
+        bool            isChannelNameTaken(const std::string& channelName);
+
         bool            isNicknameTaken(const std::string& nickname);
-        static Server*  getInstance();
 
         void    run();
 };

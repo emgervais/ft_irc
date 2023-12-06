@@ -27,9 +27,6 @@ class Command
         std::vector<std::string>    _params;
         std::string                 _prefix;
         std::string                 _raw;
-        
-        std::string                 _reply;
-
 
         Command(void);
         Command(Command const& rhs);
@@ -45,7 +42,7 @@ class Command
         // void    cmdOper();
         void    cmdQuit();
         // void    cmdError();
-        // void    cmdJoin();
+        void    cmdJoin();
         // void    cmdPart();
         // void    cmdTopic();
         // void    cmdNames();
@@ -57,7 +54,6 @@ class Command
 
     public:
         static void initCmdHandler();
-        std::string getReply() const;
 
         std::string contcatParams() const;
         Command(Client &client, Server &server, std::string const&raw);

@@ -46,26 +46,7 @@ void Server::initSocket()
     if (_socket == -1)
         throw std::runtime_error("Error: socket creation failed");
 
-    int opt = 1;
-    /*
-        Setsockopt Explanation
-        The SO_REUSEADDR option allows a socket to bind to an address that is still in the TIME_WAIT state.
-        When a socket is closed, it enters the TIME_WAIT state for a certain period to ensure that any delayed packets related to the closed connection are not misinterpreted by the operating system.
-
-        Why It's Important:
-        Without SO_REUSEADDR, if you try to bind a new socket to an address that is still in TIME_WAIT,
-        the bind operation will fail. Enabling SO_REUSEADDR allows the reuse of the local address immediately after the socket is closed.
-        This is particularly useful in server applications that might need to restart quickly or bind to the same address and port shortly after shutting down.
-
-        Scenarios Where It's Useful:
-        Server Restart:
-        If your server needs to restart quickly after being shut down, you might encounter issues if the previous socket is still in TIME_WAIT.
-        Enabling SO_REUSEADDR helps avoid delays in restarting the server.
-
-        Frequent Binding to the Same Address:
-        In some server applications, you might want to bind to the same address and port repeatedly.
-        Enabling SO_REUSEADDR allows you to do this without waiting for the TIME_WAIT period to expire.
-    */    
+    int opt = 1; 
     if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
         throw std::runtime_error("Error: socket setsockopt failed");
     
@@ -131,4 +112,39 @@ bool Server::isNicknameTaken(const std::string& nickname)
             return true;
     }
     return false;
+}
+
+bool Server::isChannelNameTaken(const std::string& channelName)
+{
+    return (_channels.find(channelName) != _channels.end());
+}
+
+Channel* Server::getChannel(const std::string& name) const
+{
+    std::map<std::string, Channel*>::const_iterator it;
+    for (it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        if (it->first == name)
+            return it->second;
+    }
+    return NULL;
+}
+
+void Server::createChannel(const std::string& name, const Client& client, const std::string& key)
+{
+    _channels[name] = new Channel(name, client, *this, key);
+}
+
+void Server::removeChannel(const std::string& name)
+{
+    std::map<std::string, Channel*>::iterator it;
+    for (it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        if (it->first == name)
+        {
+            delete it->second;
+            _channels.erase(it);
+            return;
+        }
+    }
 }
