@@ -56,6 +56,7 @@ class Command
         static void initCmdHandler();
 
         std::string contcatParams() const;
+        std::string contcatParams(size_t index) const;
         Command(Client &client, Server &server, std::string const&raw);
         ~Command();
 

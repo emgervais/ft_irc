@@ -1,18 +1,10 @@
 #include "Client.hpp"
 
-bool    Client::isOnChannel(const std::string& channel) const
-{
-    if (_channels.find(channel) != _channels.end())
-        return (true);
-    return (false);
-}
-
 void    Client::joinChannel(const std::string& channel, const std::string& key)
 {
-    Channel* chan;
-    if (_server.isChannelNameTaken(channel))
+    Channel* chan = _server.getChannel(channel);
+    if (chan)
     {
-        chan = _server.getChannel(channel);
         if (chan->isInviteOnly() && !chan->isInvited(*this))
         {
             addReply(ERR_INVITEONLYCHAN(_nick, channel));
@@ -42,14 +34,46 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
     addReply(RPL_ENDOFNAMES(_nick, channel));
 }
 
-void    Client::sendMessage(const std::string& msg, const std::string& channel)
+void    Client::partChannel(const std::string& channel, const std::string& reason)
 {
-    if (_channels.find(channel) != _channels.end())
+    Channel* chan = _server.getChannel(channel);
+    if (chan)
     {
-        _channels[channel]->sendMessage(msg);
+        if (_channels.find(channel) != _channels.end())
+        {
+            chan->removeClient(this);
+            addReply(RPL_PART(_nick, _user, _hostname, channel, reason));
+        }
+        else
+            addReply(ERR_NOTONCHANNEL(_nick, channel));
     }
     else
-    {
         addReply(ERR_NOSUCHCHANNEL(_nick, channel));
+}
+
+void    Client::sendMessage(std::vector<std::string> targets, const std::string& message)
+{
+    for (std::vector<std::string>::iterator it = targets.begin(); it != targets.end(); ++it)
+    {
+        if (std::string(*it).find_first_of("#") == 0)
+        {
+            Channel* chan = _server.getChannel(*it);
+            if (chan)
+            {
+                if (_channels.find(*it) != _channels.end())
+                    chan->sendMessage(message);
+                else
+                    addReply(ERR_NOTONCHANNEL(_nick, *it));
+            }
+            else
+                addReply(ERR_NOSUCHCHANNEL(_nick, *it));
+        }
+        // else
+        // {
+        //     if (_server.isNicknameTaken(*it))
+        //         client->addReply(":" + _nick + "!" + _user + "@" + _hostname + " PRIVMSG " + *it + " :" + message + CRLF);
+        //     else
+        //         addReply(ERR_NOSUCHNICK(_nick, *it));
+        // }
     }
 }

@@ -33,7 +33,7 @@ void    Command::splitRawCommand()
 {
     std::stringstream ss(_raw);
     if (_raw.length() > MSG_MAX_LEN)
-        throw std::invalid_argument(ERR_INPUTTOOLONG(_client.getNick()));
+        _client.addReply(ERR_INPUTTOOLONG(_client.getNick()));
     if (_raw[0] == ':')
     {
         ss.ignore(1);
@@ -63,7 +63,7 @@ void    Command::exec()
     if (f)
         (this->*f)();
     else
-        throw std::invalid_argument(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
+        _client.addReply(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
 }
 
 // -- misc ----
@@ -77,6 +77,27 @@ std::string Command::contcatParams() const
         if (it + 1 != _params.end())
             params += " ";
     }
+    return (params);
+}
+
+std::string Command::contcatParams(size_t index) const
+{
+    std::string params;
+
+    try
+    {
+        for (size_t i = index; i < _params.size(); ++i)
+        {
+            params += _params[i];
+            if (i + 1 != _params.size())
+                params += " ";
+        }
+    }
+    catch (std::exception &e)
+    {
+        return ("");
+    }
+
     return (params);
 }
 

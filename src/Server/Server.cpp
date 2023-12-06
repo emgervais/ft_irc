@@ -1,6 +1,9 @@
 #include "Server.hpp"
 #include "NumericReplies.hpp"
 
+// -- singleton --
+Server* Server::_instance = NULL;
+
 // -- init --
 Server::Server(int argc, char *argv[])
     : _maxClients(MAX_CLIENTS)
@@ -22,6 +25,10 @@ Server::Server(int argc, char *argv[])
         std::cerr << e.what() << std::endl;
         exit(1);
     }
+    if (_instance == NULL)
+        _instance = this;
+    else
+        throw std::runtime_error("Error: Server already exists");
 }
 
 void    Server::setParams(int argc, char *argv[])
@@ -103,20 +110,25 @@ std::string Server::getPass() const
     return (_pass);
 }
 
+std::string toUpper(const std::string& str)
+{
+    std::string upper;
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+    {
+        upper += toupper(*it);
+    }
+    return (upper);
+}
+
 bool Server::isNicknameTaken(const std::string& nickname)
 {
     std::map<int, Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        if (it->second->getNick() == nickname)
+        if (toUpper(it->second->getNick()) == toUpper(nickname))
             return true;
     }
     return false;
-}
-
-bool Server::isChannelNameTaken(const std::string& channelName)
-{
-    return (_channels.find(channelName) != _channels.end());
 }
 
 Channel* Server::getChannel(const std::string& name) const

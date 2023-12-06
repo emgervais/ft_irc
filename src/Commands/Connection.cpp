@@ -23,6 +23,8 @@ void    Command::cmdJoin()
                 channels[channel] = key;
             else
                 channels[channel] = "";
+            if (channel[0] != '#' && channel[0] != '&')
+                _client.addReply(ERR_NOSUCHCHANNEL(_client.getNick(), channel));
         }
         std::map<std::string, std::string>::iterator it;
         for (it = channels.begin(); it != channels.end(); ++it)

@@ -73,30 +73,21 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
         return;
     std::string msg = _buffer;
     _buffer[0] = '\0';
-    try
+    Command cmd(*_clients[socket], *this, msg);
+    cmd.exec();
+    if (_clients[socket]->getReply().size() > 0)
     {
-        Command cmd(*_clients[socket], *this, msg);
-        cmd.exec();
-        if (_clients[socket]->getReply().size() > 0)
-        {
-            EV_SET(_events, socket, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
-            if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-                std::cerr << "Error: adding client to kqueue" << std::endl;
-        }
-    }
-    catch (std::invalid_argument &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-        closeClient(socket);
+        EV_SET(_events, socket, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+        if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+            std::cerr << "Error: adding client to kqueue" << std::endl;
     }
 }
-
 
 // -- send ----
 void Server::writeToClient(int socket)
 {
     std::string msg = _clients[socket]->getReply();
-    std::cout << "Sending to client: " << socket << std::endl;
+
     ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
     if (bytesSent == -1)
         std::cerr << "Error: sending to client" << std::endl;

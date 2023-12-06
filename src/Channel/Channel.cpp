@@ -24,6 +24,8 @@ void    Channel::removeClient(Client *client)
         if (*it == client)
         {
             _clients.erase(it);
+            if (_clients.size() == 0)
+                _server.removeChannel(_name);
             return;
         }
     }
@@ -42,22 +44,6 @@ std::string     Channel::getName() const
 std::string     Channel::getTopic() const
 {
     return (_topic);
-}
-
-std::vector<Client*>    Channel::getClients() const
-{
-    return (_clients);
-}
-
-bool    Channel::isClientInChannel(const Client& client) const
-{
-    std::vector<Client*>::const_iterator it;
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if (*it == &client)
-            return true;
-    }
-    return false;
 }
 
 bool    Channel::isOp(const Client& client) const

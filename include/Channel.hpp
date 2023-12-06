@@ -34,10 +34,9 @@ class Channel
         std::string     getModeString() const;
         std::string     getNamesReply() const;
 
-        std::string     getName() const;
-        std::string     getTopic() const;
-        std::vector<Client*>    getClients() const;
-        bool    isClientInChannel(const Client& client) const;
+        std::string             getName() const;
+        std::string             getTopic() const;
+
         bool    isOp(const Client& client) const;
         bool    isInvited(const Client& client) const;
 

@@ -24,6 +24,7 @@ class Client
         std::string                     _hostname;
         Server                          &_server;
         bool                            _registered;
+        bool                            _passChecked;
         std::map<std::string, Channel*> _channels;
 
         std::queue<std::string>         _sendQueue;
@@ -40,9 +41,7 @@ class Client
         std::string     getRealname() const;
         std::string     getHostname() const;
         std::string     getReply() const;
-        std::vector<Channel*>   getChannels() const;
 
-        bool            isOnChannel(const std::string& channel) const;
         bool            isRegistered() const;
 
         void            setNick(const std::string& nick);
@@ -50,9 +49,9 @@ class Client
         void            checkPassword(std::string password);
 
         void            joinChannel(const std::string& channel, const std::string& key);
-        void            partChannel(const std::string& channel);
+        void            partChannel(const std::string& channel, const std::string& reason);
 
-        void            sendMessage(const std::string& msg, const std::string& channel);
+        void            sendMessage(std::vector<std::string> targets, const std::string& message);
 
         void            addReply(const std::string& reply);
         void            removeReply();

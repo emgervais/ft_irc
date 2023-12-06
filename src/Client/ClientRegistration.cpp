@@ -29,8 +29,10 @@ static bool isStrPrint(const std::string& str)
 
 void    Client::setNick(const std::string& nick)
 {
-    if (nick.empty())
-        addReply(ERR_NONICKNAMEGIVEN(_nick)); // Need to add a reply for this. Not in IRC RFC
+    if (!_passChecked)
+        addReply(ERR_PASSWREQ(_nick));
+    else if (nick.empty())
+        addReply(ERR_NONICKNAMEGIVEN(_nick));
     else if (nick.size() > NICK_MAX_LEN)
         addReply(ERR_ERRONEUSNICKNAME(nick.substr(0, NICK_MAX_LEN) + "..."));
     else if (_server.isNicknameTaken(nick))
@@ -46,18 +48,18 @@ void    Client::setNick(const std::string& nick)
 
 }
 
-// NO documentation on caracter that can be used in username
-// Or reply to send if username is invalid
 void    Client::setUser(std::vector<std::string> params)
 {
-    if (isRegistered())
+    if (!_passChecked)
+        addReply(ERR_PASSWREQ(_nick));
+    else if (isRegistered())
         addReply(ERR_ALREADYREGISTRED(_nick));
     else if (params.size() < 4)
         addReply(ERR_NEEDMOREPARAMS(_nick, "USER"));
     else if (params[0].size() > USER_MAX_LEN || params[0].empty())
-        addReply(""); // ERR_ERRONUSERNAME(params[1]); // Need to add a reply for this. Not in IRC RFC
+        addReply(ERR_ERRONUSERNAME(_nick));
     else if (params[3].size() > REALNAME_MAX_LEN || params[3].empty())
-        addReply(""); // ERR_ERRONUSERNAME(params[3]);
+        addReply(ERR_ERRONUSERNAME(_nick));
     else if (isStrPrint(params[0]) && isStrPrint(params[3]))
     {
         _user = params[0];
@@ -74,14 +76,12 @@ void    Client::setUser(std::vector<std::string> params)
 
 void    Client::checkPassword(std::string password)
 {
-    static bool     pass = false;
-
-    if (isRegistered() || pass)
+    if (isRegistered() || _passChecked)
         addReply(ERR_ALREADYREGISTRED(_nick));
     else if (password.empty())
         addReply(ERR_NEEDMOREPARAMS(_nick, "PASS"));
     else if (password.compare(_server.getPass()) != 0)
         addReply(ERR_PASSWDMISMATCH(_nick));
     else
-        pass = true;
+        _passChecked = true;
 }

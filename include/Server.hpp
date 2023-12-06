@@ -20,6 +20,7 @@ class Channel;
 class Server
 {
     private:
+        static Server*          _instance;
         int                     _socket;
         int                     _port;
         int                     _maxClients;
@@ -60,7 +61,6 @@ class Server
         Channel*        getChannel(const std::string& name) const;
         void            createChannel(const std::string& name, const Client& client, const std::string& key);
         void            removeChannel(const std::string& name);
-        bool            isChannelNameTaken(const std::string& channelName);
 
         bool            isNicknameTaken(const std::string& nickname);
 

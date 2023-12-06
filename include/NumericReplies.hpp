@@ -4,16 +4,17 @@
 #include <string>
 #include "IRC.hpp"
 
-const std::string SERVER_NAME = ":ircServer ";
+const std::string SERVER_NAME = ":irc.localhost ";
 
 // Welcome replies
 #define RPL_WELCOME(nick, user, host) SERVER_NAME + "001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + CRLF
 #define RPL_YOURHOST(nick) SERVER_NAME + "002 " + nick + " :Your host is " + SERVER_NAME + ", running version ircserv-0.0.1" + CRLF
 #define RPL_CREATED(nick) SERVER_NAME + "003 " + nick + " :This server was created " + CREATION_DATE + CRLF
 #define RPL_MYINFO(nick) SERVER_NAME + "004 " + nick + " " + SERVER_NAME + " ircserv 0.0.1 o itkol" + CRLF
-#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " PREFIX=(ov)@+ CHANTYPES=#& CHANMODES=,,NICKLEN=9 CHANNELLEN=50 :are supported by this server" + CRLF
+#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " PREFIX=(o)@ CHANTYPES=# CHANMODES=iksn CHANLIMIT=#:10 NICKLEN=9 CHANNELLEN=50 TOPICLEN=100 KICKLEN=50 :are supported by this server" + CRLF
 
 // PASS replies
+#define ERR_PASSWREQ(nick) SERVER_NAME + "461 " + nick + " PASS :Password required" + CRLF
 #define ERR_NEEDMOREPARAMS(nick, command) SERVER_NAME + "461 " + nick + " " + command + " :Not enough parameters" + CRLF
 #define ERR_ALREADYREGISTRED(nick) SERVER_NAME + "462 " + nick + " :You may not reregister" + CRLF
 #define ERR_PASSWDMISMATCH(nick) SERVER_NAME + "464 " + nick + " :Password incorrect" + CRLF
@@ -67,6 +68,7 @@ const std::string SERVER_NAME = ":ircServer ";
 // ERR_NEEDMOREPARAMS 461
 // ERR_NOSUCHCHANNEL 403
 #define ERR_NOTONCHANNEL(nick, channel) SERVER_NAME + "442 " + nick + " " + channel + " :You're not on that channel" + CRLF
+#define RPL_PART(nick, user, host, channel, reason) ":" + nick + "!" + user + "@" + host + " PART " + channel + (reason.empty() ? "" : " :" + reason) + CRLF
 
 // TOPIC replies
 // ERR_NEEDMOREPARAMS 461
@@ -105,4 +107,5 @@ const std::string SERVER_NAME = ":ircServer ";
 #define ERR_UNKNOWNCOMMAND(nick, command) SERVER_NAME + "421 " + nick + " " + command + " :Unknown command" + CRLF
 #define ERR_INPUTTOOLONG(nick) SERVER_NAME + "417 " + nick + " :Input line too long" + CRLF
 
+// PRIVMSG replies
 #endif
