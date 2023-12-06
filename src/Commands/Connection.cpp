@@ -23,7 +23,7 @@ void    Command::cmdJoin()
                 channels[channel] = key;
             else
                 channels[channel] = "";
-            if (channel[0] != '#' && channel[0] != '&')
+            if (channel[0] != '#')
                 _client.addReply(ERR_NOSUCHCHANNEL(_client.getNick(), channel));
         }
         std::map<std::string, std::string>::iterator it;
@@ -36,7 +36,19 @@ void    Command::cmdJoin()
         _client.addReply(ERR_NEEDMOREPARAMS(_client.getNick(), _cmd));
 }
 
+void    Command::cmdPart()
+{
+    std::string reason = contcatParams(1);
+
+    if (_params.size() > 0)
+    {
+        std::stringstream ss(_params[0]);
+        std::string channel;
+        while (std::getline(ss, channel, ','))
+            _client.partChannel(channel, reason);
+    }
+}
+
 // TODO:
-// cmdPart
 // cmdPing
 // cmdPong

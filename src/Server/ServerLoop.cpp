@@ -20,14 +20,6 @@ void Server::run()
     }
 }
 
-void Server::serverQueue()
-{
-    int     ret;
-    ret = kevent(_kqueue, NULL, 0, _events, MAX_EVENTS, NULL);
-    if (ret == -1)
-        throw std::runtime_error("Error: kqueue event creation failed");
-}
-
 // -- receive ----
 void Server::registerNewClient()
 {
@@ -39,13 +31,7 @@ void Server::registerNewClient()
         std::cerr << "Error: accepting new client" << std::endl;
         return;
     }
-    EV_SET(_events, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-    {
-        std::cerr << "Error: adding client to kqueue" << std::endl;
-        close(clientSocket);
-        return;
-    }
+    editKevent(clientSocket, EVFILT_READ, EV_ADD, "adding client to kqueue");
     Client *newClient = new Client(clientSocket, *this);
     NEW_CONNECTION_MSG(clientSocket);
     _clients.insert(std::make_pair(clientSocket, newClient));
@@ -76,11 +62,7 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
     Command cmd(*_clients[socket], *this, msg);
     cmd.exec();
     if (_clients[socket]->getReply().size() > 0)
-    {
-        EV_SET(_events, socket, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
-        if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-            std::cerr << "Error: adding client to kqueue" << std::endl;
-    }
+        editKevent(socket, EVFILT_WRITE, EV_ADD, "adding client to kqueue");
 }
 
 // -- send ----
@@ -92,17 +74,15 @@ void Server::writeToClient(int socket)
     if (bytesSent == -1)
         std::cerr << "Error: sending to client" << std::endl;
     else if (bytesSent == 0)
+    {
+        std::cerr << "From WriteToClient: Client disconnected" << std::endl;
         closeClient(socket);
+    }
     else
     {
         _clients[socket]->removeReply();
-        FROM_SERVER(msg);
         if (_clients[socket]->getReply().size() == 0)
-        {
-            EV_SET(_events, socket, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-            if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-                std::cerr << "Error: adding client to kqueue" << std::endl;
-        }
+            editKevent(socket, EVFILT_WRITE, EV_DELETE, "removing client from kqueue");
     }
 }
 
@@ -114,9 +94,24 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
         if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
         {
             it->second->addReply(msg);
-            EV_SET(_events, it->first, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
-            if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-                std::cerr << "Error: adding client to kqueue" << std::endl;
+            editKevent(it->first, EVFILT_WRITE, EV_ADD, "adding client to kqueue");
         }
     }
+}
+
+// -- Kevent ----
+
+void Server::serverQueue()
+{
+    int     ret;
+    ret = kevent(_kqueue, NULL, 0, _events, MAX_EVENTS, NULL);
+    if (ret == -1)
+        throw std::runtime_error("Error: kqueue event creation failed");
+}
+
+void Server::editKevent(int socket, int filter, int flags, std::string msg)
+{
+    EV_SET(_events, socket, filter, flags, 0, 0, NULL);
+    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
+        throw std::runtime_error("Error: " + msg);
 }

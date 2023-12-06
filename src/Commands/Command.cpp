@@ -13,7 +13,7 @@ void Command::initCmdHandler()
     _cmdHandler["QUIT"] = &Command::cmdQuit;
     // _cmdHandler["ERROR"] = &Command::cmdError;
     _cmdHandler["JOIN"] = &Command::cmdJoin;
-    // _cmdHandler["PART"] = &Command::cmdPart;
+    _cmdHandler["PART"] = &Command::cmdPart;
     // _cmdHandler["TOPIC"] = &Command::cmdTopic;
     // _cmdHandler["NAMES"] = &Command::cmdNames;
     // _cmdHandler["LIST"] = &Command::cmdList;

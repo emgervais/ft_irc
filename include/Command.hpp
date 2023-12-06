@@ -43,7 +43,7 @@ class Command
         void    cmdQuit();
         // void    cmdError();
         void    cmdJoin();
-        // void    cmdPart();
+        void    cmdPart();
         // void    cmdTopic();
         // void    cmdNames();
         // void    cmdList();

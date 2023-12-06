@@ -20,6 +20,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_PASSWDMISMATCH(nick) SERVER_NAME + "464 " + nick + " :Password incorrect" + CRLF
 
 // NICK replies
+#define ERR_NOSUCHNICK(nick, nickTarget) SERVER_NAME + "401 " + nick + " " + nickTarget + " :No such nick/channel" + CRLF
 #define ERR_NONICKNAMEGIVEN(nick) SERVER_NAME + "431 " + nick + " :No nickname given" + CRLF
 #define ERR_ERRONEUSNICKNAME(nick) SERVER_NAME + "432 " + nick + " :Erroneous nickname" + CRLF
 #define ERR_NICKNAMEINUSE(nick) SERVER_NAME + "433 " + nick + " :Nickname is already in use" + CRLF

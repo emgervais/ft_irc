@@ -98,12 +98,6 @@ void Server::closeClient(int socket, bool erase)
         _clients.erase(socket);
 }
 
-// void Server::closeServer()
-// {
-//     std::cout << "Closing server..." << std::endl;
-//     exit(0);
-// }
-
 // -- misc ----
 std::string Server::getPass() const
 {
@@ -160,3 +154,4 @@ void Server::removeChannel(const std::string& name)
         }
     }
 }
+

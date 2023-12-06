@@ -68,12 +68,12 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
             else
                 addReply(ERR_NOSUCHCHANNEL(_nick, *it));
         }
-        // else
-        // {
-        //     if (_server.isNicknameTaken(*it))
-        //         client->addReply(":" + _nick + "!" + _user + "@" + _hostname + " PRIVMSG " + *it + " :" + message + CRLF);
-        //     else
-        //         addReply(ERR_NOSUCHNICK(_nick, *it));
-        // }
+        else
+        {
+            if (_server.isNicknameTaken(*it) && *it != _nick)
+                addReply(":" + _nick + "!" + _user + "@" + _hostname + " PRIVMSG " + *it + " :" + message + CRLF);
+            else
+                addReply(ERR_NOSUCHNICK(_nick, *it));
+        }
     }
 }
