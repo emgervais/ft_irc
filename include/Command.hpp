@@ -50,13 +50,11 @@ class Command
         // void    cmdInvite();
         // void    cmdKick();
         // void    cmdMode();
-        // void    cmdPrivmsg();
+        void    cmdPrivMsg();
 
     public:
         static void initCmdHandler();
 
-        std::string contcatParams() const;
-        std::string contcatParams(size_t index) const;
         Command(Client &client, Server &server, std::string const&raw);
         ~Command();
 

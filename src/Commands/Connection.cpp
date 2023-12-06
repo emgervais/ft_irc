@@ -1,14 +1,15 @@
 #include "Command.hpp"
+#include "util.hpp"
 
-void    Command::cmdQuit()
+void Command::cmdQuit()
 {
     if (_params.size() > 1)
-        _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), contcatParams()));
+        _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), contcatParams(_params)));
     else
         _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), _params[0]));
 }
 
-void    Command::cmdJoin()
+void Command::cmdJoin()
 {
     if (_params.size() == 2 || _params.size() == 1)
     {
@@ -36,9 +37,10 @@ void    Command::cmdJoin()
         _client.addReply(ERR_NEEDMOREPARAMS(_client.getNick(), _cmd));
 }
 
-void    Command::cmdPart()
+void Command::cmdPart()
 {
-    std::string reason = contcatParams(1);
+    std::vector<std::string> lastParams(_params.begin() + 1, _params.end());
+    std::string reason = contcatParams(lastParams);
 
     if (_params.size() > 0)
     {

@@ -8,11 +8,19 @@ OBJ_SUBDIRS = Server Client Commands Channel
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 
-SRC = Server/Server.cpp Server/ServerLoop.cpp \
-	Client/Client.cpp Client/ClientRegistration.cpp Client/ClientConnection.cpp \
-	Commands/Command.cpp Commands/Registration.cpp Commands/Connection.cpp \
-	Channel/Channel.cpp \
-	main.cpp
+SRC = Channel/Channel.cpp \
+	Client/Client.cpp \
+	Client/ClientConnection.cpp \
+	Client/ClientRegistration.cpp \
+	Commands/Channel.cpp \
+	Commands/Command.cpp \
+	Commands/Connection.cpp \
+	Commands/Registration.cpp \
+	Commands/Sending.cpp \
+	main.cpp \
+	Server/Server.cpp \
+	Server/ServerLoop.cpp \
+	util.cpp
 
 SRC := $(addprefix $(SRC_DIR), $(SRC))
 OBJ := $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)

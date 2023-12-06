@@ -20,7 +20,7 @@ void Command::initCmdHandler()
     // _cmdHandler["INVITE"] = &Command::cmdInvite;
     // _cmdHandler["KICK"] = &Command::cmdKick;
     // _cmdHandler["MODE"] = &Command::cmdMode;
-    // _cmdHandler["PRIVMSG"] = &Command::cmdPrivmsg;
+    _cmdHandler["PRIVMSG"] = &Command::cmdPrivMsg;
 }
 
 Command::Command(Client &client, Server &server, std::string const&raw)
@@ -64,41 +64,6 @@ void    Command::exec()
         (this->*f)();
     else
         _client.addReply(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
-}
-
-// -- misc ----
-std::string Command::contcatParams() const
-{
-    std::string params;
-
-    for (std::vector<std::string>::const_iterator it = _params.begin(); it != _params.end(); ++it)
-    {
-        params += *it;
-        if (it + 1 != _params.end())
-            params += " ";
-    }
-    return (params);
-}
-
-std::string Command::contcatParams(size_t index) const
-{
-    std::string params;
-
-    try
-    {
-        for (size_t i = index; i < _params.size(); ++i)
-        {
-            params += _params[i];
-            if (i + 1 != _params.size())
-                params += " ";
-        }
-    }
-    catch (std::exception &e)
-    {
-        return ("");
-    }
-
-    return (params);
 }
 
 // -- end ----

@@ -29,7 +29,7 @@ class Channel
         void    addClient(Client *client);
         void    removeClient(Client *client, const std::string& reason);
         void    setTopic(const std::string& topic);
-        void    sendMessage(const std::string& msg);
+        void    sendMessage(const std::string& msg, const std::string& sender="");
 
         std::string     getModeString() const;
         std::string     getNamesReply() const;

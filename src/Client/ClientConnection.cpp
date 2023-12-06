@@ -15,21 +15,20 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
             addReply(ERR_BADCHANNELKEY(_nick, channel));
             return;
         }
-        chan->addClient(this);
-        addReply(RPL_JOIN(_nick, _user, _hostname, channel));
-        if (chan->getTopic() != "")
-        {
-            addReply(RPL_TOPIC(_nick, channel, chan->getTopic()));
-            addReply(RPL_TOPICWHOTIME(_nick, channel, _user, _hostname, "Time not implemented yet"));
-        }
     }
     else
     {
         _server.createChannel(channel, *this, key);
         chan = _server.getChannel(channel);
-        chan->addClient(this);
-        addReply(RPL_JOIN(_nick, _user, _hostname, channel));
     }
+    addReply(RPL_JOIN(_nick, _user, _hostname, channel));
+    if (chan->getTopic() != "")
+    {
+        addReply(RPL_TOPIC(_nick, channel, chan->getTopic()));
+        addReply(RPL_TOPICWHOTIME(_nick, channel, _user, _hostname, "Time not implemented yet"));
+    }
+    chan->addClient(this);
+    _channels[channel] = chan;
     addReply(RPL_NAMREPLY(_nick, channel, chan->getNamesReply()));
     addReply(RPL_ENDOFNAMES(_nick, channel));
 }
@@ -61,7 +60,7 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
             if (chan)
             {
                 if (_channels.find(*it) != _channels.end())
-                    chan->sendMessage(message);
+                    chan->sendMessage(message, _nick);
                 else
                     addReply(ERR_NOTONCHANNEL(_nick, *it));
             }

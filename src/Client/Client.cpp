@@ -2,7 +2,7 @@
 #include "Server.hpp"
 
 Client::Client(int socket, Server &server)
-    : _socket(socket), _nick("NICK"), _user("USER"), _realname("RealName"), _hostname("HostName"), _server(server), _registered(false)
+    : _socket(socket), _nick("NICK"), _user("USER"), _realname("RealName"), _hostname("HostName"), _server(server), _registered(false), _sendQueue()
 {
 
 }
@@ -54,7 +54,13 @@ void            Client::removeReply()
 
 std::string     Client::getReply() const
 {
+    std::cout << "before--------------------" << std::endl;
     if (_sendQueue.empty())
+    {
+        std::cout << "jambon in--------------------" << std::endl;
         return ("");
-    return (_sendQueue.front());
+
+    }
+    std::cout << "jambon--------------------" << std::endl;
+    return _sendQueue.front();
 }

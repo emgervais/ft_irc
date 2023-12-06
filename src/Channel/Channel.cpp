@@ -58,12 +58,14 @@ bool    Channel::isInvited(const Client& client) const
     return (isMode("i", client.getNick()));
 }
 
-void    Channel::sendMessage(const std::string& msg)
+void    Channel::sendMessage(const std::string& msg, const std::string& sender)
 {
     std::vector<int>    sockets;
     std::vector<Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
+        if ((*it)->getNick() == sender)
+            continue;
         sockets.push_back((*it)->getSocket());
     }
     _server.writeToClients(sockets, msg);
