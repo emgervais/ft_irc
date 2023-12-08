@@ -43,13 +43,13 @@ def send_command(nc_process, text):
 		text += "\r\n"
 		nc_process.stdin.write(text.encode())
 		nc_process.stdin.flush()
-		sleep(.2)
+		# sleep(.2)
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
 
 # -- decorators ----
-def netcat_connection(host, port, num_connections):
+def netcat(host, port, num_connections):
     def decorator(func):
         def wrapper():
             ncs = [start_nc(host, port) for _ in range(num_connections)]
@@ -61,7 +61,7 @@ def netcat_connection(host, port, num_connections):
         return wrapper
     return decorator
 
-def server_management(port, password):
+def server(port, password):
     def decorator(func):
         def wrapper():
             if not start_server(port, password):

@@ -83,5 +83,8 @@ void    Client::checkPassword(std::string password)
     else if (password.compare(_server.getPass()) != 0)
         addReply(ERR_PASSWDMISMATCH(_nick));
     else
+    {
         _passChecked = true;
+        std::cout << "password ok" << std::endl;
+    }
 }

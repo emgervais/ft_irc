@@ -1,9 +1,8 @@
 NAME = ircserv
 
-INCLUDES = -I./include
+INCLUDES = -I./include -I./src/util
 SRC_DIR = src/
 OBJ_DIR = obj/
-OBJ_SUBDIRS = Server Client Commands Channel
 
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
@@ -20,8 +19,8 @@ SRC = Channel/Channel.cpp \
 	main.cpp \
 	Server/Server.cpp \
 	Server/ServerLoop.cpp \
-	util.cpp
-
+	util/util.cpp
+	
 SRC := $(addprefix $(SRC_DIR), $(SRC))
 OBJ := $(SRC:$(SRC_DIR)%.cpp=$(OBJ_DIR)%.o)
 DEP := $(OBJ:%.o=%.d)
@@ -51,7 +50,7 @@ $(NAME): $(OBJ)
 	@echo $(GREEN) $(NAME) created $(NO_COLOR)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
-	@mkdir -p $(OBJ_DIR) $(addprefix $(OBJ_DIR), $(OBJ_SUBDIRS))
+	@mkdir -p $(dir $@)
 	@echo $(YELLOW) Compiling $< $(NO_COLOR)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 

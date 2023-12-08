@@ -1,17 +1,18 @@
-from init import netcat_connection, server_management, send_command
+from random import randint
+from init import netcat, server, send_command
 
 HOST = 'localhost'
-PORT = 1233
+PORT = randint(6000, 7000)
 PASS ="test"
-NICK ="Nick"
-USER ="User"
-LOGIN = "Login"
+NICK ="a_nick"
+USER ="a_username"
+LOGIN = "a_login"
 REAL_NAME = "Real Name"
 CHANNEL = "#test"
 
 
 # -- tests --------------------------------------------------------
-@netcat_connection(HOST, PORT, num_connections=1)
+@netcat(HOST, PORT, num_connections=1)
 def login(nc1):
 	send_command(nc1, f"PASS {PASS}")
 	send_command(nc1, f"NICK {NICK}")
@@ -20,7 +21,7 @@ def login(nc1):
 
 
 # -- main ---------------------------------------------------------
-@server_management(PORT, PASS)
+@server(PORT, PASS)
 def main():
 	login()
 

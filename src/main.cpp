@@ -30,7 +30,6 @@ static Args getArgs(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    //std::cout << "Process ID (PID): " << getpid() << std::endl;
     try
     {
         Args args = getArgs(argc, argv);

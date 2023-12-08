@@ -23,10 +23,10 @@ class Command
     private:
         Client                      &_client;
         Server                      &_server;
-        std::string                 _cmd;
-        std::vector<std::string>    _params;
-        std::string                 _prefix;
-        std::string                 _raw;
+        std::string                  _cmd;
+        std::vector<std::string>     _params;
+        std::string                  _prefix;
+        std::string                  _raw;
 
         Command(void);
         Command(Command const& rhs);
@@ -60,7 +60,6 @@ class Command
 
         void    splitRawCommand();
         void    exec();
-        // static bool isCmd(std::string const& msg);
 };
 
 

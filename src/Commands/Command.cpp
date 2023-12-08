@@ -1,4 +1,7 @@
+#include <cctype>
+#include <cstring>
 #include "Command.hpp"
+#include "util.hpp"
 
 // -- init ----
 std::map<const std::string, cmdFunc> Command::_cmdHandler;
@@ -28,6 +31,77 @@ Command::Command(Client &client, Server &server, std::string const&raw)
 {
     splitRawCommand();
 }
+
+// -- parsing ----
+size_t getSizeSpace(std::string const& str)
+{
+    size_t i;
+    for (i = 0; !isspace(str[i]) && str[i] != '\0'; ++i)
+    {
+    }
+    return i;
+}
+
+size_t getSizeSep(std::string const& str, std::string const& sep)
+{
+    size_t i;
+    for (i = 0; !startsWith(str.substr(i), sep) && str[i] != '\0'; ++i)
+    {
+    }
+    return i;
+}
+
+std::string extractElement(std::string const& _raw, size_t& i)
+{
+    std::string element = _raw.substr(i);
+    size_t size = getSizeSpace(element);
+    element = element.substr(0, size);
+    i += size + 1;
+    return element;
+}
+
+std::string extractLastElement(std::string const& _raw, size_t& i)
+{
+    std::string element = _raw.substr(i);
+    size_t size = getSizeSep(element, "\r\n");
+    element = element.substr(0, size);
+    i += size + 1;
+    return element;
+}
+
+
+// void    Command::splitRawCommand()
+// {
+//     if (_raw.size() > MSG_MAX_LEN)
+//         _client.addReply(ERR_INPUTTOOLONG(_client.getNick()));
+
+//     size_t i = 0;
+//     if (_raw[i] == ':')
+//     {
+//         i += 1;
+//         _prefix = extractElement(_raw, i);
+//     }
+//     _cmd = extractElement(_raw, i);
+
+//     bool done = false;
+//     do
+//     {
+//         std::string param;
+//         if (_raw[i] == ':')
+//         {
+//             param = extractLastElement(_raw, i);
+//             done = true;
+//         }
+//         else
+//         {
+//             param = extractElement(_raw, i);
+//         }
+//         if (param.size())
+//             _params.push_back(param);
+//         else
+//             done = true;
+//     } while (!done);
+// }
 
 void    Command::splitRawCommand()
 {
