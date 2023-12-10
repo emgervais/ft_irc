@@ -88,5 +88,4 @@ void    Client::checkPassword(std::string password)
         addReply(ERR_PASSWDMISMATCH("NICK"));
     else
         _passChecked = true;
-
 }

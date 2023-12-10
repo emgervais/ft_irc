@@ -17,6 +17,7 @@
 #define CLOSE_CONNECTION_MSG(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET_COLOR << std::endl
 
 #define CREATION_DATE "2023-11-30"
+#define OPER_PASS "admin"
 
 #define BUFF_SIZE 1024
 #define USAGE "Wrong usage : ./ircserv <port>(0-65535) <password>"
@@ -29,14 +30,14 @@
 
 #define NICK_NOT_CONTAIN " ,.*!?@/"
 #define NICK_NOT_START "0123456789$:#&"
-#define NICK_MAX_LEN 9
 
+#define NICK_MAX_LEN 30
 #define USER_MAX_LEN 50
 #define REALNAME_MAX_LEN 50
 #define HOST_MAX_LEN 50
-
-#define CHANNEL_MUST_START "&#"
-#define CHANNEL_NOT_CONTAIN " ,^G"
 #define CHANNEL_MAX_LEN 50
+#define TOPIC_MAX_LEN 100
+
+#define CHANNEL_MODES "itkol"
 
 #endif

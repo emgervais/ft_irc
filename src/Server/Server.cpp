@@ -41,16 +41,21 @@ void Server::initKqueue()
 void Server::initSocket()
 {
     _socket = socket(AF_INET, SOCK_STREAM, 0);
+    int optval = 1;
+    
     if (_socket < 0)
         throw std::runtime_error("socket() failed");
-    int optval = 1;
+
     if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
         throw std::runtime_error("setsockopt() failed");
-    if (fcntl(_socket, F_SETFL, O_NONBLOCK) < 0)
+    
+    if (fcntl(_socket, F_SETFL, O_NONBLOCK) < 0) // Shouldn't be necessary since we use kqueue, but we never know with macOS LOL
         throw std::runtime_error("fcntl() failed");
+   
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
     _addr.sin_port = htons(_port);
+    
     if (bind(_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) < 0)
         throw std::runtime_error("bind() failed");
     if (listen(_socket, _maxClients) < 0)
@@ -135,6 +140,17 @@ Channel* Server::getChannel(const std::string& name) const
     return NULL;
 }
 
+Client* Server::getClient(const std::string& nick) const
+{
+    std::map<int, Client*>::const_iterator it;
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second->getNick() == nick)
+            return it->second;
+    }
+    return NULL;
+}
+
 void Server::createChannel(const std::string& name, const Client& client, const std::string& key)
 {
     _channels[name] = new Channel(name, client, *this, key);
@@ -152,4 +168,26 @@ void Server::removeChannel(const std::string& name)
             return;
         }
     }
+}
+
+std::string Server::getChannelReply(const std::string& name, const std::string& clientNick) const
+{
+    std::map<std::string, Channel*>::const_iterator it;
+    for (it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        if (it->first == name)
+            return (RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    }
+    return "";
+}
+
+std::vector<std::string> Server::getChannelsReply(const std::string& clientNick) const
+{
+    std::vector<std::string> channelsList;
+    std::map<std::string, Channel*>::const_iterator it;
+    for (it = _channels.begin(); it != _channels.end(); ++it)
+    {
+        channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    }
+    return channelsList;
 }

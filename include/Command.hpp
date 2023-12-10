@@ -18,6 +18,7 @@ class Command;
 
 typedef void (Command::*cmdFunc)(void);
 
+// A verifier : toutes commandes qui peuvent etre utilisees sur client meme
 class Command
 {
     private:
@@ -39,16 +40,14 @@ class Command
         void    cmdUser();
         void    cmdPing();
         void    cmdPong();
-        // void    cmdOper();
         void    cmdQuit();
-        // void    cmdError();
         void    cmdJoin();
         void    cmdPart();
-        // void    cmdTopic();
-        // void    cmdNames();
-        // void    cmdList();
-        // void    cmdInvite();
-        // void    cmdKick();
+        void    cmdTopic();
+        void    cmdNames();
+        void    cmdList();
+        void    cmdInvite();
+        void    cmdKick();
         // void    cmdMode();
         void    cmdPrivMsg();
 

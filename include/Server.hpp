@@ -56,9 +56,14 @@ class Server
         void            writeToClients(std::vector<int> sockets, const std::string& msg);
         std::string     getPass() const;
         Channel*        getChannel(const std::string& name) const;
+        Client*         getClient(const std::string& nick) const;
+
         void            createChannel(const std::string& name, const Client& client, const std::string& key);
         void            removeChannel(const std::string& name);
         bool            isNicknameTaken(const std::string& nickname);
+
+        std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
+        std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
 };
 
 #endif

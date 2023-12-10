@@ -59,7 +59,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_INVITEONLYCHAN(nick, channel) SERVER_NAME + "473 " + nick + " " + channel + " :Cannot join channel (+i)" + CRLF
 #define ERR_BADCHANMASK(nick, channel) SERVER_NAME + "476 " + nick + " " + channel + " :Bad Channel Mask" + CRLF
 #define RPL_TOPIC(nick, channel, topic) SERVER_NAME + "332 " + nick + " " + channel + " :" + topic + CRLF
-#define RPL_TOPICWHOTIME(nick, channel, user, host, time) SERVER_NAME + "333 " + nick + " " + channel + " " + user + "!" + user + "@" + host + " " + time + CRLF
+#define RPL_TOPICWHOTIME(nick, channel, user, host, timeAt) SERVER_NAME + "333 " + nick + " " + channel + " " + user + "!" + user + "@" + host + " " + timeAt + CRLF
 #define RPL_NAMREPLY(nick, channel, users) SERVER_NAME + "353 " + nick + " = " + channel + " :" + users + CRLF //See https://modern.ircdocs.horse/#rplnamreply-353
 #define RPL_ENDOFNAMES(nick, channel) SERVER_NAME + "366 " + nick + " " + channel + " :End of /NAMES list" + CRLF
 #define RPL_JOIN(nick, user, host, channel) ":" + nick + "!" + user + "@" + host + " JOIN " + channel + CRLF
@@ -76,7 +76,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 // ERR_NOTONCHANNEL 442
 #define ERR_CHANOPRIVSNEEDED(nick, channel) SERVER_NAME + "482 " + nick + " " + channel + " :You're not channel operator" + CRLF
 #define RPL_NOTOPIC(nick, channel) SERVER_NAME + "331 " + nick + " " + channel + " :No topic is set" + CRLF
-// RPL_TOPIC 332
+#define RPL_SETTOPIC(nick, user, host, channel, topic) ":" + nick + "!" + user + "@" + host + " TOPIC " + channel + " :" + topic + CRLF
 // RPL_TOPICWHOTIME 333
 
 // NAMES replies
@@ -89,19 +89,21 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_LISTEND(nick) SERVER_NAME + "323 " + nick + " :End of /LIST" + CRLF
 
 // INVITE replies
-#define RPL_INVITING(nick, channel) SERVER_NAME + "341 " + nick + " " + channel + " :Inviting " + nick + " to channel " + channel + CRLF
+#define RPL_INVITING(nick, nickInvite, channel) SERVER_NAME + "341 " + nick + " " + nickInvite + " " + channel + CRLF
 // ERR_NEEDMOREPARAMS 461
 // ERR_NOSUCHCHANNEL 403
 // ERR_NOTONCHANNEL 442
 // ERR_CHANOPRIVSNEEDED 482
-#define ERR_USERONCHANNEL(nick, channel) SERVER_NAME + "443 " + nick + " " + channel + " :is already on channel" + CRLF
+#define ERR_USERONCHANNEL(nick, nickInvite, channel) SERVER_NAME + "443 " + nick + " " + nickInvite + " " + channel + " :is already on channel" + CRLF
+#define RPL_INVITE(nick, nickInvite, channel) ":" + nick + " INVITE " + nickInvite + " " + channel + CRLF
 
 // KICK replies
 // ERR_NEEDMOREPARAMS 461
 // ERR_NOSUCHCHANNEL 403
 // ERR_CHANOPRIVSNEEDED 482
-#define ERR_USERNOTINCHANNEL(nick, channel) SERVER_NAME + "441 " + nick + " " + channel + " :They aren't on that channel" + CRLF
+#define ERR_USERNOTINCHANNEL(nick, nickKick, channel) SERVER_NAME + "441 " + nick + " " + nickKick + channel + " :They aren't on that channel" + CRLF
 // ERR_NOTONCHANNEL 442
+#define RPL_KICK(nick, user, host, channel, nickKick, reason) ":" + nick + "!" + user + "@" + host + " KICK " + channel + " " + nickKick + " :" + reason + CRLF
 
 // OTHER replies
 #define ERR_UNKNOWNCOMMAND(nick, command) SERVER_NAME + "421 " + nick + " " + command + " :Unknown command" + CRLF
@@ -118,5 +120,5 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_WILDTOPLEVEL(nick, mask) SERVER_NAME + "414 " + nick + " " + mask + " :Wildcard in toplevel domain" + CRLF
 #define RPL_AWAY(nick, user, host, target, message) SERVER_NAME + "301 " + nick + " " + target + " :" + message + CRLF
 
-// PRIVMSG replies
+
 #endif

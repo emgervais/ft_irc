@@ -3,14 +3,20 @@
 void    Client::joinChannel(const std::string& channel, const std::string& key)
 {
     Channel* chan = _server.getChannel(channel);
+    
     if (chan)
     {
-        if (chan->isInviteOnly() && !chan->isInvited(*this))
+        if (chan->isClientOnChannel(*this))
+        {
+            addReply(ERR_USERONCHANNEL(_nick, _nick, channel));
+            return;
+        }
+        if (chan->isMode("i") && !chan->isMode("i", _nick))
         {
             addReply(ERR_INVITEONLYCHAN(_nick, channel));
             return;
         }
-        if (chan->getKey() != key)
+        if (chan->isMode("k") && !chan->isMode("k", key))
         {
             addReply(ERR_BADCHANNELKEY(_nick, channel));
             return;

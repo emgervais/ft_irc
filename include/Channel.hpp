@@ -17,7 +17,6 @@ class Channel
     private:
         std::string             _name;
         std::string             _topic;
-        std::string             _key;
         std::vector<Client*>    _clients;
         Server                  &_server;
         std::map<std::string, std::vector<std::string> > _modes;
@@ -34,20 +33,20 @@ class Channel
         std::string     getModeString() const;
         std::string     getNamesReply() const;
 
-        std::string             getName() const;
-        std::string             getTopic() const;
+        std::string     getName() const;
+        std::string     getTopic() const;
+        int             getUsersCount() const;
 
-        bool    isOp(const Client& client) const;
-        bool    isInvited(const Client& client) const;
+        void            removeAllModes(const Client& client);
+        bool            isMode(const std::string& mode) const;
+        bool            isMode(const std::string& mode, const std::string& param) const;
+        void            addMode(const std::string& mode);
+        void            addMode(const std::string& mode, const std::string& param);
+        void            removeMode(const std::string& mode);
+        void            removeMode(const std::string& mode, const std::string& param);
 
-        bool    isMode(const std::string& mode, const std::string& param) const;
-        void    addMode(const std::string& mode, const std::string& param);
-        void    removeMode(const std::string& mode, const std::string& param);
-
-        void    setKey(const std::string& key);
-        std::string     getKey() const;
-
-        bool    isInviteOnly();
+        bool            isClientOnChannel(const Client& client) const;
+        bool            isClientOnChannel(const std::string& nick) const;
 };
 
 #endif

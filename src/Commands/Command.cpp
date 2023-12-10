@@ -12,16 +12,14 @@ void Command::initCmdHandler()
     _cmdHandler["USER"] = &Command::cmdUser;
     _cmdHandler["PING"] = &Command::cmdPing;
     _cmdHandler["PONG"] = &Command::cmdPong;
-    // _cmdHandler["OPER"] = &Command::cmdOper;
     _cmdHandler["QUIT"] = &Command::cmdQuit;
-    // _cmdHandler["ERROR"] = &Command::cmdError;
     _cmdHandler["JOIN"] = &Command::cmdJoin;
     _cmdHandler["PART"] = &Command::cmdPart;
-    // _cmdHandler["TOPIC"] = &Command::cmdTopic;
-    // _cmdHandler["NAMES"] = &Command::cmdNames;
-    // _cmdHandler["LIST"] = &Command::cmdList;
-    // _cmdHandler["INVITE"] = &Command::cmdInvite;
-    // _cmdHandler["KICK"] = &Command::cmdKick;
+    _cmdHandler["TOPIC"] = &Command::cmdTopic;
+    _cmdHandler["NAMES"] = &Command::cmdNames;
+    _cmdHandler["LIST"] = &Command::cmdList;
+    _cmdHandler["INVITE"] = &Command::cmdInvite;
+    _cmdHandler["KICK"] = &Command::cmdKick;
     // _cmdHandler["MODE"] = &Command::cmdMode;
     _cmdHandler["PRIVMSG"] = &Command::cmdPrivMsg;
 }

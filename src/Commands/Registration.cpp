@@ -3,19 +3,13 @@
 
 void    Command::cmdPass()
 {
-    std::string pass = _params[0];
-
-    if (_params.size() > 1)
-        pass = contcatParams(_params);
+    std::string pass = contcatParams(_params);
     _client.checkPassword(pass);
 }
 
 void    Command::cmdNick()
 {
-    std::string nick = _params[0];
-
-    if (_params.size() > 1)
-        nick = contcatParams(_params);
+    std::string nick = contcatParams(_params);
     _client.setNick(nick);
 }
 

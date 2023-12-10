@@ -53,3 +53,16 @@ std::string randomToken()
         token += rand() % 94 + 33;
     return token;
 }
+
+std::string getTimeOfDay()
+{
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", timeinfo);
+    return std::string(buffer);
+}
