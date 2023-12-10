@@ -15,6 +15,7 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
             addReply(ERR_BADCHANNELKEY(_nick, channel));
             return;
         }
+        chan->addClient(this);
     }
     else
     {
@@ -27,7 +28,6 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
         addReply(RPL_TOPIC(_nick, channel, chan->getTopic()));
         addReply(RPL_TOPICWHOTIME(_nick, channel, _user, _hostname, "Time not implemented yet"));
     }
-    chan->addClient(this);
     _channels[channel] = chan;
     addReply(RPL_NAMREPLY(_nick, channel, chan->getNamesReply()));
     addReply(RPL_ENDOFNAMES(_nick, channel));
@@ -48,6 +48,13 @@ void    Client::partChannel(const std::string& channel, const std::string& reaso
     }
     else
         addReply(ERR_NOSUCHCHANNEL(_nick, channel));
+}
+
+void    Client::partAllChannels()
+{
+    std::map<std::string, Channel*>::iterator it;
+    for (it = _channels.begin(); it != _channels.end(); ++it)
+        partChannel(it->first, "Disconnected from server");
 }
 
 void    Client::sendMessage(std::vector<std::string> targets, const std::string& message)

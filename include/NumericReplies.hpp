@@ -29,14 +29,13 @@ const std::string SERVER_NAME = ":irc.localhost ";
 // USER replies
 // ERR_NEEDMOREPARAMS 461
 // ERR_ALREADYREGISTRED 462
-#define ERR_ERRONUSERNAME(nick) SERVER_NAME + "468 " + nick + " : USER Your username is not valid" + CRLF
+#define ERR_ERRONUSERNAME(nick) SERVER_NAME + "468 " + nick + " :Erroneous username" + CRLF
 
 // PING replies
 // ERR_NICKCOLLISION 436
 #define ERR_NOORIGIN(nick) SERVER_NAME + "409 " + nick + " :No origin specified" + CRLF
-
-// PONG replies
-// NONE
+#define RPL_PINGUSE(nick) SERVER_NAME + "650 " + nick + " PING :<cookie> [<servername>]" + CRLF
+#define RPL_PONG(nick, server, token) SERVER_NAME + " PONG " + nick + server + " :" + token + CRLF
 
 // OPER replies
 // ERR_NEEDMOREPARAMS 461

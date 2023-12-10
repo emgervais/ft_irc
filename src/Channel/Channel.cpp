@@ -14,7 +14,7 @@ Channel::~Channel()
 void    Channel::addClient(Client *client)
 {
     _clients.push_back(client);
-    sendMessage(RPL_JOIN(client->getNick(), client->getUser(), client->getHostname(), _name));
+    sendMessage(RPL_JOIN(client->getNick(), client->getUser(), client->getHostname(), _name), client->getNick());
 }
 
 void    Channel::removeClient(Client *client, const std::string& reason)
@@ -24,7 +24,7 @@ void    Channel::removeClient(Client *client, const std::string& reason)
     {
         if (*it == client)
         {
-            sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason));
+            sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason), client->getNick());
             _clients.erase(it);
             if (_clients.size() == 0)
                 _server.removeChannel(_name);
@@ -60,15 +60,13 @@ bool    Channel::isInvited(const Client& client) const
 
 void    Channel::sendMessage(const std::string& msg, const std::string& sender)
 {
-    std::vector<int>    sockets;
     std::vector<Client*>::iterator it;
+
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        if ((*it)->getNick() == sender)
-            continue;
-        sockets.push_back((*it)->getSocket());
+        if ((*it)->getNick() != sender)
+            (*it)->addReply(msg);
     }
-    _server.writeToClients(sockets, msg);
 }
 
 bool    Channel::isMode(const std::string& mode, const std::string& param) const

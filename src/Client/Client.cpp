@@ -1,10 +1,10 @@
 #include "Client.hpp"
 #include "Server.hpp"
+#include "util.hpp"
 
 Client::Client(int socket, Server &server)
-    : _socket(socket), _nick("NICK"), _user("USER"), _realname("RealName"), _hostname("HostName"), _server(server), _registered(false), _sendQueue()
+    : _socket(socket), _nick(""), _user(""), _realname(""), _hostname(""), _ping(randomToken()), _waitingForPong(false), _server(server), _registered(false), _passChecked(false), _closing(false)
 {
-
 }
 
 Client::~Client()
@@ -37,14 +37,30 @@ int             Client::getSocket() const
     return (_socket);
 }
 
+std::string     Client::getPing() const
+{
+    return (_ping);
+}
+
 bool            Client::isRegistered() const
 {
     return (_registered);
 }
 
+void            Client::setRegistered()
+{
+    _registered = true;
+}
+
+bool            Client::isWaitingForPong() const
+{
+    return (_waitingForPong);
+}
+
 void            Client::addReply(std::string const& reply)
 {
-    _sendQueue.push(reply);
+    if (!_closing)
+        _sendQueue.push(reply);
 }
 
 void            Client::removeReply()
@@ -59,4 +75,14 @@ std::string     Client::getReply() const
         return ("");
     }
     return _sendQueue.front();
+}
+
+void            Client::setClosing()
+{
+    _closing = true;
+}
+
+bool            Client::isClosing() const
+{
+    return (_closing);
 }

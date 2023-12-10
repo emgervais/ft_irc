@@ -37,8 +37,8 @@ class Command
         void    cmdPass();
         void    cmdNick();
         void    cmdUser();
-        // void    cmdPing();
-        // void    cmdPong();
+        void    cmdPing();
+        void    cmdPong();
         // void    cmdOper();
         void    cmdQuit();
         // void    cmdError();

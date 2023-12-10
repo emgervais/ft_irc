@@ -1,7 +1,7 @@
 #include "Server.hpp"
 #include "NumericReplies.hpp"
 
-// -- init --
+// -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)
 {
     static Server instance(port, password);
@@ -10,6 +10,7 @@ Server& Server::getInstance(int port, std::string const& password)
     return instance;
 }
 
+// -- init ----
 Server::Server(int port, std::string const& password)
     : _port(port), _pass(password), _maxClients(MAX_CLIENTS)
 {
@@ -27,35 +28,33 @@ Server::Server(int port, std::string const& password)
     }
 }
 
+void Server::initKqueue()
+{
+    _kq = kqueue();
+    if (_kq == -1)
+        throw std::runtime_error("Error: kqueue");
+    EV_SET(&_change, _socket, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    if (kevent(_kq, &_change, 1, NULL, 0, NULL) == -1)
+        throw std::runtime_error("Error: kevent");
+}
+
 void Server::initSocket()
 {
-    _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (_socket == -1)
-        throw std::runtime_error("Error: socket creation failed");
-
-    int opt = 1; 
-    if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-        throw std::runtime_error("Error: socket setsockopt failed");
-    
+    _socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (_socket < 0)
+        throw std::runtime_error("socket() failed");
+    int optval = 1;
+    if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+        throw std::runtime_error("setsockopt() failed");
+    if (fcntl(_socket, F_SETFL, O_NONBLOCK) < 0)
+        throw std::runtime_error("fcntl() failed");
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
     _addr.sin_port = htons(_port);
-
-    if (bind(_socket, (sockaddr *)&_addr, sizeof(_addr)) == -1)
-        throw std::runtime_error("Error: socket bind failed");
-    
-    if (listen(_socket, MAX_CLIENTS) == -1)
-        throw std::runtime_error("Error: socket listen failed");
-}
-
-void Server::initKqueue()
-{
-    _kqueue = kqueue();
-    if (_kqueue == -1)
-        throw std::runtime_error("Error: kqueue creation failed");
-    EV_SET(_events, _socket, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    if (kevent(_kqueue, _events, 1, NULL, 0, NULL) == -1)
-        throw std::runtime_error("Error: kqueue event creation failed");
+    if (bind(_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) < 0)
+        throw std::runtime_error("bind() failed");
+    if (listen(_socket, _maxClients) < 0)
+        throw std::runtime_error("listen() failed");
 }
 
 // -- end ----
@@ -64,20 +63,34 @@ Server::~Server()
     std::map<int, Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        closeClient(it->first, false);
+        closeClient(it->first);
+    }
+    std::map<std::string, Channel*>::iterator it2;
+    for (it2 = _channels.begin(); it2 != _channels.end(); ++it2)
+    {
+        delete it2->second;
     }
     close(_socket);
 }
 
-void Server::closeClient(int socket, bool erase)
+void Server::closeClient(int socket)
 {
-    editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read to kqueue");
-    editKevent(socket, EVFILT_WRITE, EV_DELETE, "deleting client write to kqueue");    
-    CLOSE_CONNECTION_MSG(socket);
-    delete _clients[socket];
-    close(socket);
-    if (erase)
+    if (_clients[socket])
+    {
+        delete _clients[socket];
+        _clients[socket] = NULL;
         _clients.erase(socket);
+    }
+    try
+    {
+        editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    CLOSE_CONNECTION_MSG(socket);
+    close(socket);
 }
 
 // -- misc ----
@@ -98,11 +111,15 @@ std::string toUpper(const std::string& str)
 
 bool Server::isNicknameTaken(const std::string& nickname)
 {
-    std::map<int, Client*>::iterator it;
+    std::map<int, Client*>::const_iterator it;
+    int i = 0;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        if (toUpper(it->second->getNick()) == toUpper(nickname))
+        if (!it->second)
+            std::cout << "Client " << i << " is NULL" << std::endl;
+        else if (toUpper(it->second->getNick()) == toUpper(nickname))
             return true;
+        i++;
     }
     return false;
 }

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <string>
+#include <ctime>
 
 bool startsWith(std::string const& s1, std::string const& s2)
 {
@@ -40,4 +42,14 @@ std::string contcatParams(std::vector<std::string> const& params)
             res += " ";
     }
     return (res);
+}
+
+// generate a random token of 10 ascii printable characters
+std::string randomToken()
+{
+    srand(time(NULL));
+    std::string token;
+    for (int i = 0; i < 10; ++i)
+        token += rand() % 94 + 33;
+    return token;
 }

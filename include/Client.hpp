@@ -22,17 +22,17 @@ class Client
         std::string                     _user;
         std::string                     _realname;
         std::string                     _hostname;
+        std::string                     _ping;
+        bool                            _waitingForPong;
         Server                          &_server;
         bool                            _registered;
         bool                            _passChecked;
+        bool                            _closing;
         std::map<std::string, Channel*> _channels;
 
         std::queue<std::string>         _sendQueue;
     public:
-        //Client(void);
         Client(int socket, Server &server);
-        // Client(Client const& rhs);              // Probably not useful since each client is unique
-        // Client& operator=(Client const& rhs);   // Probably not useful since each client is unique
         ~Client();
 
         std::string     getNick() const;
@@ -41,8 +41,13 @@ class Client
         std::string     getRealname() const;
         std::string     getHostname() const;
         std::string     getReply() const;
+        std::string     getPing() const;
 
+        void            setClosing();
+        bool            isClosing() const;
         bool            isRegistered() const;
+        void            setRegistered();
+        bool            isWaitingForPong() const;
 
         void            setNick(const std::string& nick);
         void            setUser(std::vector<std::string> params);
@@ -50,6 +55,7 @@ class Client
 
         void            joinChannel(const std::string& channel, const std::string& key);
         void            partChannel(const std::string& channel, const std::string& reason);
+        void            partAllChannels();
 
         void            sendMessage(std::vector<std::string> targets, const std::string& message);
 

@@ -10,8 +10,8 @@ void Command::initCmdHandler()
     _cmdHandler["PASS"] = &Command::cmdPass;
     _cmdHandler["NICK"] = &Command::cmdNick;
     _cmdHandler["USER"] = &Command::cmdUser;
-    // _cmdHandler["PING"] = &Command::cmdPing;
-    // _cmdHandler["PONG"] = &Command::cmdPong;
+    _cmdHandler["PING"] = &Command::cmdPing;
+    _cmdHandler["PONG"] = &Command::cmdPong;
     // _cmdHandler["OPER"] = &Command::cmdOper;
     _cmdHandler["QUIT"] = &Command::cmdQuit;
     // _cmdHandler["ERROR"] = &Command::cmdError;

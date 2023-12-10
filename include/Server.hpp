@@ -30,19 +30,18 @@ class Server
         std::map<int, Client*>  _clients;
         std::map<std::string, Channel*> _channels;
         struct kevent           _events[MAX_EVENTS];
-        int                     _kqueue;
+        struct kevent           _change;
         char                    _buffer[BUFF_SIZE];
+        int                     _kq;
 
-        void    setParams(int argc, char **argv);
         void    initSocket();
         void    initKqueue();
-        
-        void    serverQueue();
+        void    addKevent();
         void    editKevent(int socket, int filter, int flags, std::string msg);
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-        void    closeClient(int socket, bool erase=true);
+        void    closeClient(int socket);
         void    handleMsg(int socket, ssize_t bytesRead);
 
         Server(void);

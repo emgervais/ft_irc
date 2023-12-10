@@ -7,6 +7,8 @@ void Command::cmdQuit()
         _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), contcatParams(_params)));
     else
         _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), _params[0]));
+    _client.partAllChannels();
+    _client.setClosing();
 }
 
 void Command::cmdJoin()
@@ -51,6 +53,37 @@ void Command::cmdPart()
     }
 }
 
-// TODO:
-// cmdPing
-// cmdPong
+void Command::cmdPing()
+{
+    if (_params.size() == 1)
+        _client.addReply(RPL_PONG(_client.getNick(), SERVER_NAME, _params[0]));
+    else if (_params.size() > 1)
+        _client.addReply(RPL_PONG(_client.getNick(), _params[1], _params[0]));
+    else
+    {
+        _client.addReply(ERR_NEEDMOREPARAMS(_client.getNick(), _cmd));
+        _client.addReply(RPL_PINGUSE(_client.getNick()));
+    }
+}
+
+void Command::cmdPong()
+{
+    if (!_client.isRegistered() && _client.isWaitingForPong())
+    {
+        if (_params.size() != 0 && _client.getPing() == _params[0])
+        {
+            _client.setRegistered();
+            _client.addReply(RPL_WELCOME(_client.getNick(), _client.getUser(), _client.getHostname()));
+            _client.addReply(RPL_YOURHOST(_client.getNick()));
+            _client.addReply(RPL_CREATED(_client.getNick()));
+            _client.addReply(RPL_MYINFO(_client.getNick()));
+            _client.addReply(RPL_ISUPPORT(_client.getNick()));
+            return;
+        }
+        else
+        {
+            _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), "[Incorrect ping reply for registration]"));
+            _client.setClosing();
+        }
+    }
+}
