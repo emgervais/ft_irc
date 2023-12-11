@@ -34,6 +34,7 @@ class Server
         char                    _buffer[BUFF_SIZE];
         int                     _kq;
 
+        int     serverQueue();
         void    initSocket();
         void    initKqueue();
         void    addWriteKevent();

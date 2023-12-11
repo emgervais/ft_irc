@@ -6,9 +6,7 @@ void Server::run()
 {
     while (true)
     {
-        int nev = kevent(_kq, NULL, 0, _events, MAX_EVENTS, NULL);
-        if (nev == -1)
-            throw std::runtime_error("Error: kevent");
+        int nev = serverQueue();
         for (int i = 0; i < nev; ++i)
         {
             if ((int) _events[i].ident == _socket)
@@ -116,4 +114,12 @@ void Server::addWriteKevent()
         if (it->second && !it->second->getReply().empty())
             editKevent(it->first, EVFILT_WRITE, EV_ADD | EV_ONESHOT, "adding client write to kqueue");
     }
+}
+
+int Server::serverQueue()
+{
+    int evQty = kevent(_kq, NULL, 0, _events, MAX_EVENTS, NULL);
+    if (evQty == ERROR)
+        throw std::runtime_error("Error: kqueue event creation failed");
+    return evQty;
 }
