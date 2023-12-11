@@ -1,8 +1,5 @@
 #include "Command.hpp"
-<<<<<<< HEAD
-=======
 #include "util.hpp"
->>>>>>> 05cef9261f4511cabf5ef01d893cf2043edaff02
 #include "NumericReplies.hpp"
 
 void    Command::cmdMode()
@@ -26,18 +23,18 @@ void    Command::cmdMode()
         {
             if (mode[0] == '+' || mode[0] == '-')
                 mode = mode.substr(1);
-            if (mode[0] == 'i')
-                cmdModeI(channel);
-            else if (mode[0] == 'o')
-                cmdModeO(channel);
-            else if (mode[0] == 'k')
-                cmdModeK(channel);
-            else if (mode[0] == 'l')
-                cmdModeL(channel);
-            else if (mode[0] == 't')
-                cmdModeT(channel);
-            else
-                _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), mode[0]));
+            // if (mode[0] == 'i')
+            //     cmdModeI(channel);
+            // else if (mode[0] == 'o')
+            //     cmdModeO(channel);
+            // else if (mode[0] == 'k')
+            //     cmdModeK(channel);
+            // else if (mode[0] == 'l')
+            //     cmdModeL(channel);
+            // else if (mode[0] == 't')
+            //     cmdModeT(channel);
+            // else
+             _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), mode[0]));
         }
     }
 }
@@ -48,22 +45,22 @@ void    Command::cmdMode()
 // i = invite only takes no parameter
 // o = operator always takes parameter
 
-void    Command::cmdModeI(Channel *channel)
-{
-}
+// void    Command::cmdModeI(Channel *channel)
+// {
+// }
 
-void    Command::cmdModeO(Channel *channel)
-{
-}
+// void    Command::cmdModeO(Channel *channel)
+// {
+// }
 
-void    Command::cmdModeK(Channel *channel)
-{
-}
+// void    Command::cmdModeK(Channel *channel)
+// {
+// }
 
-void    Command::cmdModeL(Channel *channel)
-{
-}
+// void    Command::cmdModeL(Channel *channel)
+// {
+// }
 
-void    Command::cmdModeT(Channel *channel)
-{
-}
+// void    Command::cmdModeT(Channel *channel)
+// {
+// }

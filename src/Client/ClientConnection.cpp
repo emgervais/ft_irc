@@ -70,22 +70,19 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
         if (std::string(*it).find_first_of("#") == 0)
         {
             Channel* chan = _server.getChannel(*it);
-            if (chan)
-            {
-                if (_channels.find(*it) != _channels.end())
-                    chan->sendMessage(message, _nick);
-                else
-                    addReply(ERR_NOTONCHANNEL(_nick, *it));
-            }
-            else
+            if (!chan)
                 addReply(ERR_NOSUCHCHANNEL(_nick, *it));
+            else if (chan->isClientOnChannel(*this))
+                chan->sendMessage(RPL_PRIVMSG(_nick, _user, _hostname, *it, message), _nick);
+            else
+                addReply(ERR_CANNOTSENDTOCHAN(_nick, *it));
         }
         else
         {
             if (_server.isNicknameTaken(*it) && *it != _nick)
             {
-                addReply(":" + _nick + "!" + _user + "@" + _hostname + " PRIVMSG " + *it + " :" + message + CRLF);
-                // actually send the message
+                Client* target = _server.getClient(*it);
+                target->addReply(RPL_PRIVMSG(_nick, _user, _hostname, *it, message));
             }
             else
                 addReply(ERR_NOSUCHNICK(_nick, *it));

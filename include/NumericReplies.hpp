@@ -64,5 +64,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_AWAY(nick, user, host, target, message) SERVER_NAME + "301 " + nick + " " + target + " :" + message + CRLF
 #define RPL_CHANNELMODEIS(nick, channel, modes) SERVER_NAME + "324 " + nick + " " + channel + " " + modes + CRLF
 #define RPL_CREATIONTIME(nick, channel, creationtime) SERVER_NAME + "329 " + nick + " " + channel + " " + creationtime + CRLF
+#define RPL_PRIVMSG(nick, user, host, target, message) ":" + nick + "!" + user + "@" + host + " PRIVMSG " + target + " :" + message + CRLF
+#define ERR_UNKNOWNMODE(nick, mode) SERVER_NAME + "472 " + nick + " " + mode + " :is unknown mode char to me" + CRLF
 
 #endif
