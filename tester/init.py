@@ -43,20 +43,24 @@ def send_command(nc_process, text):
 		text += "\r\n"
 		nc_process.stdin.write(text.encode())
 		nc_process.stdin.flush()
+		sleep(.2)
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
 
-def get_answer(nc_process):
-	res = ""
-	stdout, stderr = nc_process.communicate()
-	if stdout:
-		res += stdout.decode()
-	if stderr:
-		if res:
-			res += "\n"
-		res += stderr.decode()
-	return res
+def receive_response(nc_process, keyword=""):
+	if not nc_process:
+		print("Netcat process not available.")
+		return None
+	try:
+		while True:
+			output = nc_process.stdout.readline().decode().strip()
+			if not keyword or (keyword and keyword.lower() in output.lower()):
+				break
+		return output
+	except Exception as e:
+		print(f"Error receiving response: {e}")
+		return None
 
 # -- decorators ----
 def netcat(host, port, num_connections):
