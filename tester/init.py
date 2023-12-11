@@ -43,23 +43,34 @@ def send_command(nc_process, text):
 		text += "\r\n"
 		nc_process.stdin.write(text.encode())
 		nc_process.stdin.flush()
-		# sleep(.2)
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
 
+def get_answer(nc_process):
+	res = ""
+	stdout, stderr = nc_process.communicate()
+	if stdout:
+		res += stdout.decode()
+	if stderr:
+		if res:
+			res += "\n"
+		res += stderr.decode()
+	return res
+
 # -- decorators ----
 def netcat(host, port, num_connections):
-    def decorator(func):
-        def wrapper():
-            ncs = [start_nc(host, port) for _ in range(num_connections)]
-            if all(ncs):
-                func(*ncs)
-                input("Press enter to stop connections")
-                for nc in ncs:
-                    nc.terminate()
-        return wrapper
-    return decorator
+	def decorator(func):
+		def wrapper():
+			ncs = [start_nc(host, port) for _ in range(num_connections)]
+			if all(ncs):
+				func(*ncs)
+				sleep(2)
+				input("Press enter to stop connections")
+				for nc in ncs:
+					nc.terminate()
+		return wrapper
+	return decorator
 
 def server(port, password):
     def decorator(func):

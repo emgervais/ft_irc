@@ -1,5 +1,6 @@
 #include "Command.hpp"
 #include "util.hpp"
+#include "NumericReplies.hpp"
 
 void    Command::cmdMode()
 {
@@ -15,7 +16,7 @@ void    Command::cmdMode()
     }
     else if (_params.size() == 1)
     {
-        _client.addReply(RPL_CHANNELMODEIS(_client.getNick(), _client.getMode()));
+        _client.addReply(RPL_CHANNELMODEIS(_client.getNick(), "____", "____"));
     }
     std::string mode = _params[0];
 
