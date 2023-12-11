@@ -2,6 +2,7 @@
 *.o
 *.d
 *.a
+a.out
 *.dSYM
 
 .DS_Store

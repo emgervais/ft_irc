@@ -119,8 +119,11 @@ void    Command::splitRawCommand()
         if (param[0] == ':')
         {
             std::string lastParam = param.substr(1);
-            std::getline(ss, param); // doesn't handle multiline params
-            lastParam += param;
+			if (!ss.eof())
+            {
+                std::getline(ss, param); // doesn't handle multiline params
+                lastParam += param;
+            }
             _params.push_back(lastParam);
             break;
         }
