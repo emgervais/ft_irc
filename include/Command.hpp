@@ -11,10 +11,12 @@
 #include "IRC.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
+#include "Channel.hpp"
 
 class Server;
 class Client;
 class Command;
+class Channel;
 
 typedef void (Command::*cmdFunc)(void);
 
@@ -50,6 +52,12 @@ class Command
         void    cmdKick();
         void    cmdMode();
         void    cmdPrivMsg();
+
+        // void    cmdModeO(Channel *channel, char sign, const std::string &param);
+        // void    cmdModeI(Channel *channel, char sign);
+        // void    cmdModeK(Channel *channel, char sign, const std::string &param);
+        // void    cmdModeL(Channel *channel, char sign, const std::string &param);
+        // void    cmdModeT(Channel *channel, char sign);
 
     public:
         static void initCmdHandler();

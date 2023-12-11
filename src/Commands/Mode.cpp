@@ -16,51 +16,100 @@ void    Command::cmdMode()
         _client.addReply(RPL_CHANNELMODEIS(_client.getNick(), channel->getName(), channel->getModeString()));
     else
     {
-        std::string mode = _params[1];
-        if (mode[0] != '+' && mode[0] != '-' && mode[0] != 'i' && mode[0] != 'o' && mode[0] != 'k' && mode[0] != 'l' && mode[0] != 't')
-            _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), mode[0]));
-        else
-        {
-            if (mode[0] == '+' || mode[0] == '-')
-                mode = mode.substr(1);
-            // if (mode[0] == 'i')
-            //     cmdModeI(channel);
-            // else if (mode[0] == 'o')
-            //     cmdModeO(channel);
-            // else if (mode[0] == 'k')
-            //     cmdModeK(channel);
-            // else if (mode[0] == 'l')
-            //     cmdModeL(channel);
-            // else if (mode[0] == 't')
-            //     cmdModeT(channel);
-            // else
-             _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), mode[0]));
-        }
+        _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), _params[1]));
+        // if (channel->isMode("o", _client.getNick()) == false)
+        // {
+        //     _client.addReply(ERR_CHANOPRIVSNEEDED(_client.getNick(), channel->getName()));
+        //     return;
+        // }
+        // std::string::iterator it = _params[1].begin();
+        // std::string mode = _params[1];
+        // std::vector<std::string>::iterator params;
+        // std::string param = "";
+        // char sign = '+';
+
+        // if (_params.size() > 2)
+        //     params = _params.begin() + 2;
+        // while (it != _params[1].end())
+        // {
+        //     if (*it == 'o'|| *it == 'k' || *it == 'l')
+        //     {
+        //         if (params == _params.end())
+        //             param = "";
+        //         else
+        //             param = *params++;
+        //     }
+        //     if (*it == '+' || *it == '-')
+        //         sign = *it;
+        //     else if (*it == 'i')
+        //         cmdModeI(channel, sign);
+        //     else if (*it == 'o')
+        //         cmdModeO(channel, sign, param);
+        //     else if (*it == 'k')
+        //         cmdModeK(channel, sign, param);
+        //     else if (*it == 'l')
+        //         cmdModeL(channel, sign, param);
+        //     else if (*it == 't')
+        //         cmdModeT(channel, sign);
+        //     else
+        //         _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), *it));
+        //     ++it;
+        // }
     }
 }
 
-// t = topic takes no parameter
-// k = key takes parameter if +, no parameter if -
-// l = limit takes parameter if +, no parameter if -
-// i = invite only takes no parameter
-// o = operator always takes parameter
-
-// void    Command::cmdModeI(Channel *channel)
+// void    Command::cmdModeO(Channel *channel, char sign, const std::string& param)
 // {
+//     if (param.empty())
+//         _client.addReply(ERR_SPECIFYOP(_client.getNick()));
+//     else
+//     {
+//         if (sign == '+')
+//         {
+//             if (!channel->isMode("o", param))
+//                 channel->addMode("o", param);
+//         }
+//         else if (sign == '-')
+//         {
+//             if (channel->isMode("o", param))
+//                 channel->removeMode("o", param);
+//         }
+//     }
 // }
 
-// void    Command::cmdModeO(Channel *channel)
+// void    Command::cmdModeI(Channel *channel, char sign)
 // {
+
 // }
 
-// void    Command::cmdModeK(Channel *channel)
+// void    Command::cmdModeK(Channel *channel, char sign, const std::string& param)
 // {
+//     if (param.empty())
+//         _client.addReply(ERR_SPECIFYKEY(_client.getNick()));
+//     else
+//     {
+//         if (sign == '+')
+//         {
+//             if (!channel->isMode("k", param))
+//             {
+//                 // check if key is correct
+//                 channel->addMode("k", param);
+//             }
+//         }
+//         else if (sign == '-')
+//         {
+//             if (channel->isMode("k", param))
+//                 channel->removeMode("k", param);
+//         }
+//     }
 // }
 
-// void    Command::cmdModeL(Channel *channel)
+// void    Command::cmdModeL(Channel *channel, char sign, const std::string& param)
 // {
+
 // }
 
-// void    Command::cmdModeT(Channel *channel)
+// void    Command::cmdModeT(Channel *channel, char sign)
 // {
+
 // }
