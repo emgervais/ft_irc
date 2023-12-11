@@ -20,7 +20,7 @@ void Command::initCmdHandler()
     _cmdHandler["LIST"] = &Command::cmdList;
     _cmdHandler["INVITE"] = &Command::cmdInvite;
     _cmdHandler["KICK"] = &Command::cmdKick;
-    // _cmdHandler["MODE"] = &Command::cmdMode;
+    _cmdHandler["MODE"] = &Command::cmdMode;
     _cmdHandler["PRIVMSG"] = &Command::cmdPrivMsg;
 }
 

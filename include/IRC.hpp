@@ -29,7 +29,7 @@
 #define CRLF "\r\n"
 
 #define NICK_NOT_CONTAIN " ,.*!?@/"
-#define NICK_NOT_START "0123456789$:#&"
+#define NICK_NOT_START "0123456789$:#&+-"
 
 #define NICK_MAX_LEN 30
 #define USER_MAX_LEN 50

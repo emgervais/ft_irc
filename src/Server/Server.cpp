@@ -75,6 +75,15 @@ Server::~Server()
     {
         delete it2->second;
     }
+    try
+    {
+        editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    close(_kq);
     close(_socket);
 }
 

@@ -18,7 +18,7 @@ void Server::run()
             else if (_events[i].filter == EVFILT_WRITE)
                 writeToClient(_events[i].ident);
         }
-        addKevent();
+        addWriteKevent();
     }
 }
 
@@ -28,11 +28,7 @@ void Server::registerNewClient()
     sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
-    std::map<int, Client*>::iterator it;
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        std::cout << "client: " << it->first << std::endl;
-    }
+
     if (clientSocket == -1)
     {
         std::cerr << "Error: accepting new client" << std::endl;
@@ -111,7 +107,7 @@ void Server::editKevent(int socket, int filter, int flags, std::string msg)
         throw std::runtime_error("Error: " + msg);
 }
 
-void Server::addKevent()
+void Server::addWriteKevent()
 {
     std::map<int, Client*>::iterator it;
 

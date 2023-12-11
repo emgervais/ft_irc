@@ -48,7 +48,7 @@ class Command
         void    cmdList();
         void    cmdInvite();
         void    cmdKick();
-        // void    cmdMode();
+        void    cmdMode();
         void    cmdPrivMsg();
 
     public:

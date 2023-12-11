@@ -1,7 +1,13 @@
 #include "Channel.hpp"
+#include "util.hpp"
+// t = topic takes no parameter
+// k = key takes parameter if +, no parameter if -
+// l = limit takes parameter if +, no parameter if -
+// i = invite only takes no parameter
+// o = operator always takes parameter
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
-    : _name(name), _topic(""), _server(const_cast<Server&>(server))
+    : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getTimeOfDay())
 {
     _clients.push_back(const_cast<Client*>(&client));
     addMode("o", client.getNick());
@@ -80,7 +86,7 @@ bool    Channel::isMode(const std::string& mode) const
     std::map<std::string, std::vector<std::string> >::const_iterator it;
     for (it = _modes.begin(); it != _modes.end(); ++it)
     {
-        if (it->first == mode)
+        if (it->first == mode && it->second.size() > 0)
             return true;
     }
     return false;
@@ -104,18 +110,22 @@ bool    Channel::isMode(const std::string& mode, const std::string& param) const
     return false;
 }
 
-void    Channel::addMode(const std::string& mode)
-{
-    if (isMode(mode))
-        return;
-    _modes[mode];
-}
-
 void    Channel::addMode(const std::string& mode, const std::string& param)
 {
     if (isMode(mode, param))
         return;
-    _modes[mode].push_back(param);
+    std::map<std::string, std::vector<std::string> >::iterator it;
+    for (it = _modes.begin(); it != _modes.end(); ++it)
+    {
+        if (it->first == mode)
+        {
+            it->second.push_back(param);
+            return;
+        }
+    }
+    std::vector<std::string> v;
+    v.push_back(param);
+    _modes[mode] = v;
 }
 
 void    Channel::removeMode(const std::string& mode)
@@ -125,7 +135,8 @@ void    Channel::removeMode(const std::string& mode)
     {
         if (it->first == mode)
         {
-            _modes.erase(it);
+            if (mode != "o")
+                _modes.erase(it);
             return;
         }
     }

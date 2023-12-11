@@ -19,6 +19,7 @@ class Channel
         std::string             _topic;
         std::vector<Client*>    _clients;
         Server                  &_server;
+        std::string             _creationTime;
         std::map<std::string, std::vector<std::string> > _modes;
 
     public:
@@ -40,7 +41,6 @@ class Channel
         void            removeAllModes(const Client& client);
         bool            isMode(const std::string& mode) const;
         bool            isMode(const std::string& mode, const std::string& param) const;
-        void            addMode(const std::string& mode);
         void            addMode(const std::string& mode, const std::string& param);
         void            removeMode(const std::string& mode);
         void            removeMode(const std::string& mode, const std::string& param);
