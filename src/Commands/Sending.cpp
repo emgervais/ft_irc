@@ -9,7 +9,7 @@ void    Command::cmdPrivMsg()
 		return;
 	}
 	std::vector<std::string> targets = splitString(_params[0], ",");
-	std::vector<std::string> msgParams(_params.begin() + 1, _params.end());
-	std::string const& msg = contcatParams(msgParams);
+	std::vector<std::string> msgParts(_params.begin() + 1, _params.end());
+	std::string const& msg = contcatParams(msgParts);
 	_client.sendMessage(targets, msg);
 }

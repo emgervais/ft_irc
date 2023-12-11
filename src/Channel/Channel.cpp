@@ -77,7 +77,9 @@ void    Channel::sendMessage(const std::string& msg, const std::string& sender)
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         if ((*it)->getNick() != sender)
+        {
             (*it)->addReply(msg);
+        }
     }
 }
 

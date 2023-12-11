@@ -40,7 +40,6 @@ class Client
         int             getSocket() const;
         std::string     getRealname() const;
         std::string     getHostname() const;
-        std::string     getReply() const;
         std::string     getPing() const;
 
         void            setClosing();
@@ -59,6 +58,8 @@ class Client
 
         void            sendMessage(std::vector<std::string> targets, const std::string& message);
 
+        std::string     getReply() const;
+        size_t          getRepliesQty() const;
         void            addReply(const std::string& reply);
         void            removeReply();
 };

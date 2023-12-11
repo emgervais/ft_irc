@@ -69,13 +69,18 @@ void            Client::removeReply()
     _sendQueue.pop();
 }
 
-std::string     Client::getReply() const
+std::string  Client::getReply() const
 {
     if (_sendQueue.empty())
     {
         return ("");
     }
     return _sendQueue.front();
+}
+
+size_t Client::getRepliesQty() const
+{
+    return _sendQueue.size();
 }
 
 void            Client::setClosing()

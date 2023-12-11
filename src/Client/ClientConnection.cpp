@@ -83,7 +83,10 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
         else
         {
             if (_server.isNicknameTaken(*it) && *it != _nick)
+            {
                 addReply(":" + _nick + "!" + _user + "@" + _hostname + " PRIVMSG " + *it + " :" + message + CRLF);
+                // actually send the message
+            }
             else
                 addReply(ERR_NOSUCHNICK(_nick, *it));
         }

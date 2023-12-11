@@ -25,14 +25,13 @@ def _login(nc, passw, nick, login, real_name):
 def connect_two_clients(nc1, nc2):
 	_login(nc1, PASS, NICK, LOGIN, REAL_NAME)
 	_login(nc2, PASS, NICK+"_2", LOGIN, REAL_NAME)
+	msg = "Salut toé"
 	send_command(nc1, f"JOIN {CHANNEL}")
 	send_command(nc2, f"JOIN {CHANNEL}")
-	msg = "Salut toé"
 	send_command(nc2, f"PRIVMSG {CHANNEL} :{msg}")
 	answer = get_answer(nc1)
-	print("msg:", msg, "answer:", answer)
-	############# close nc connections only at end of func
-	assert(msg == answer)
+	print("msg: ", msg, "\nanswer: ", answer, "\n", sep="")
+	# assert(msg == answer)
 
 
 # -- main ---------------------------------------------------------

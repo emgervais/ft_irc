@@ -68,20 +68,20 @@ void Server::writeToClient(int socket)
 {
     if (!_clients[socket])
         return;
-    std::string msg = _clients[socket]->getReply();
-    if(msg.empty())
-        return ;
-    ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
-    if (bytesSent == -1)
-        std::cerr << "Error: sending to client" << std::endl;
-    else if (bytesSent == 0)
-        closeClient(socket);
-    else
+    size_t repliesQty = _clients[socket]->getRepliesQty();
+    for (size_t i = 0; i < repliesQty; ++i)
     {
-        FROM_SERVER(std::string(msg));
-        _clients[socket]->removeReply();
-        if (!_clients[socket]->getReply().empty())
-            writeToClient(socket);
+        std::string msg = _clients[socket]->getReply();
+        ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
+        if (bytesSent == ERROR)
+            std::cerr << "Error: sending to client" << std::endl;
+        else if (bytesSent == 0)
+            closeClient(socket);
+        else
+        {
+            FROM_SERVER(std::string(msg));
+            _clients[socket]->removeReply();
+        }
     }
 }
 

@@ -65,7 +65,6 @@ def netcat(host, port, num_connections):
 			ncs = [start_nc(host, port) for _ in range(num_connections)]
 			if all(ncs):
 				func(*ncs)
-				sleep(2)
 				input("Press enter to stop connections")
 				for nc in ncs:
 					nc.terminate()
