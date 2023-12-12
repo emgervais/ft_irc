@@ -49,6 +49,7 @@ class Server
         void    writeToClient(int socket);
         void    closeClient(int socket);
         void    handleMsg(int socket, ssize_t bytesRead);
+        void    exitSignal(int sig);
 
         Server(void);
         Server(const Server& rhs);

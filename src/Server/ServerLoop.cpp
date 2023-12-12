@@ -1,5 +1,7 @@
 #include "Server.hpp"
+#include "IRC.hpp"
 #include "util.hpp"
+#include <cstring>
 
 // -- loop ----
 void Server::run()
@@ -9,17 +11,14 @@ void Server::run()
         int nev = serverQueue();
         for (int i = 0; i < nev; ++i)
         {
-            if ((int) _events[i].ident == _socket)
+            if (_events[i].filter == EVFILT_SIGNAL)
+                exitSignal(_events[i].ident);
+            else if ((int) _events[i].ident == _socket)
                 registerNewClient();
             else if (_events[i].filter == EVFILT_READ)
                 readFromClient(_events[i].ident);
             else if (_events[i].filter == EVFILT_WRITE)
                 writeToClient(_events[i].ident);
-            else if (_events[i].filter == EVFILT_SIGNAL)
-            {
-                std::cout << "Received signal: " << _events[i].ident << std::endl;
-                exit(128 + _events[i].ident);
-            }
         }
         addWriteKevent();
     }
@@ -123,11 +122,21 @@ void Server::addWriteKevent()
 
 int Server::serverQueue()
 {
-    // static struct timespec t;
-    // memset(&t, 0, sizeof(struct timespec));
-    // int evQty = kevent(_kq, NULL, 0, _events, MAX_EVENTS, &t);
     int evQty = kevent(_kq, NULL, 0, _events, MAX_EVENTS, NULL);
     if (evQty == ERROR)
         throw std::runtime_error("Error: kqueue event creation failed");
     return evQty;
+}
+
+// -- exit ----
+void Server::exitSignal(int sig)
+{
+    std::cout << "Quitting after receiving: ";
+    const char *signal_name = strsignal(sig);
+    if (signal_name != nullptr) {
+        std::cout << signal_name << " (" << sig << ")" << std::endl;
+    } else {
+        std::cout << "Unknown Signal (" << sig << ")" << std::endl;
+    }
+    exit(128 + sig);
 }

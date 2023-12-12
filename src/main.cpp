@@ -32,7 +32,6 @@ static Args getArgs(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-
     try
     {
         Args args = getArgs(argc, argv);

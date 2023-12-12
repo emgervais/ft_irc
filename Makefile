@@ -1,6 +1,6 @@
 NAME = ircserv
 
-INCLUDES = -I./include -I./src/util
+INCLUDES = -I./include -I./src/util -I./src/Server -I./src/Commands -I./src/Client -I./src/Channel
 SRC_DIR = src/
 OBJ_DIR = obj/
 

@@ -34,14 +34,7 @@ void Server::initKqueue()
     _kq = kqueue();
     if (_kq == -1)
         throw std::runtime_error("Error: kqueue");
-    const int signalList[] = {
-        SIGINT,
-        SIGQUIT,
-        SIGTERM,
-        SIGSTOP,
-        SIGTSTP,
-        SIGKILL
-    };
+    const int signalList[] = { SIGINT, SIGQUIT, SIGTERM, SIGSTOP, SIGTSTP, SIGKILL};
     const size_t signalCount = sizeof(signalList) / sizeof(signalList[0]);
     size_t i;
     for (i = 0; i < signalCount; ++i)
