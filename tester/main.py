@@ -1,9 +1,10 @@
 from random import randint
-from init import netcat, server, send_command, receive_response
+from init import netcat, server, send_command, receive_response, _login
 from time import sleep
 
 HOST = 'localhost'
-PORT = randint(6000, 7000)
+PORT = randint(6000, 7000) # always keeping the same port can cause bind() to fail
+# PORT = 6666
 PASS ="test"
 NICK ="a_nick"
 USER ="a_username"
@@ -11,31 +12,23 @@ LOGIN = "a_login"
 REAL_NAME = "Real Name"
 CHANNEL = "#test"
 
-def _login(nc, passw, nick, login, real_name):
-	send_command(nc, f"PASS {passw}")
-	send_command(nc, f"NICK {nick}")
-	send_command(nc, f"USER {login} 0 * :{real_name}")
-	_pong(nc)
-	
-def _pong(nc):
-	ping = receive_response(nc, "PING")
-	send_command(nc, ping.replace("PING", "PONG"))
+
 
 # -- tests --------------------------------------------------------
 @netcat(HOST, PORT, num_connections=1)
-def login(nc1):
-	_login(nc1, PASS, NICK, LOGIN, REAL_NAME)
+def login(ncs):
+	_login(ncs[0], PASS, NICK, LOGIN, REAL_NAME)
 
 @netcat(HOST, PORT, num_connections=2)
-def connect_two_clients(nc1, nc2):
-	_login(nc1, PASS, NICK, LOGIN, REAL_NAME)
-	_login(nc2, PASS, NICK+"_2", LOGIN, REAL_NAME)
-	send_command(nc1, f"JOIN {CHANNEL}")
-	send_command(nc2, f"JOIN {CHANNEL}")
+def connect_two_clients(ncs):
+	_login(ncs[0], PASS, NICK, LOGIN, REAL_NAME)
+	_login(ncs[1], PASS, NICK+"_2", LOGIN, REAL_NAME)
+	send_command(ncs[0], f"JOIN {CHANNEL}")
+	send_command(ncs[1], f"JOIN {CHANNEL}")
 	
 	msg = "Salut toé"
-	send_command(nc2, f"PRIVMSG {CHANNEL} :{msg}")
-	answer = receive_response(nc1, msg)
+	send_command(ncs[1], f"PRIVMSG {CHANNEL} :{msg}")
+	answer = receive_response(ncs[0], msg)
 	print(f"msg: {msg}\nanswer: {answer}")
 
 

@@ -84,14 +84,6 @@ Server::~Server()
     {
         delete it2->second;
     }
-    try
-    {
-        editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-    }
     close(_kq);
     close(_socket);
 }
@@ -103,14 +95,15 @@ void Server::closeClient(int socket)
         delete _clients[socket];
         _clients[socket] = NULL;
         _clients.erase(socket);
-    }
-    try
-    {
-        editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
+        try
+        {
+            editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
+            editKevent(socket, EVFILT_WRITE, EV_DELETE, "deleting client write from kqueue");
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
     }
     CLOSE_CONNECTION_MSG(socket);
     close(socket);

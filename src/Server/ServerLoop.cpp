@@ -105,8 +105,14 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
 void Server::editKevent(int socket, int filter, int flags, std::string msg)
 {
     EV_SET(_change, socket, filter, flags, 0, 0, NULL);
-    if (kevent(_kq, _change, 1, NULL, 0, NULL) == -1)
-        throw std::runtime_error("Error: " + msg);
+    if (kevent(_kq, _change, 1, NULL, 0, NULL) == ERROR)
+    {
+        bool deleteNonExistent = (errno == ENOENT);
+        if (deleteNonExistent)
+            return;
+        else
+            throw std::runtime_error("Error: " + msg);
+    }
 }
 
 void Server::addWriteKevent()
@@ -131,7 +137,7 @@ int Server::serverQueue()
 // -- exit ----
 void Server::exitSignal(int sig)
 {
-    std::cout << "Quitting after receiving: ";
+    std::cout << "Quitting due to signal reception: ";
     const char *signal_name = strsignal(sig);
     if (signal_name != nullptr) {
         std::cout << signal_name << " (" << sig << ")" << std::endl;
