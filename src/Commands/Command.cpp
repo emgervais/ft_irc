@@ -1,7 +1,4 @@
-#include <cctype>
-#include <cstring>
 #include "Command.hpp"
-#include "util.hpp"
 
 // -- init ----
 std::map<const std::string, cmdFunc> Command::_cmdHandler;

@@ -1,6 +1,4 @@
 #include "Command.hpp"
-#include "util.hpp"
-#include "NumericReplies.hpp"
 
 void    Command::cmdMode()
 {

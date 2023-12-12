@@ -1,9 +1,4 @@
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <unistd.h>
-#include "Server.hpp"
+#include "Server/Server.hpp"
 #include "util.hpp"
 
 struct Args

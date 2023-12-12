@@ -1,22 +1,7 @@
 #ifndef Command_HPP
 #define Command_HPP
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <map>
-#include <vector>
-#include <algorithm>
-
-#include "IRC.hpp"
-#include "Server.hpp"
-#include "Client.hpp"
-#include "Channel.hpp"
-
-class Server;
-class Client;
-class Command;
-class Channel;
+#include "util.hpp"
 
 typedef void (Command::*cmdFunc)(void);
 

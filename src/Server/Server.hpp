@@ -1,21 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <exception>
-#include <map>
-#include <vector>
-#include "IRC.hpp"
-#include "NumericReplies.hpp"
-#include "CHeaders.hpp"
-#include "Client.hpp"
-#include "Command.hpp"
-#include "Channel.hpp"
-
-class Client;
-class Channel;
+#include "util.hpp"
 
 #define SIGNAL_QTY 5
 #define CHANGE_LIST_SIZE (SIGNAL_QTY + 1)

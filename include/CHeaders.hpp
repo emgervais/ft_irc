@@ -12,6 +12,6 @@
 #include <sys/stat.h>
 #include <sys/event.h>
 #include <sys/time.h>
-
+#include <signal.h>
 
 #endif

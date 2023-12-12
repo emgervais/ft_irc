@@ -1,7 +1,4 @@
 #include "Server.hpp"
-#include "IRC.hpp"
-#include "util.hpp"
-#include <cstring>
 
 // -- loop ----
 void Server::run()

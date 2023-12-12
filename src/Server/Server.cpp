@@ -1,7 +1,4 @@
-#include <signal.h>
-#include <thread>
 #include "Server.hpp"
-#include "NumericReplies.hpp"
 
 // -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)
@@ -135,16 +132,6 @@ void Server::closeClient(int socket)
 std::string Server::getPass() const
 {
     return (_pass);
-}
-
-std::string toUpper(const std::string& str)
-{
-    std::string upper;
-    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
-    {
-        upper += toupper(*it);
-    }
-    return (upper);
 }
 
 bool Server::isNicknameTaken(const std::string& nickname)

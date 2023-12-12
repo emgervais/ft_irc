@@ -1,8 +1,4 @@
 #include "Client.hpp"
-#include "Server.hpp"
-#include "util.hpp"
-
-
 
 Client::Client(int socket, Server &server)
     : _socket(socket), _nick(""), _user(""), _realname(""), _hostname(""), _ping(randomToken()), _waitingForPong(false), _server(server), _registered(false), _passChecked(false), _closing(false)

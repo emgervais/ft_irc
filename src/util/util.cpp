@@ -1,8 +1,4 @@
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <string>
-#include <ctime>
+#include "util.hpp"
 
 bool startsWith(std::string const& s1, std::string const& s2)
 {
@@ -78,4 +74,14 @@ std::string getTimeOfDay()
 
     strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", getLocalTime());
     return (std::string(buffer));
+}
+
+std::string toUpper(const std::string& str)
+{
+    std::string upper;
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+    {
+        upper += toupper(*it);
+    }
+    return (upper);
 }

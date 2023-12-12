@@ -1,5 +1,4 @@
 #include "Command.hpp"
-#include "util.hpp"
 
 void    Command::cmdPrivMsg()
 {

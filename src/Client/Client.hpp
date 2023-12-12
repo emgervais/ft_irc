@@ -1,18 +1,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <queue>
-#include <map>
-#include "IRC.hpp"
-#include "Server.hpp"
-#include "Channel.hpp"
-
-class Server;
-class Channel;
+#include "util.hpp"
 
 class Client
 {

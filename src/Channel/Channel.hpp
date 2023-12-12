@@ -1,16 +1,7 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include "Client.hpp"
-#include "IRC.hpp"
-#include "Server.hpp"
-
-class Client;
-class Server;
+#include "util.hpp"
 
 class Channel
 {

@@ -1,5 +1,4 @@
 #include "Client.hpp"
-#include "Server.hpp"
 
 static std::string    getHostName(int socket)
 {

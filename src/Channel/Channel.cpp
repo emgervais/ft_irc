@@ -1,5 +1,5 @@
 #include "Channel.hpp"
-#include "util.hpp"
+
 // t = topic takes no parameter
 // k = key takes parameter if +, no parameter if -
 // l = limit takes parameter if +, no parameter if -

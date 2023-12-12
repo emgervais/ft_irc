@@ -1,8 +1,7 @@
 #ifndef IRC_HPP
 #define IRC_HPP
 
-#include <string>
-#include <map>
+#include "util.hpp"
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
