@@ -45,6 +45,10 @@ undefined: all
 noerr: CXXFLAGS := $(filter-out -Werror,$(CXXFLAGS))
 noerr: all
 
+leak: all
+leak:
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=vgsuppress.txt ./$(NAME) 1234 jambon
+
 
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)

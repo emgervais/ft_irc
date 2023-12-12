@@ -15,6 +15,11 @@ void Server::run()
                 readFromClient(_events[i].ident);
             else if (_events[i].filter == EVFILT_WRITE)
                 writeToClient(_events[i].ident);
+            else if (_events[i].filter == EVFILT_SIGNAL)
+            {
+                std::cout << "Received signal: " << _events[i].ident << std::endl;
+                exit(128 + _events[i].ident);
+            }
         }
         addWriteKevent();
     }
@@ -100,8 +105,8 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
 // -- Kevent ----
 void Server::editKevent(int socket, int filter, int flags, std::string msg)
 {
-    EV_SET(&_change, socket, filter, flags, 0, 0, NULL);
-    if (kevent(_kq, &_change, 1, NULL, 0, NULL) == -1)
+    EV_SET(_change, socket, filter, flags, 0, 0, NULL);
+    if (kevent(_kq, _change, 1, NULL, 0, NULL) == -1)
         throw std::runtime_error("Error: " + msg);
 }
 
@@ -118,6 +123,9 @@ void Server::addWriteKevent()
 
 int Server::serverQueue()
 {
+    // static struct timespec t;
+    // memset(&t, 0, sizeof(struct timespec));
+    // int evQty = kevent(_kq, NULL, 0, _events, MAX_EVENTS, &t);
     int evQty = kevent(_kq, NULL, 0, _events, MAX_EVENTS, NULL);
     if (evQty == ERROR)
         throw std::runtime_error("Error: kqueue event creation failed");

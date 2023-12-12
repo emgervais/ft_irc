@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "NumericReplies.hpp"
+#include <signal.h>
 
 // -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)
@@ -33,9 +34,24 @@ void Server::initKqueue()
     _kq = kqueue();
     if (_kq == -1)
         throw std::runtime_error("Error: kqueue");
-    EV_SET(&_change, _socket, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    if (kevent(_kq, &_change, 1, NULL, 0, NULL) == -1)
-        throw std::runtime_error("Error: kevent");
+    const int signalList[] = {
+        SIGINT,
+        SIGQUIT,
+        SIGTERM,
+        SIGSTOP,
+        SIGTSTP,
+        SIGKILL
+    };
+    const size_t signalCount = sizeof(signalList) / sizeof(signalList[0]);
+    size_t i;
+    for (i = 0; i < signalCount; ++i)
+    {
+        EV_SET(_change+i, signalList[i], EVFILT_SIGNAL, EV_ADD | EV_ENABLE, 0, 0, NULL);
+        signal(signalList[i], SIG_IGN);
+    }
+    EV_SET(_change+i, _socket, EVFILT_READ, EV_ADD, 0, 0, NULL);
+    if (kevent(_kq, _change, signalCount+1, NULL, 0, NULL) == ERROR)
+        throw std::runtime_error("Error: Kevent: Register server socket to KQueue");
 }
 
 void Server::initSocket()

@@ -14,6 +14,7 @@ struct Args
 
 static Args getArgs(int argc, char *argv[])
 {
+    std::cout << "Process ID (PID): " << getpid() << std::endl;
     if (argc != 3)
         throw std::invalid_argument("Error: wrong number of arguments");
     Args args;
@@ -31,6 +32,7 @@ static Args getArgs(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+
     try
     {
         Args args = getArgs(argc, argv);

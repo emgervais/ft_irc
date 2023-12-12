@@ -24,7 +24,6 @@
 #define USAGE "Wrong usage : ./ircserv <port>(0-65535) <password>"
 
 #define MAX_CLIENTS 10
-#define MAX_EVENTS 128
 
 #define MSG_MAX_LEN 512
 #define CRLF "\r\n"

@@ -1,4 +1,5 @@
 *.txt
+!vgsuppress.txt
 *.o
 *.d
 *.a

@@ -17,20 +17,25 @@
 class Client;
 class Channel;
 
+#define SIGNAL_QTY 5
+#define CHANGE_LIST_SIZE (SIGNAL_QTY + 1)
+#define MAX_EVENTS (CHANGE_LIST_SIZE + MAX_CLIENTS * 2)
+
+
 class Server
 {
     private:
         int                     _socket;
         int                     _port;
         std::string             _pass;
-        int                     _maxClients;
+        size_t                  _maxClients;
         sockaddr_in             _addr;
         fd_set                  _readFdSet;
         fd_set                  _writeFdSet;
         std::map<int, Client*>  _clients;
         std::map<std::string, Channel*> _channels;
         struct kevent           _events[MAX_EVENTS];
-        struct kevent           _change;
+        struct kevent           _change[CHANGE_LIST_SIZE];
         char                    _buffer[BUFF_SIZE];
         int                     _kq;
 
