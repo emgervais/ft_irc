@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from random import randint
 from init import netcat, server, send_command, receive_response, _login
 from time import sleep
@@ -24,7 +25,7 @@ def clients_chat(ncs):
 		_login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
 	for nc in ncs:
 		send_command(nc, f"JOIN {CHANNEL}")
-	msg = "Salut toé"
+	msg = "Salut toé😍"
 	send_command(ncs[0], f"PRIVMSG {CHANNEL} :{msg}")
 	input("connect")
 	for nc in ncs[1:]:
@@ -38,6 +39,7 @@ def clients_chat2(ncs):
 		_login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
 	for nc in ncs:
 		send_command(nc, f"JOIN {CHANNEL}")
+	sleep(1)
 	input("press enter to send messages")
 	for i, nc in enumerate(ncs):
 		msg = f"from client_{i}"

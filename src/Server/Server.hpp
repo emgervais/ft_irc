@@ -41,6 +41,7 @@ class Server
 
         int     serverQueue();
         void    initSocket();
+        void    bindSocket();
         void    initKqueue();
         void    addWriteKevent();
         void    editKevent(int socket, int filter, int flags, std::string msg);

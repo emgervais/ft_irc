@@ -67,40 +67,6 @@ std::string extractLastElement(std::string const& _raw, size_t& i)
     return element;
 }
 
-
-// void    Command::splitRawCommand()
-// {
-//     if (_raw.size() > MSG_MAX_LEN)
-//         _client.addReply(ERR_INPUTTOOLONG(_client.getNick()));
-
-//     size_t i = 0;
-//     if (_raw[i] == ':')
-//     {
-//         i += 1;
-//         _prefix = extractElement(_raw, i);
-//     }
-//     _cmd = extractElement(_raw, i);
-
-//     bool done = false;
-//     do
-//     {
-//         std::string param;
-//         if (_raw[i] == ':')
-//         {
-//             param = extractLastElement(_raw, i);
-//             done = true;
-//         }
-//         else
-//         {
-//             param = extractElement(_raw, i);
-//         }
-//         if (param.size())
-//             _params.push_back(param);
-//         else
-//             done = true;
-//     } while (!done);
-// }
-
 void    Command::splitRawCommand()
 {
     std::stringstream ss(_raw);
@@ -121,7 +87,7 @@ void    Command::splitRawCommand()
             std::string lastParam = param.substr(1);
 			if (!ss.eof())
             {
-                std::getline(ss, param); // doesn't handle multiline params
+                std::getline(ss, param);
                 lastParam += param;
             }
             _params.push_back(lastParam);

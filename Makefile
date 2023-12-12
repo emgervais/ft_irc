@@ -50,6 +50,9 @@ leak:
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=vgsuppress.txt ./$(NAME) 1234 jambon
 
 
+kill:
+	kill $(shell pgrep $(NAME))
+
 $(NAME): $(OBJ)
 	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 	@echo $(GREEN) $(NAME) created $(NO_COLOR)

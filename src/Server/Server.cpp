@@ -59,33 +59,38 @@ void Server::initSocket()
     if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
         throw std::runtime_error("setsockopt() failed");
     
-    if (fcntl(_socket, F_SETFL, O_NONBLOCK) < 0) // Shouldn't be necessary since we use kqueue, but we never know with macOS LOL
-        throw std::runtime_error("fcntl() failed");
+    // if (fcntl(_socket, F_SETFL, O_NONBLOCK) < 0) // Shouldn't be necessary since we use kqueue, but we never know with macOS LOL
+    //     throw std::runtime_error("fcntl() failed");
    
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
     _addr.sin_port = htons(_port);
 
-    int bindAttempt = 0;
+    bindSocket();
+    if (listen(_socket, _maxClients) < 0)
+        throw std::runtime_error("listen() failed");
+}
+
+void Server::bindSocket()
+{
+    int i = 0;
     const int maxBindAttempts = 3;
-    const int retryIntervalSeconds = 2;    
-    
+    const int retryIntervalSeconds = 2;   
+
     while (bind(_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) == ERROR)
     {
-        if (errno == EADDRINUSE && bindAttempt < maxBindAttempts)
+        if (errno == EADDRINUSE && i < maxBindAttempts)
         {
             std::cerr << "bind() failed, retrying in " << retryIntervalSeconds << "seconds" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(retryIntervalSeconds));
-            ++bindAttempt;
+            ++i;
         }
         else
         {
-            std::cerr << "bind() failed, giving up." << std::endl;
+            std::cerr << "bind() failed, shutting down server." << std::endl;
             exit(1);
         }
     }
-    if (listen(_socket, _maxClients) < 0)
-        throw std::runtime_error("listen() failed");
 }
 
 // -- end ----
