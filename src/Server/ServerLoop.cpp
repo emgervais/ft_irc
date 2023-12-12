@@ -59,12 +59,16 @@ void Server::readFromClient(int socket)
 
 void Server::handleMsg(int socket, ssize_t bytesRead)
 {
-    if (_buffer[bytesRead - 1] != '\n' || _buffer[bytesRead - 2] != '\r')
+    if (_buffer[bytesRead - 2] != '\r' || _buffer[bytesRead - 1] != '\n')
         return;
-    std::string raw(_buffer);
-    raw = raw.substr(0, bytesRead - 2);
-    Command cmd(*_clients[socket], *this, raw);
-    cmd.exec();
+    std::vector<std::string> cmds = splitString(_buffer, "\r\n");
+    _buffer[0] = '\0';
+
+    for (size_t i = 0; i < cmds.size(); ++i)
+    {
+        Command cmd(*_clients[socket], *this, cmds[i]);
+        cmd.exec();
+    }    
 }
 
 // -- send ----

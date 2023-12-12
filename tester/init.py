@@ -29,7 +29,6 @@ def stop_server():
 def start_nc(host, port):
 	try:
 		nc_process = subprocess.Popen(['nc', host, str(port)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		sleep(1)
 		return nc_process
 	except FileNotFoundError:
 		print("Netcat (nc) command not found. Please make sure it's installed and in your PATH.")
@@ -43,7 +42,7 @@ def send_command(nc_process, text):
 		text += "\r\n"
 		nc_process.stdin.write(text.encode())
 		nc_process.stdin.flush()
-		sleep(.2)
+		# sleep(.01)
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
@@ -57,6 +56,8 @@ def receive_response(nc_process, keyword=""):
 			output = nc_process.stdout.readline().decode().strip()
 			if not keyword or (keyword and keyword.lower() in output.lower()):
 				break
+		if keyword not in output:
+			return ""
 		return output
 	except Exception as e:
 		print(f"Error receiving response: {e}")

@@ -1,6 +1,7 @@
+#include <signal.h>
+#include <thread>
 #include "Server.hpp"
 #include "NumericReplies.hpp"
-#include <signal.h>
 
 // -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)
@@ -64,9 +65,25 @@ void Server::initSocket()
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
     _addr.sin_port = htons(_port);
+
+    int bindAttempt = 0;
+    const int maxBindAttempts = 3;
+    const int retryIntervalSeconds = 2;    
     
-    if (bind(_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) < 0)
-        throw std::runtime_error("bind() failed");
+    while (bind(_socket, reinterpret_cast<sockaddr*>(&_addr), sizeof(_addr)) == ERROR)
+    {
+        if (errno == EADDRINUSE && bindAttempt < maxBindAttempts)
+        {
+            std::cerr << "bind() failed, retrying in " << retryIntervalSeconds << "seconds" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(retryIntervalSeconds));
+            ++bindAttempt;
+        }
+        else
+        {
+            std::cerr << "bind() failed, giving up." << std::endl;
+            exit(1);
+        }
+    }
     if (listen(_socket, _maxClients) < 0)
         throw std::runtime_error("listen() failed");
 }
