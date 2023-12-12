@@ -103,10 +103,8 @@ bool    Channel::isMode(const std::string& mode, const std::string& param) const
         {
             std::vector<std::string>::const_iterator it2;
             for (it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-            {
                 if (*it2 == param)
                     return true;
-            }
         }
     }
     return false;
@@ -188,12 +186,22 @@ bool    Channel::isClientOnChannel(const std::string& nick) const
 
 std::string     Channel::getModeString() const
 {
-    std::string mode;
-    std::map<std::string, std::vector<std::string> >::const_iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
+    std::string mode = "+";
+    std::string addLimit = "";
+    std::map<std::string, std::vector<std::string> >::const_iterator it = _modes.begin();
+    
+    for (; it != _modes.end(); ++it)
     {
-        mode += it->first;
+        if (it->first == "o")
+            continue;
+        else if (it->first == "l")
+        {
+            mode += it->first;
+            addLimit = it->second[0];
+        }
     }
+    if (addLimit != "")
+        mode += " :" + addLimit;
     return mode;
 }
 
