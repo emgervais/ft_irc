@@ -96,12 +96,26 @@ Server::~Server()
     std::map<int, Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        closeClient(it->first);
+        if (it->second)
+        {
+            delete it->second;
+            try
+            {
+                editKevent(it->first, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
+                editKevent(it->first, EVFILT_WRITE, EV_DELETE, "deleting client write from kqueue");
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+        }
+        close(it->first);
     }
     std::map<std::string, Channel*>::iterator it2;
     for (it2 = _channels.begin(); it2 != _channels.end(); ++it2)
     {
-        delete it2->second;
+        if (it2->second)
+            delete it2->second;
     }
     close(_kq);
     close(_socket);

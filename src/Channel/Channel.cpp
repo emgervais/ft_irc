@@ -1,10 +1,10 @@
 #include "Channel.hpp"
 
-// t = topic takes no parameter
+// i = invite only takes no parameter
 // k = key takes parameter if +, no parameter if -
 // l = limit takes parameter if +, no parameter if -
-// i = invite only takes no parameter
 // o = operator always takes parameter
+// t = topic takes no parameter
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
     : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getTimeOfDay())
@@ -184,25 +184,30 @@ bool    Channel::isClientOnChannel(const std::string& nick) const
     return false;
 }
 
-std::string     Channel::getModeString() const
+std::string     Channel::getChanModes() const
 {
-    std::string mode = "+";
-    std::string addLimit = "";
-    std::map<std::string, std::vector<std::string> >::const_iterator it = _modes.begin();
-    
-    for (; it != _modes.end(); ++it)
+    std::string reply = "+";
+    std::string params;
+
+    std::map<std::string, std::vector<std::string> >::const_iterator it;
+    for (it = _modes.begin(); it != _modes.end(); ++it)
     {
-        if (it->first == "o")
-            continue;
-        else if (it->first == "l")
+        if (it->first != "o")
         {
-            mode += it->first;
-            addLimit = it->second[0];
+            reply += it->first;
+            if (it->first == "k" || it->first == "l")
+            {
+                if (it->second.size() > 0)
+                    params += " " + it->second[0];
+            }
         }
     }
-    if (addLimit != "")
-        mode += " :" + addLimit;
-    return mode;
+    if (!params.empty())
+    {
+        ssize_t pos = params.find_last_of(' ');
+        params.insert(pos, ":");
+    }
+    return (reply + params);
 }
 
 std::string     Channel::getNamesReply() const
@@ -225,4 +230,21 @@ void    Channel::removeAllModes(const Client& client)
 
     for (int i = 0; mode[i]; ++i)
         removeMode(std::string(1, mode[i]), client.getNick());
+}
+
+bool    Channel::canJoin() const
+{
+    if (isMode("l"))
+    {
+        try
+        {
+            if (getUsersCount() >= atoi(_modes.find("l")->second[0].c_str()))
+                return false;
+        }
+        catch (std::exception& e)
+        {
+            return false;
+        }
+    }
+    return true;
 }

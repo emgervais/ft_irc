@@ -30,9 +30,10 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_INVITE(nick, nickInvite, channel) ":" + nick + " INVITE " + nickInvite + " " + channel + CRLF
 #define RPL_KICK(nick, user, host, channel, nickKick, reason) ":" + nick + "!" + user + "@" + host + " KICK " + channel + " " + nickKick + " :" + reason + CRLF
 #define RPL_AWAY(nick, user, host, target, message) SERVER_NAME + "301 " + nick + " " + target + " :" + message + CRLF
-#define RPL_CHANNELMODEIS(nick, channel, modes) SERVER_NAME + "324 " + nick + " " + channel + " " + modes + CRLF
+#define RPL_CHANNELMODEIS(nick, channel, modes) SERVER_NAME + "324 " + nick + " " + channel + " :" + modes + CRLF
 #define RPL_CREATIONTIME(nick, channel, creationtime) SERVER_NAME + "329 " + nick + " " + channel + " " + creationtime + CRLF
 #define RPL_PRIVMSG(nick, user, host, target, message) ":" + nick + "!" + user + "@" + host + " PRIVMSG " + target + " :" + message + CRLF
+#define RPL_MODE(nick, user, host, target, modes) ":" + nick + "!" + user + "@" + host + " MODE " + target + " " + modes + CRLF
 
 
 // Errors
@@ -68,10 +69,13 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_NOTEXTTOSEND(nick) SERVER_NAME + "412 " + nick + " :No text to send" + CRLF
 #define ERR_NOTOPLEVEL(nick, mask) SERVER_NAME + "413 " + nick + " " + mask + " :No toplevel domain specified" + CRLF
 #define ERR_WILDTOPLEVEL(nick, mask) SERVER_NAME + "414 " + nick + " " + mask + " :Wildcard in toplevel domain" + CRLF
-#define ERR_UNKNOWNMODE(nick, mode) SERVER_NAME + "472 " + nick + " " + mode + " :is unknown mode char to me" + CRLF
-#define ERR_SPECIFYLIM(nick) SERVER_NAME + "696 " + nick + " l * :You must specify a parameter for the limit mode. Syntax: <limit>." + CRLF
+#define ERR_UNKNOWNMODE(nick, mode) SERVER_NAME + "472 " + nick + " " + mode + " :is not a recognised channel mode." + CRLF
+#define ERR_SPECIFYLIMIT(nick) SERVER_NAME + "696 " + nick + " l * :You must specify a parameter for the limit mode. Syntax: <limit>." + CRLF
 #define ERR_SPECIFYKEY(nick) SERVER_NAME + "696 " + nick + " k * :You must specify a parameter for the key mode. Syntax: <key>." + CRLF
 #define ERR_SPECIFYOP(nick) SERVER_NAME + "696 " + nick + " o * :You must specify a parameter for the op mode. Syntax: <nick>." + CRLF
-
+#define ERR_INVALIDKEY(nick, channel, key) SERVER_NAME + "696 " + nick + channel + " k " + key + " :Invalid key mode parameter. Syntax: <key>." + CRLF
+#define ERR_INVALIDLIMIT(nick, channel, limit) SERVER_NAME + "696 " + nick + channel + " l " + limit + " :Invalid limit mode parameter. Syntax: <limit>." + CRLF
 
 #endif
+
+//:Invalid limit mode parameter. Syntax: <limit>.

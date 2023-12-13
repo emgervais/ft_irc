@@ -21,6 +21,11 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
             addReply(ERR_BADCHANNELKEY(_nick, channel));
             return;
         }
+        if (chan->isMode("l") && chan->canJoin() == false)
+        {
+            addReply(ERR_CHANNELISFULL(_nick, channel));
+            return;
+        }
         chan->addClient(this);
     }
     else

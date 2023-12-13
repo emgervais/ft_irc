@@ -49,7 +49,9 @@ void Server::readFromClient(int socket)
     else
     {
         _buffer[bytesRead] = '\0';
-        FROM_CLIENT(std::string(_buffer));
+        std::string msg(_buffer);
+        if (msg.find("PONG") == std::string::npos)
+            FROM_CLIENT(std::string(_buffer));
         handleMsg(socket, bytesRead);
     }
 }

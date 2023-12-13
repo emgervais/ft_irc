@@ -22,12 +22,13 @@ class Channel
         void    setTopic(const std::string& topic);
         void    sendMessage(const std::string& msg, const std::string& sender="");
 
-        std::string     getModeString() const;
+        std::string     getChanModes() const;
         std::string     getNamesReply() const;
 
         std::string     getName() const;
         std::string     getTopic() const;
         int             getUsersCount() const;
+        bool            canJoin() const;
 
         void            removeAllModes(const Client& client);
         bool            isMode(const std::string& mode) const;

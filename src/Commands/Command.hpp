@@ -38,11 +38,12 @@ class Command
         void    cmdMode();
         void    cmdPrivMsg();
 
-        // void    cmdModeO(Channel *channel, char sign, const std::string &param);
-        // void    cmdModeI(Channel *channel, char sign);
-        // void    cmdModeK(Channel *channel, char sign, const std::string &param);
-        // void    cmdModeL(Channel *channel, char sign, const std::string &param);
-        // void    cmdModeT(Channel *channel, char sign);
+        void     cmdModeLoop(Channel *channel);
+        bool     cmdModeO(Channel *channel, char sign, const std::string &param);
+        bool     cmdModeI(Channel *channel, char sign);
+        bool     cmdModeK(Channel *channel, char sign, const std::string &param);
+        bool     cmdModeL(Channel *channel, char sign, const std::string &param);
+        bool     cmdModeT(Channel *channel, char sign);
 
     public:
         static void initCmdHandler();
