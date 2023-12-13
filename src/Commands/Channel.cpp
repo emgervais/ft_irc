@@ -10,7 +10,7 @@ void    Command::cmdTopic()
             _client.addReply(ERR_NOTONCHANNEL(_client.getNick(), _params[0]));
         else if (!channel->isClientOnChannel(_client))
             _client.addReply(ERR_NOTONCHANNEL(_client.getNick(), _params[0]));
-        else if (!channel->isMode("t") && !channel->isMode("o", _client.getNick()))
+        else if (channel->isMode("t") && !channel->isMode("o", _client.getNick()))
             _client.addReply(ERR_CHANOPRIVSNEEDED(_client.getNick(), _params[0]));
         else
         {

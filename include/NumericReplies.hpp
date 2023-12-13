@@ -77,5 +77,3 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_INVALIDLIMIT(nick, channel, limit) SERVER_NAME + "696 " + nick + channel + " l " + limit + " :Invalid limit mode parameter. Syntax: <limit>." + CRLF
 
 #endif
-
-//:Invalid limit mode parameter. Syntax: <limit>.

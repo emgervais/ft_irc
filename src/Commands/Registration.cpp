@@ -2,14 +2,12 @@
 
 void    Command::cmdPass()
 {
-    std::string pass = contcatParams(_params);
-    _client.checkPassword(pass);
+    _client.checkPassword(contcatParams(_params));
 }
 
 void    Command::cmdNick()
 {
-    std::string nick = contcatParams(_params);
-    _client.setNick(nick);
+    _client.setNick(contcatParams(_params));
 }
 
 void    Command::cmdUser()

@@ -25,7 +25,7 @@ static std::string  getChangeModes(std::string modes[2])
     if (!modes[1].empty())
     {
         ssize_t pos = modes[1].find_last_of(' ');
-        modes[1].insert(pos, ":");
+        modes[1].insert(pos + 1, ":");
         changeModes += modes[1];
     }
     return (changeModes);
@@ -42,7 +42,10 @@ void    Command::cmdMode()
     if (!channel)
         _client.addReply(ERR_NOSUCHCHANNEL(_client.getNick(), _params[0]));
     else if (_params.size() == 1)
+    {
         _client.addReply(RPL_CHANNELMODEIS(_client.getNick(), channel->getName(), channel->getChanModes()));
+        _client.addReply(RPL_CREATIONTIME(_client.getNick(), channel->getName(), channel->getCreationTime()));
+    }
     else
     {
         if (channel->isMode("o", _client.getNick()) == false)
@@ -74,12 +77,12 @@ void    Command::cmdModeLoop(Channel *channel)
         }
         if (*it == 'o'|| *it == 'k' || *it == 'l')
         {
-            if (params == _params.end() || (sign == '-' && *it != 'o'))
+            if (params == _params.end() || (sign == '-' && *it == 'l'))
                 param = "";
             else
                 param = *params++;
         }
-        else if (*it == 'i')
+        if (*it == 'i')
             modeChange = cmdModeI(channel, sign);
         else if (*it == 'o')
             modeChange = cmdModeO(channel, sign, param);
@@ -96,14 +99,18 @@ void    Command::cmdModeLoop(Channel *channel)
         }
         if (modeChange)
         {
-            modeChanges[0] += sign + *it;
+            modeChanges[0] += std::string(1, sign) + std::string(1, *it);
             if (!param.empty())
-                modeChanges[0] += " " + param;
+                modeChanges[1] += " " + param;
         }
         ++it;
     }
     if (!modeChanges[0].empty())
-        _client.addReply(RPL_MODE(_client.getNick(), _client.getUser(), _client.getHostname(), channel->getName(), getChangeModes(modeChanges)));
+    {
+        std::string changeModes = RPL_MODE(_client.getNick(), _client.getUser(), _client.getHostname(), channel->getName(), getChangeModes(modeChanges));
+        _client.addReply(changeModes);
+        channel->sendMessage(changeModes, _client.getNick());
+    }
 }
 
 bool    Command::cmdModeO(Channel *channel, char sign, const std::string& param)
@@ -182,6 +189,8 @@ bool    Command::cmdModeK(Channel *channel, char sign, const std::string& param)
                 else
                     _client.addReply(ERR_INVALIDKEY(_client.getNick(), channel->getName(), param));
             }
+            else
+                std::cout << "Already has a key" << std::endl;
         }
     }
     return false;
@@ -189,25 +198,22 @@ bool    Command::cmdModeK(Channel *channel, char sign, const std::string& param)
 
 bool    Command::cmdModeL(Channel *channel, char sign, const std::string& param)
 {
-    if (param.empty())
-        _client.addReply(ERR_SPECIFYLIMIT(_client.getNick()));
+
+    if (sign == '-' && channel->isMode("l"))
+    {
+        channel->removeMode("l");
+        return true;
+    }
     else
     {
-        if (sign == '-' && channel->isMode("l"))
+        if (param.find_first_not_of("0123456789") == std::string::npos)
         {
             channel->removeMode("l");
+            channel->addMode("l", param);
             return true;
         }
         else
-        {
-            if (param.find_first_not_of("0123456789") == std::string::npos)
-            {
-                channel->addMode("l", param);
-                return true;
-            }
-            else
-                _client.addReply(ERR_INVALIDLIMIT(_client.getNick(), channel->getName(), param));
-        }
+            _client.addReply(ERR_INVALIDLIMIT(_client.getNick(), channel->getName(), param));
     }
     return false;
 }

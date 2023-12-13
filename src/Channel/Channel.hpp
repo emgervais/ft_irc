@@ -11,6 +11,7 @@ class Channel
         std::vector<Client*>    _clients;
         Server                  &_server;
         std::string             _creationTime;
+        std::string             _topicTime;
         std::map<std::string, std::vector<std::string> > _modes;
 
     public:
@@ -24,7 +25,7 @@ class Channel
 
         std::string     getChanModes() const;
         std::string     getNamesReply() const;
-
+        std::string     getCreationTime() const;
         std::string     getName() const;
         std::string     getTopic() const;
         int             getUsersCount() const;

@@ -7,7 +7,7 @@
 // t = topic takes no parameter
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
-    : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getTimeOfDay())
+    : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getUnixTime())
 {
     _clients.push_back(const_cast<Client*>(&client));
     addMode("o", client.getNick());
@@ -52,6 +52,7 @@ void    Channel::removeClient(Client *client, const std::string& reason)
 void    Channel::setTopic(const std::string& topic)
 {
     _topic = topic;
+    _topicTime = getUnixTime();
     sendMessage(RPL_TOPIC(_clients[0]->getNick(), _name, _topic), _clients[0]->getNick());
 }
 
@@ -224,6 +225,11 @@ std::string     Channel::getNamesReply() const
     return reply;
 }
 
+std::string     Channel::getCreationTime() const
+{
+    return _creationTime;
+}
+
 void    Channel::removeAllModes(const Client& client)
 {
     char    mode[3] = {'o', 'i', '\0'};
@@ -238,6 +244,7 @@ bool    Channel::canJoin() const
     {
         try
         {
+            std::cout << atoi(_modes.find("l")->second[0].c_str()) << std::endl;
             if (getUsersCount() >= atoi(_modes.find("l")->second[0].c_str()))
                 return false;
         }

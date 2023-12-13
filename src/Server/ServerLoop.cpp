@@ -92,60 +92,16 @@ void Server::writeToClient(int socket)
     }
 }
 
-void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
-{
-    std::map<int, Client*>::iterator it;
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
-        {
-            it->second->addReply(msg);
-        }
-    }
-}
-
-// -- Kevent ----
-void Server::editKevent(int socket, int filter, int flags, std::string msg)
-{
-    EV_SET(_change, socket, filter, flags, 0, 0, NULL);
-    if (kevent(_kq, _change, 1, NULL, 0, NULL) == ERROR)
-    {
-        bool deleteNonExistent = (errno == ENOENT);
-        if (deleteNonExistent)
-            return;
-        else
-            throw std::runtime_error("Error: " + msg);
-    }
-}
-
-void Server::addWriteKevent()
-{
-    std::map<int, Client*>::iterator it;
-
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if (it->second && !it->second->getReply().empty())
-            editKevent(it->first, EVFILT_WRITE, EV_ADD | EV_ONESHOT, "adding client write to kqueue");
-    }
-}
-
-int Server::serverQueue()
-{
-    int evQty = kevent(_kq, NULL, 0, _events, MAX_EVENTS, NULL);
-    if (evQty == ERROR)
-        throw std::runtime_error("Error: kqueue event creation failed");
-    return evQty;
-}
-
 // -- exit ----
 void Server::exitSignal(int sig)
 {
-    std::cout << "Quitting due to signal reception: ";
     const char *signal_name = strsignal(sig);
-    if (signal_name != nullptr) {
+
+    std::cout << std::endl << "Quitting due to signal reception: ";
+    if (signal_name != nullptr)
         std::cout << signal_name << " (" << sig << ")" << std::endl;
-    } else {
+    else
         std::cout << "Unknown Signal (" << sig << ")" << std::endl;
-    }
+
     exit(128 + sig);
 }

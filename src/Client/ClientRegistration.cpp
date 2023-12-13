@@ -7,9 +7,9 @@ static std::string    getHostName(int socket)
     char                hostname[NI_MAXHOST];
 
     if (getpeername(socket, (struct sockaddr *)&addr, &len) == -1)
-        return ("");
+        return ("Unknown");
     if (getnameinfo((struct sockaddr *)&addr, len, hostname, sizeof(hostname), NULL, 0, 0) == -1)
-        return ("");
+        return ("Unknown");
     return (std::string(hostname));
 }
 
