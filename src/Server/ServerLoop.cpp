@@ -33,7 +33,16 @@ void Server::registerNewClient()
         std::cerr << "Error: accepting new client" << std::endl;
         return;
     }
-    editKevent(clientSocket, EVFILT_READ, EV_ADD, "adding client read to kqueue");
+    try
+    {
+        editKevent(clientSocket, EVFILT_READ, EV_ADD, "adding client read to kqueue");
+    }
+    catch (const std::runtime_error& e)
+    {
+        std::cerr << "Client connection failed. Disconnecting." << std::endl;
+        close(clientSocket);
+        return;
+    }
     Client *newClient = new Client(clientSocket, *this);
     NEW_CONNECTION_MSG(clientSocket);
     _clients.insert(std::make_pair(clientSocket, newClient));
@@ -43,7 +52,10 @@ void Server::readFromClient(int socket)
 {
     ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
     if (bytesRead == -1)
+    {
         std::cerr << "Error: reading from client" << std::endl;
+        closeClient(socket);
+    }
     else if (bytesRead == 0)
         closeClient(socket);
     else
@@ -81,7 +93,10 @@ void Server::writeToClient(int socket)
         std::string msg = _clients[socket]->getReply();
         ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
         if (bytesSent == ERROR)
+        {
             std::cerr << "Error: sending to client" << std::endl;
+            closeClient(socket);
+        }
         else if (bytesSent == 0)
             closeClient(socket);
         else

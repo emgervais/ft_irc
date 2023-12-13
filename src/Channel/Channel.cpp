@@ -206,7 +206,7 @@ std::string     Channel::getChanModes() const
     if (!params.empty())
     {
         ssize_t pos = params.find_last_of(' ');
-        params.insert(pos, ":");
+        params.insert(pos + 1, ":");
     }
     return (reply + params);
 }

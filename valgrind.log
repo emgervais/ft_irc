@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ==2791== Memcheck, a memory error detector
 ==2791== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
 ==2791== Using Valgrind-3.22.0.GIT-lbmacos and LibVEX; rerun with -h for copyright info
@@ -24,3 +25,47 @@
 ==2791== 
 ==2791== For lists of detected and suppressed errors, rerun with: -s
 ==2791== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 4 from 4)
+=======
+==7345== Memcheck, a memory error detector
+==7345== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==7345== Using Valgrind-3.21.0.GIT-lbmacos and LibVEX; rerun with -h for copyright info
+==7345== Command: ./ircserv 1234 jambon
+==7345== Parent PID: 7344
+==7345== 
+--7345-- UNKNOWN mach_msg unhandled MACH_SEND_TRAILER option
+--7345-- UNKNOWN mach_msg unhandled MACH_SEND_TRAILER option (repeated 2 times)
+--7345-- UNKNOWN mach_msg unhandled MACH_SEND_TRAILER option (repeated 4 times)
+==7345== 
+==7345== FILE DESCRIPTORS: 5 open (3 std) at exit.
+==7345== Open AF_UNIX socket 9: <unknown>
+==7345==    at 0x1007C60D6: socket (in /usr/lib/system/libsystem_kernel.dylib)
+==7345==    by 0x10066B9F9: ConnectToServer (in /usr/lib/system/libsystem_dnssd.dylib)
+==7345==    by 0x10066B782: DNSServiceCreateConnection (in /usr/lib/system/libsystem_dnssd.dylib)
+==7345==    by 0x100694F74: _mdns_search_ex (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x10069BCB3: mdns_hostbyaddr (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x10069B719: si_host_byaddr (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x10069B828: search_host_byaddr (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x10069B719: si_host_byaddr (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x100691DC9: si_nameinfo (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x1006916C3: _getnameinfo_interface_internal (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x1006915DB: getnameinfo (in /usr/lib/system/libsystem_info.dylib)
+==7345==    by 0x10001883C: getHostName(int) (ClientRegistration.cpp:11)
+==7345== 
+==7345== Open file descriptor 3: /Users/francoma/Desktop/Projets/ft_irc/github/valgrind.log
+==7345==    <inherited from parent>
+==7345== 
+==7345== 
+==7345== HEAP SUMMARY:
+==7345==     in use at exit: 27,554 bytes in 203 blocks
+==7345==   total heap usage: 411 allocs, 208 frees, 64,449 bytes allocated
+==7345== 
+==7345== LEAK SUMMARY:
+==7345==    definitely lost: 0 bytes in 0 blocks
+==7345==    indirectly lost: 0 bytes in 0 blocks
+==7345==      possibly lost: 0 bytes in 0 blocks
+==7345==    still reachable: 0 bytes in 0 blocks
+==7345==         suppressed: 27,554 bytes in 203 blocks
+==7345== 
+==7345== For lists of detected and suppressed errors, rerun with: -s
+==7345== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 21 from 21)
+>>>>>>> refs/remotes/origin/main
