@@ -1,8 +1,477 @@
 {
-   ostream_still_reachable
+   <insert_a_suppression_name_here>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:malloc                          
+   fun:malloc
+   fun:strdup
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:__si_module_static_mdns_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_mdns
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:__si_module_static_file_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_file
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:__si_module_static_cache_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_cache
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+   fun:si_search
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+   fun:_ZL11getHostNamei
+   fun:_ZN6Client7setUserENSt3__16vectorINS0_12basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEENS5_IS7_EEEE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+   fun:si_search
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+   fun:_ZL11getHostNamei
+   fun:_ZN6Client7setUserENSt3__16vectorINS0_12basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEENS5_IS7_EEEE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_ZNK8method_t11remappedImpEb
+   fun:_ZN13list_array_ttI10property_t15property_list_t6RawPtrE11attachListsEPKPS1_j
+   fun:_ZNK13method_list_t9duplicateEv
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZL24realizeClassWithoutSwiftP10objc_classS0_
+   fun:-[NSObject dealloc]
+   fun:lookUpImpOrForward
+   fun:_xpc_pipe_routine
+   fun:xpc_pipe_routine_with_flags
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+   fun:si_search
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+   fun:_ZL11getHostNamei
+   fun:_ZN6Client7setUserENSt3__16vectorINS0_12basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEENS5_IS7_EEEE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_ZL27method_t_remappedImp_nolockPK8method_t
+   fun:_ZN13list_array_ttI10property_t15property_list_t6RawPtrE11attachListsEPKPS1_j
+   fun:_ZNK13method_list_t9duplicateEv
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZL24realizeClassWithoutSwiftP10objc_classS0_
+   fun:-[NSObject dealloc]
+   fun:lookUpImpOrForward
+   fun:_xpc_pipe_routine
+   fun:xpc_pipe_routine_with_flags
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:si_inet_config
+   fun:_mdns_search_ex
+   fun:mdns_hostbyaddr
+   fun:si_host_byaddr
+   fun:search_host_byaddr
+   fun:si_host_byaddr
+   fun:si_nameinfo
+   fun:_getnameinfo_interface_internal
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_object_remove_assocations
+   fun:_ZNK8method_t11remappedImpEb
+   fun:_ZN13list_array_ttI10property_t15property_list_t6RawPtrE11attachListsEPKPS1_j
+   fun:_ZNK13method_list_t9duplicateEv
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZN10class_rw_t8extAllocEPK10class_ro_tb
+   fun:_ZL24realizeClassWithoutSwiftP10objc_classS0_
+   fun:-[NSObject dealloc]
+   fun:lookUpImpOrForward
+   fun:_xpc_pipe_routine
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:__si_module_static_file_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_file
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:ConnectToServer
+   fun:DNSServiceCreateConnection
+   fun:_mdns_search_ex
+   fun:mdns_hostbyaddr
+   fun:si_host_byaddr
+   fun:search_host_byaddr
+   fun:si_host_byaddr
+   fun:si_nameinfo
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+   fun:_ZL11getHostNamei
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:si_inet_config
+   fun:_mdns_search_ex
+   fun:mdns_hostbyaddr
+   fun:si_host_byaddr
+   fun:search_host_byaddr
+   fun:si_host_byaddr
+   fun:si_nameinfo
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:LI_ils_create
+   fun:mdns_hostbyaddr
+   fun:si_host_byaddr
+   fun:search_host_byaddr
+   fun:si_host_byaddr
+   fun:si_nameinfo
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+   fun:_ZL11getHostNamei
+   fun:_ZN6Client7setUserENSt3__16vectorINS0_12basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEENS5_IS7_EEEE
+   fun:_ZN7Command7cmdUserEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:notify_dump_status
+   fun:notify_dump_status
+   fun:_notify_fork_child
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:notify_dump_status
+   fun:notify_monitor_file
+   fun:_notify_fork_child
+   fun:notify_register_check
+   fun:__si_module_static_ds_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_ds
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+   fun:si_search
+   fun:_getnameinfo_interface_internal
+   fun:getnameinfo
+   fun:_ZL11getHostNamei
+   fun:_ZN6Client7setUserENSt3__16vectorINS0_12basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEENS5_IS7_EEEE
+   fun:_ZN7Command7cmdUserEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strsignal
+   fun:_ZN6Server10exitSignalEi
+   fun:_ZN6Server3runEv
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
    fun:__smakebuf
    fun:__swsetup
    fun:__sfvwrite
@@ -12,14 +481,28 @@
    fun:_ZNSt3__124__put_character_sequenceIcNS_11char_traitsIcEEEERNS_13basic_ostreamIT_T0_EES7_PKS4_m
    fun:_ZNSt3__1lsINS_11char_traitsIcEEEERNS_13basic_ostreamIcT_EES6_PKc
    fun:_ZL7getArgsiPPc
+   fun:main
 }
 {
-   strsignal_from_<cstring>
+   <insert_a_suppression_name_here>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:malloc
-   fun:strsignal
-   fun:_ZN6Server10exitSignalEi
-   fun:_ZN6Server3runEv
-   fun:main
+   fun:calloc
+   fun:__si_module_static_cache_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_cache
+   fun:si_module_with_name
+   fun:si_module_config_modules_for_category
+   fun:__si_module_static_search_block_invoke
+   fun:_dispatch_client_callout
+   fun:_dispatch_once_callout
+   fun:si_module_static_search
+   fun:si_module_with_name
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:getnameinfo
 }

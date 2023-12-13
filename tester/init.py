@@ -85,23 +85,23 @@ def netcat(host, port, num_connections):
 			ncs = [start_nc(host, port) for _ in range(num_connections)]
 			if all(ncs):
 				func(ncs)
-				sleep(1)
-				input("Press enter to stop connections")
+				wait_user("Press enter to stop connections")
 				for nc in ncs:
 					nc.terminate()
 		return wrapper
 	return decorator
 
 def server(port, password):
-    def decorator(func):
-        def wrapper():
-            if not start_server(port, password):
-                print("Can't start server.")
-                exit(1)
-            func()
-            stop_server()
-        return wrapper
-    return decorator
+	def decorator(func):
+		def wrapper():
+			if not start_server(port, password):
+				print("Can't start server.")
+				exit(1)
+			func()
+			sleep(1)
+			stop_server()
+		return wrapper
+	return decorator
 
 # -- sub functions ----
 def _login(nc, passw, nick, login, real_name):
@@ -113,3 +113,9 @@ def _login(nc, passw, nick, login, real_name):
 def _pong(nc):
 	ping = receive_response(nc, "PING")
 	send_command(nc, ping.replace("PING", "PONG"))
+
+# -- util ----
+def wait_user(msg):
+	sleep(1)
+	input(msg)
+	
