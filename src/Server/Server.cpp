@@ -32,7 +32,7 @@ void Server::initSocket()
     _socket = socket(AF_INET, SOCK_STREAM, 0);
     int optval = 1;
     
-    if (_socket < 0)
+    if (_socket == ERROR)
         throw std::runtime_error("socket() failed");
 
     if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)

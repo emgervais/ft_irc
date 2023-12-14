@@ -9,6 +9,7 @@
 #define BLUE "\033[34m"
 #define RESET_COLOR "\033[0m"
 #define ERROR -1
+#define SWEAR_WORDS_PATH "data/swearWords.txt"
 
 #define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET_COLOR << msg << std::endl
 #define FROM_CLIENT(msg) std::cout << YELLOW + std::string("Client: ") + RESET_COLOR << msg << std::endl

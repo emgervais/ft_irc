@@ -1,3 +1,7 @@
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 #include "Server.hpp"
 
 // -- misc ----
@@ -91,3 +95,45 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
         if (std::find(sockets.begin(), sockets.end(), it->first) == sockets.end())
             it->second->addReply(msg);
 }
+
+void Server::loadSwearWords()
+{
+    std::ifstream file(SWEAR_WORDS_PATH);
+    if (!file.is_open())
+    {
+        std::cerr << "Error opening SWEAR_WORDS_PATH: " << SWEAR_WORDS_PATH << std::endl;
+        return;
+    }
+
+    std::string swearWord;
+    while (std::getline(file, swearWord))
+    {
+        std::transform(swearWord.begin(), swearWord.end(), swearWord.begin(), ::tolower);
+        swearWordsSet.insert(swearWord);
+    }
+    file.close();
+}
+
+void Server::censor(std::string& str)
+{
+    if (swearWordsSet.empty())
+        loadSwearWords();
+
+    std::string lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+
+    std::set<std::string>::iterator it;
+    for (it = swearWordsSet.begin(); it != swearWordsSet.end(); ++it)
+    {
+        std::string swearWord = *it;
+        size_t found = lowerStr.find(swearWord);
+        while (found != std::string::npos)
+        {
+            size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
+            if (vowel != std::string::npos)
+                str[vowel] = '*';
+            found = lowerStr.find(swearWord, found + 1);
+        }
+    }
+}
+

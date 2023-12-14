@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <string>
+#include <set>
 #include "util.hpp"
 
 #define SIGNAL_QTY 5
@@ -38,6 +40,9 @@ class Server
         void    handleMsg(int socket, ssize_t bytesRead);
         void    exitSignal(int sig);
 
+        std::set<std::string> swearWordsSet;
+        void    loadSwearWords();
+
         Server(void);
         Server(const Server& rhs);
         Server& operator=(const Server& rhs);
@@ -58,6 +63,7 @@ class Server
 
         std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
         std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
+        void            censor(std::string& str);
 };
 
 #endif
