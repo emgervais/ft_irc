@@ -1,4 +1,9 @@
 #include "Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../Commands/Command.hpp"
+#include <thread>
+#include <unistd.h>
 
 // -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)

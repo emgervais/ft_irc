@@ -1,4 +1,10 @@
 #include "Command.hpp"
+#include "../Server/Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../util/util.hpp"
+#include "NumericReplies.hpp"
+#include <sstream>
 
 void    Command::cmdTopic()
 {

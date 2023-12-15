@@ -1,10 +1,9 @@
 #include "Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "../util/util.hpp"
+#include "NumericReplies.hpp"
 
-// i = invite only takes no parameter
-// k = key takes parameter if +, no parameter if -
-// l = limit takes parameter if +, no parameter if -
-// o = operator always takes parameter
-// t = topic takes no parameter
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
     : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getUnixTime())

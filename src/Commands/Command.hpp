@@ -1,7 +1,14 @@
 #ifndef Command_HPP
 #define Command_HPP
 
-#include "util.hpp"
+#include <string>
+#include <vector>
+#include <map>
+
+class Client;
+class Server;
+class Channel;
+class Command;
 
 typedef void (Command::*cmdFunc)(void);
 

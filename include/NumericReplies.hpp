@@ -1,7 +1,7 @@
 #ifndef NUMERICSREPLIES_HPP
 #define NUMERICSREPLIES_HPP
 
-#include "util.hpp"
+#include <string>
 
 const std::string SERVER_NAME = ":irc.localhost ";
 

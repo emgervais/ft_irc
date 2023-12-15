@@ -1,4 +1,7 @@
 #include "Client.hpp"
+#include "../Server/Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "NumericReplies.hpp"
 
 void    Client::joinChannel(const std::string& channel, const std::string& key)
 {

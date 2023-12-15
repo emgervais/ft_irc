@@ -1,4 +1,9 @@
 #include "Command.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "../util/util.hpp"
+#include "NumericReplies.hpp"
+#include <sstream>
 
 // -- init ----
 std::map<const std::string, cmdFunc> Command::_cmdHandler;
@@ -102,6 +107,20 @@ void    Command::exec()
         (this->*f)();
     else
         _client.addReply(ERR_UNKNOWNCOMMAND(_client.getNick(), _cmd));
+}
+
+void    Command::cmdPrivMsg()
+{
+	if (_params.size() < 2)
+	{
+		_client.addReply(ERR_NOTEXTTOSEND(_client.getNick()));
+		return;
+	}
+	std::vector<std::string> targets = splitString(_params[0], ",");
+	std::vector<std::string> msgParts(_params.begin() + 1, _params.end());
+	std::string msg = contcatParams(msgParts);
+	_server.censor(msg, &_client);
+	_client.sendMessage(targets, msg);
 }
 
 // -- end ----

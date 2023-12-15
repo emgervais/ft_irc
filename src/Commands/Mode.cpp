@@ -1,4 +1,9 @@
 #include "Command.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "NumericReplies.hpp"
+#include <iostream>
 
 static std::string  getChangeModes(std::string modes[2])
 {
