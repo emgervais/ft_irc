@@ -1,4 +1,9 @@
 #include "Command.hpp"
+#include "NumericReplies.hpp"
+#include "../util/util.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include <sstream>
 
 void Command::cmdQuit()
 {

@@ -1,8 +1,9 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
 #include "Server.hpp"
+#include "../util/util.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "NumericReplies.hpp"
+#include <fstream>
 
 // -- misc ----
 std::string Server::getPass() const
@@ -71,7 +72,7 @@ std::string Server::getChannelReply(const std::string& name, const std::string& 
     std::map<std::string, Channel*>::const_iterator it;
     for (it = _channels.begin(); it != _channels.end(); ++it)
     {
-        if (it->first == name)
+        if (it->first == name && (it->second->isClientOnChannel(clientNick) || it->second->isMode("n") == false))
             return (RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
     }
     return "";
@@ -83,7 +84,10 @@ std::vector<std::string> Server::getChannelsReply(const std::string& clientNick)
     std::map<std::string, Channel*>::const_iterator it;
 
     for (it = _channels.begin(); it != _channels.end(); ++it)
-        channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    {
+        if (it->second->isClientOnChannel(clientNick) || it->second->isMode("n") == false)
+            channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    }
     return channelsList;
 }
 
@@ -144,7 +148,10 @@ void Server::censor(std::string& str, Client* c)
             Warned = true;
             size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
             if (vowel != std::string::npos)
+            {
                 str[vowel] = '*';
+                censored = true;
+            }
             found = lowerStr.find(swearWord, found + 1);
         }
     }

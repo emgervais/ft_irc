@@ -1,4 +1,9 @@
 #include "Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../Commands/Command.hpp"
+#include <thread>
+#include <unistd.h>
 
 // -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)
@@ -77,22 +82,15 @@ Server::~Server()
 
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        closeClient(it->first);
-        // if (it->second)
-        // {
-        //     delete it->second;
-
-        //     // try
-        //     // {
-        //     //     editKevent(it->first, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
-        //     //     editKevent(it->first, EVFILT_WRITE, EV_DELETE, "deleting client write from kqueue");
-        //     // }
-        //     // catch(const std::exception& e)
-        //     // {
-        //     //     std::cerr << e.what() << '\n';
-        //     // }
-        // }
-        // close(it->first);
+        if (it->second)
+            delete it->second;
+        try
+        { 
+            editKevent(it->first, EVFILT_READ, EV_DELETE, "deleting client read from kqueue"); 
+            editKevent(it->first, EVFILT_WRITE, EV_DELETE, "deleting client write from kqueue");
+        } catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
+        
+        close(it->first);
     }
     
     for (it2 = _channels.begin(); it2 != _channels.end(); ++it2)

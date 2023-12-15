@@ -1,4 +1,6 @@
 #include "Command.hpp"
+#include "../util/util.hpp"
+#include "../Client/Client.hpp"
 
 void    Command::cmdPass()
 {

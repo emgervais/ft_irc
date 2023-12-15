@@ -1,14 +1,22 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "IRC.hpp"
+#include <sys/event.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <string>
+#include <map>
 #include <set>
-#include "util.hpp"
+
+
 
 #define SIGNAL_QTY 5
 #define CHANGE_LIST_SIZE (SIGNAL_QTY + 1)
 #define MAX_EVENTS (CHANGE_LIST_SIZE + MAX_CLIENTS * 2)
 
+class Client;
+class Channel;
 
 class Server
 {

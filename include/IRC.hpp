@@ -1,7 +1,8 @@
 #ifndef IRC_HPP
 #define IRC_HPP
 
-#include "util.hpp"
+#include <iostream>
+#include <string>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -26,7 +27,6 @@
 #define MAX_CLIENTS 10
 
 #define MSG_MAX_LEN 512
-#define CRLF "\r\n"
 
 #define NICK_NOT_CONTAIN " ,.*!?@/"
 #define NICK_NOT_START "0123456789$:#&+-"

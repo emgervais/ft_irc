@@ -1,7 +1,12 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "util.hpp"
+#include <string>
+#include <vector>
+#include <map>
+
+class Client;
+class Server;
 
 class Channel
 {
@@ -19,7 +24,7 @@ class Channel
         ~Channel();
 
         void    addClient(Client *client);
-        void    removeClient(Client *client, const std::string& reason);
+        void    removeClient(Client *client, const std::string& reason, Client *kicker=NULL);
         void    setTopic(const std::string& topic);
         void    sendMessage(const std::string& msg, const std::string& sender="");
 

@@ -1,4 +1,7 @@
 #include "Client.hpp"
+#include "../Server/Server.hpp"
+#include "../Channel/Channel.hpp"
+#include "NumericReplies.hpp"
 
 void    Client::joinChannel(const std::string& channel, const std::string& key)
 {
@@ -77,7 +80,7 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
             Channel* chan = _server.getChannel(*it);
             if (!chan)
                 addReply(ERR_NOSUCHCHANNEL(_nick, *it));
-            else if (chan->isClientOnChannel(*this))
+            else if (chan->isClientOnChannel(*this) || chan->isMode("n") == false)
                 chan->sendMessage(RPL_PRIVMSG(_nick, _user, _hostname, *it, message), _nick);
             else
                 addReply(ERR_CANNOTSENDTOCHAN(_nick, *it));

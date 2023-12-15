@@ -1,4 +1,11 @@
 #include "Client.hpp"
+#include "../Server/Server.hpp"
+#include "NumericReplies.hpp"
+#include "IRC.hpp"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <iostream>
 
 static std::string    getHostName(int socket)
 {
