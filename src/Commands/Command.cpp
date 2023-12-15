@@ -1,4 +1,9 @@
 #include "Command.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "../util/util.hpp"
+#include "NumericReplies.hpp"
+#include <sstream>
 
 // -- init ----
 std::map<const std::string, cmdFunc> Command::_cmdHandler;
@@ -19,6 +24,7 @@ void Command::initCmdHandler()
     _cmdHandler["KICK"] = &Command::cmdKick;
     _cmdHandler["MODE"] = &Command::cmdMode;
     _cmdHandler["PRIVMSG"] = &Command::cmdPrivMsg;
+    _cmdHandler["HELP"] = &Command::cmdHelp;
 }
 
 Command::Command(Client &client, Server &server, std::string const&raw)

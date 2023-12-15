@@ -1,7 +1,12 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "util.hpp"
+#include <string>
+#include <queue>
+#include <map>
+
+class Channel;
+class Server;
 
 class Client
 {
@@ -18,6 +23,7 @@ class Client
         bool                            _passChecked;
         bool                            _closing;
         std::map<std::string, Channel*> _channels;
+        int                             _warnings;
 
         std::queue<std::string>         _sendQueue;
     public:
@@ -51,6 +57,8 @@ class Client
         size_t          getRepliesQty() const;
         void            addReply(const std::string& reply);
         void            removeReply();
+        void            addWarning();
+        int             getWarning();
 };
 
 #endif

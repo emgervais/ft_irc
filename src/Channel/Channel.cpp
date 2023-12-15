@@ -1,10 +1,9 @@
 #include "Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "../util/util.hpp"
+#include "NumericReplies.hpp"
 
-// i = invite only takes no parameter
-// k = key takes parameter if +, no parameter if -
-// l = limit takes parameter if +, no parameter if -
-// o = operator always takes parameter
-// t = topic takes no parameter
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
     : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getUnixTime())
@@ -32,14 +31,20 @@ void    Channel::addClient(Client *client)
     sendMessage(RPL_JOIN(client->getNick(), client->getUser(), client->getHostname(), _name), client->getNick());
 }
 
-void    Channel::removeClient(Client *client, const std::string& reason)
+void    Channel::removeClient(Client *client, const std::string& reason, Client *kicker)
 {
     std::vector<Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         if (*it == client)
         {
-            sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason), client->getNick());
+            if (kicker)
+            {
+                sendMessage(RPL_KICK(kicker->getNick(), kicker->getUser(), kicker->getHostname(), _name, client->getNick(), reason), kicker->getNick());
+                sendMessage(RPL_KICK(kicker->getNick(), kicker->getUser(), kicker->getHostname(), _name, client->getNick(), reason), client->getNick());
+            }
+            else
+                sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason), client->getNick());
             removeAllModes(*client);
             _clients.erase(it);
             if (_clients.size() == 0)

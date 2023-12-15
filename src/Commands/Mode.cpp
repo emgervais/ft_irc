@@ -1,4 +1,11 @@
 #include "Command.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "../Server/Server.hpp"
+#include "NumericReplies.hpp"
+#include <iostream>
+
+const std::string OTHERMODES = "itns";
 
 static std::string  getChangeModes(std::string modes[2])
 {
@@ -63,7 +70,7 @@ void    Command::cmdModeLoop(Channel *channel)
     std::string param = "";
     char sign = '+';
     std::string modeChanges[2] = {"", ""};
-    bool modeChange = false;
+    bool    modeChanged = false;
 
     if (_params.size() > 2)
         params = _params.begin() + 2;
@@ -82,22 +89,15 @@ void    Command::cmdModeLoop(Channel *channel)
             else
                 param = *params++;
         }
-        if (*it == 'i')
-            modeChange = cmdModeI(channel, sign);
-        else if (*it == 'o')
-            modeChange = cmdModeO(channel, sign, param);
+        if (*it == 'o')
+            modeChanged = cmdModeO(channel, sign, param);
         else if (*it == 'k')
-            modeChange = cmdModeK(channel, sign, param);
+            modeChanged = cmdModeK(channel, sign, param);
         else if (*it == 'l')
-            modeChange = cmdModeL(channel, sign, param);
-        else if (*it == 't')
-            modeChange = cmdModeT(channel, sign);
+            modeChanged = cmdModeL(channel, sign, param);
         else
-        {
-            modeChange = false;
-            _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), *it));
-        }
-        if (modeChange)
+            modeChanged = cmdModeOther(channel, sign, *it);
+        if (modeChanged)
         {
             modeChanges[0] += std::string(1, sign) + std::string(1, *it);
             if (!param.empty())
@@ -115,18 +115,18 @@ void    Command::cmdModeLoop(Channel *channel)
 
 bool    Command::cmdModeO(Channel *channel, char sign, const std::string& param)
 {
-    if (param.empty())
-        _client.addReply(ERR_SPECIFYOP(_client.getNick()));
+    if (sign == '-')
+    {
+        if (channel->isMode("o", param))
+        {
+            channel->removeMode("o", param);
+            return true;
+        }
+    }
     else
     {
-        if (sign == '-')
-        {
-            if (channel->isMode("o", param))
-            {
-                channel->removeMode("o", param);
-                return true;
-            }
-        }
+        if (param.empty())
+            _client.addReply(ERR_SPECIFYOP(_client.getNick()));
         else
         {
             if (!channel->isMode("o", param))
@@ -137,27 +137,6 @@ bool    Command::cmdModeO(Channel *channel, char sign, const std::string& param)
                     return true;
                 }
             }
-        }
-    }
-    return false;
-}
-
-bool    Command::cmdModeI(Channel *channel, char sign)
-{
-    if (sign == '-')
-    {
-        if (channel->isMode("i"))
-        {
-            channel->removeMode("i");
-            return true;
-        }
-    }
-    else
-    {
-        if (!channel->isMode("i"))
-        {
-            channel->addMode("i", _client.getNick());
-            return true;
         }
     }
     return false;
@@ -218,21 +197,26 @@ bool    Command::cmdModeL(Channel *channel, char sign, const std::string& param)
     return false;
 }
 
-bool    Command::cmdModeT(Channel *channel, char sign)
+bool    Command::cmdModeOther(Channel *channel, char sign, char mode)
 {
+    if (OTHERMODES.find(mode) == std::string::npos)
+    {
+        _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), mode));
+        return false;
+    }
     if (sign == '-')
     {
-        if (channel->isMode("t"))
+        if (channel->isMode(std::string(1, mode)))
         {
-            channel->removeMode("t");
+            channel->removeMode(std::string(1, mode));
             return true;
         }
     }
     else
     {
-        if (!channel->isMode("t"))
+        if (!channel->isMode(std::string(1, mode)))
         {
-            channel->addMode("t", _client.getNick());
+            channel->addMode(std::string(1, mode), _client.getNick());
             return true;
         }
     }

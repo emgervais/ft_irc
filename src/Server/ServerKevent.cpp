@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "../Client/Client.hpp"
 
 // -- Kevent ----
 void Server::initKqueue()

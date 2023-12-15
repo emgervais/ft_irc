@@ -1,8 +1,9 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
 #include "Server.hpp"
+#include "../util/util.hpp"
+#include "../Channel/Channel.hpp"
+#include "../Client/Client.hpp"
+#include "NumericReplies.hpp"
+#include <fstream>
 
 // -- misc ----
 std::string Server::getPass() const
@@ -71,7 +72,7 @@ std::string Server::getChannelReply(const std::string& name, const std::string& 
     std::map<std::string, Channel*>::const_iterator it;
     for (it = _channels.begin(); it != _channels.end(); ++it)
     {
-        if (it->first == name)
+        if (it->first == name && (it->second->isClientOnChannel(clientNick) || it->second->isMode("n") == false))
             return (RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
     }
     return "";
@@ -83,7 +84,10 @@ std::vector<std::string> Server::getChannelsReply(const std::string& clientNick)
     std::map<std::string, Channel*>::const_iterator it;
 
     for (it = _channels.begin(); it != _channels.end(); ++it)
-        channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    {
+        if (it->second->isClientOnChannel(clientNick) || it->second->isMode("n") == false)
+            channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    }
     return channelsList;
 }
 
@@ -114,12 +118,23 @@ void Server::loadSwearWords()
     file.close();
 }
 
-bool Server::censor(std::string& str)
+void Server::swearPolice(Client *c) {
+    c->addWarning();
+    if(c->getWarning() >= 3) {
+        c->addReply("BadWordsPolice : Demande à ta mère de t'apprendre à parler");
+        c->partAllChannels();
+        c->setClosing();
+    }
+    else {
+        c->addReply("BadWordsPolice : Your language wont be tolerated for long!");
+    }
+}
+
+void Server::censor(std::string& str, Client* c)
 {
-    bool censored = false;
+    bool Warned = false;
     if (swearWordsSet.empty())
         loadSwearWords();
-
     std::string lowerStr = str;
     std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
 
@@ -130,6 +145,7 @@ bool Server::censor(std::string& str)
         size_t found = lowerStr.find(swearWord);
         while (found != std::string::npos)
         {
+            Warned = true;
             size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
             if (vowel != std::string::npos)
             {
@@ -139,6 +155,6 @@ bool Server::censor(std::string& str)
             found = lowerStr.find(swearWord, found + 1);
         }
     }
-    return censored;
+    if(Warned)
+        swearPolice(c);
 }
-

@@ -5,7 +5,7 @@ SRC_DIR = src/
 OBJ_DIR = obj/
 
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -g -std=c++98 -MMD $(INCLUDES)
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -MMD $(INCLUDES)
 
 SRC = Channel/Channel.cpp \
 	Client/Client.cpp \
@@ -15,8 +15,9 @@ SRC = Channel/Channel.cpp \
 	Commands/Command.cpp \
 	Commands/Connection.cpp \
 	Commands/Registration.cpp \
-	Commands/Sending.cpp \
 	Commands/Mode.cpp \
+	Commands/Utils.cpp \
+	Commands/Help.cpp \
 	main.cpp \
 	Server/Server.cpp \
 	Server/ServerLoop.cpp \
