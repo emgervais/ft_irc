@@ -63,7 +63,7 @@ class Server
 
         std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
         std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
-        void            censor(std::string& str);
+        bool            censor(std::string& str);
 };
 
 #endif

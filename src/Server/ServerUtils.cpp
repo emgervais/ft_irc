@@ -114,8 +114,9 @@ void Server::loadSwearWords()
     file.close();
 }
 
-void Server::censor(std::string& str)
+bool Server::censor(std::string& str)
 {
+    bool censored = false;
     if (swearWordsSet.empty())
         loadSwearWords();
 
@@ -131,9 +132,13 @@ void Server::censor(std::string& str)
         {
             size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
             if (vowel != std::string::npos)
+            {
                 str[vowel] = '*';
+                censored = true;
+            }
             found = lowerStr.find(swearWord, found + 1);
         }
     }
+    return censored;
 }
 
