@@ -148,7 +148,10 @@ void Server::censor(std::string& str, Client* c)
             Warned = true;
             size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
             if (vowel != std::string::npos)
+            {
                 str[vowel] = '*';
+                censored = true;
+            }
             found = lowerStr.find(swearWord, found + 1);
         }
     }
