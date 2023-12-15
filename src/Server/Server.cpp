@@ -78,41 +78,25 @@ void Server::bindSocket(sockaddr_in const& addr)
 // -- end ----
 Server::~Server()
 {
-    std::map<std::string, Channel*>::iterator it2;
+    std::map<int, Client*>::iterator clientIt;
+    for (clientIt = _clients.begin(); clientIt != _clients.end(); ++clientIt)
+        closeClient(clientIt->first, false);
 
-    std::map<int, Client*>::iterator it;
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if (it->second)
-            delete it->second;
-        try
-        {
-            editKevent(it->first, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
-            editKevent(it->first, EVFILT_WRITE, EV_DELETE, "deleting client write from kqueue");
-            
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
-        close(it->first);
-    }
-    for (it2 = _channels.begin(); it2 != _channels.end(); ++it2)
-        delete it2->second;
+    std::map<std::string, Channel*>::iterator chanIt;
+    for (chanIt = _channels.begin(); chanIt != _channels.end(); ++chanIt)
+        delete chanIt->second;
+
     try { editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting server socket read from kqueue"); }
     catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
     close(_socket);
     close(_kq);
 }
 
-void Server::closeClient(int socket)
+void Server::closeClient(int socket, bool eraseFromMap)
 {
-    if (_clients[socket])
-    {
-        delete _clients[socket];
+    delete _clients[socket];
+    if (eraseFromMap)
         _clients.erase(socket);
-        _clients[socket] = NULL;
-    }
     try
     {
         editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
@@ -121,6 +105,7 @@ void Server::closeClient(int socket)
     catch (const std::exception& e)
     {
         std::cerr << e.what() << '\n';
+        exit(1);
     }
     close(socket);
     CLOSE_CONNECTION_MSG(socket);

@@ -93,8 +93,6 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
 // -- send ----
 void Server::writeToClient(int socket)
 {
-    if (!_clients[socket])
-        return;
     size_t repliesQty = _clients[socket]->getRepliesQty();
     for (size_t i = 0; i < repliesQty; ++i)
     {

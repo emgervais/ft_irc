@@ -1,28 +1,13 @@
 #!/usr/bin/python3
-from random import randint
-from init import netcat, server, send_command, receive_response, _login, wait_user
-
-HOST = 'localhost'
-# PORT = randint(6000, 7000) # always keeping the same port can cause bind() to fail. Why?
-PORT = 1234
-PASS ="jambon"
-NICK ="a_nick"
-USER ="a_username"
-LOGIN = "a_login"
-REAL_NAME = "Real Name"
-CHANNEL = "#test"
+from time import sleep
+from init import netcat, server, send_command, login, receive_response, start_nc, wait_user
+from define import *
 
 
 # -- tests --------------------------------------------------------
-@netcat(HOST, PORT, num_connections=1)
-def login(ncs):
-	_login(ncs[0], PASS, NICK, LOGIN, REAL_NAME)
-
-@netcat(HOST, PORT, num_connections=2000)
+@netcat(HOST, PORT, num_connections=500)
 def chat_reception(ncs):
 	wait_user(f"connect to {PORT} {PASS} {CHANNEL}")
-	for i, nc in enumerate(ncs):
-		_login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
 	for nc in ncs:
 		send_command(nc, f"JOIN {CHANNEL}")
 	wait_user(f"connect to {PORT} {PASS} {CHANNEL}")
@@ -39,8 +24,6 @@ def chat_reception(ncs):
 
 @netcat(HOST, PORT, num_connections=100)
 def noisy_chat(ncs):
-	for i, nc in enumerate(ncs):
-		_login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
 	for nc in ncs:
 		send_command(nc, f"JOIN {CHANNEL}")
 	wait_user(f"connect to {PORT} {PASS} {CHANNEL}")
@@ -48,12 +31,28 @@ def noisy_chat(ncs):
 		msg = f"from client_{i}"
 		send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")
 
+def connect_deconnect():
+	# 10 clients connect and deconnect 10 times
+	for _ in range(10):
+		ncs = [start_nc(HOST, PORT) for _ in range(10)]
+		for i, nc in enumerate(ncs):
+			login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
+		# for nc in ncs:
+		# 	send_command(nc, f"JOIN {CHANNEL}")
+		# sleep(1)
+		# for i, nc in enumerate(ncs):
+		# 	msg = f"from client_{i}"
+		# 	send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")			
+		sleep(1)
+		for nc in ncs:
+			nc.terminate()
+
 # -- main ---------------------------------------------------------
 @server(PORT, PASS)
 def main():
-	# login()
 	chat_reception()
 	# noisy_chat()
+	# connect_deconnect()
 
 if __name__ == "__main__":
 	main()

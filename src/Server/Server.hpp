@@ -39,7 +39,7 @@ class Server
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-        void    closeClient(int socket);
+        void    closeClient(int socket, bool eraseFromMap=true);
         void    handleMsg(int socket, ssize_t bytesRead);
         void    exitSignal(int sig);
 

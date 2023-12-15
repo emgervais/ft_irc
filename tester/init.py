@@ -2,6 +2,7 @@ import subprocess
 import os
 import signal
 from time import sleep
+from define import *
 
 NAME = "ircserv"
 # -- init ----
@@ -46,6 +47,8 @@ def send_command(nc_process, text):
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
+		kill_processes_by_name(NAME)
+		exit(1)
 
 def receive_response(nc_process, keyword=""):
 	if not nc_process:
@@ -83,6 +86,8 @@ def netcat(host, port, num_connections):
 	def decorator(func):
 		def wrapper():
 			ncs = [start_nc(host, port) for _ in range(num_connections)]
+			for i, nc in enumerate(ncs):
+				login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
 			if all(ncs):
 				func(ncs)
 				wait_user("Press enter to stop connections")
@@ -104,7 +109,7 @@ def server(port, password):
 	return decorator
 
 # -- sub functions ----
-def _login(nc, passw, nick, login, real_name):
+def login(nc, passw, nick, login, real_name):
 	send_command(nc, f"PASS {passw}")
 	send_command(nc, f"NICK {nick}")
 	send_command(nc, f"USER {login} 0 * :{real_name}")
