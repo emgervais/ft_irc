@@ -114,11 +114,23 @@ void Server::loadSwearWords()
     file.close();
 }
 
-void Server::censor(std::string& str)
+void Server::swearPolice(Client *c) {
+    c->addWarning();
+    if(c->getWarning() >= 3) {
+        c->addReply("BadWordsPolice : Demande à ta mère de t'apprendre à parler");
+        c->partAllChannels();
+        c->setClosing();
+    }
+    else {
+        c->addReply("BadWordsPolice : Your language wont be tolerated for long!");
+    }
+}
+
+void Server::censor(std::string& str, Client* c)
 {
+    bool Warned = false;
     if (swearWordsSet.empty())
         loadSwearWords();
-
     std::string lowerStr = str;
     std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
 
@@ -129,11 +141,13 @@ void Server::censor(std::string& str)
         size_t found = lowerStr.find(swearWord);
         while (found != std::string::npos)
         {
+            Warned = true;
             size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
             if (vowel != std::string::npos)
                 str[vowel] = '*';
             found = lowerStr.find(swearWord, found + 1);
         }
     }
+    if(Warned)
+        swearPolice(c);
 }
-

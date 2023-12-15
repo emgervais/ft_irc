@@ -42,6 +42,7 @@ class Server
 
         std::set<std::string> swearWordsSet;
         void    loadSwearWords();
+        void    swearPolice(Client *c);
 
         Server(void);
         Server(const Server& rhs);
@@ -63,7 +64,7 @@ class Server
 
         std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
         std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
-        void            censor(std::string& str);
+        void            censor(std::string& str, Client* c);
 };
 
 #endif

@@ -45,9 +45,6 @@ class Command
         bool    cmdModeL(Channel *channel, char sign, const std::string &param);
         bool    cmdModeT(Channel *channel, char sign);
 
-        void    censor(std::string& str) const;
-
-
     public:
         static void initCmdHandler();
 
