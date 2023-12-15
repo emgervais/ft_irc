@@ -150,7 +150,7 @@ void Server::censor(std::string& str, Client* c)
             if (vowel != std::string::npos)
             {
                 str[vowel] = '*';
-                censored = true;
+                //censored = true;
             }
             found = lowerStr.find(swearWord, found + 1);
         }
