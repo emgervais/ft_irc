@@ -31,14 +31,20 @@ void    Channel::addClient(Client *client)
     sendMessage(RPL_JOIN(client->getNick(), client->getUser(), client->getHostname(), _name), client->getNick());
 }
 
-void    Channel::removeClient(Client *client, const std::string& reason)
+void    Channel::removeClient(Client *client, const std::string& reason, Client *kicker)
 {
     std::vector<Client*>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         if (*it == client)
         {
-            sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason), client->getNick());
+            if (kicker)
+            {
+                sendMessage(RPL_KICK(kicker->getNick(), kicker->getUser(), kicker->getHostname(), _name, client->getNick(), reason), kicker->getNick());
+                sendMessage(RPL_KICK(kicker->getNick(), kicker->getUser(), kicker->getHostname(), _name, client->getNick(), reason), client->getNick());
+            }
+            else
+                sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason), client->getNick());
             removeAllModes(*client);
             _clients.erase(it);
             if (_clients.size() == 0)

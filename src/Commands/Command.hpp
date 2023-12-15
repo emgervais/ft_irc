@@ -44,13 +44,13 @@ class Command
         void    cmdKick();
         void    cmdMode();
         void    cmdPrivMsg();
+        void    cmdHelp();
 
         void    cmdModeLoop(Channel *channel);
         bool    cmdModeO(Channel *channel, char sign, const std::string &param);
-        bool    cmdModeI(Channel *channel, char sign);
         bool    cmdModeK(Channel *channel, char sign, const std::string &param);
         bool    cmdModeL(Channel *channel, char sign, const std::string &param);
-        bool    cmdModeT(Channel *channel, char sign);
+        bool    cmdModeOther(Channel *channel, char sign, char mode);
 
     public:
         static void initCmdHandler();

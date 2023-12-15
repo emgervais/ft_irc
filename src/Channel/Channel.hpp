@@ -24,7 +24,7 @@ class Channel
         ~Channel();
 
         void    addClient(Client *client);
-        void    removeClient(Client *client, const std::string& reason);
+        void    removeClient(Client *client, const std::string& reason, Client *kicker=NULL);
         void    setTopic(const std::string& topic);
         void    sendMessage(const std::string& msg, const std::string& sender="");
 

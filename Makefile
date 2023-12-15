@@ -16,6 +16,8 @@ SRC = Channel/Channel.cpp \
 	Commands/Connection.cpp \
 	Commands/Registration.cpp \
 	Commands/Mode.cpp \
+	Commands/Utils.cpp \
+	Commands/Help.cpp \
 	main.cpp \
 	Server/Server.cpp \
 	Server/ServerLoop.cpp \

@@ -72,7 +72,7 @@ std::string Server::getChannelReply(const std::string& name, const std::string& 
     std::map<std::string, Channel*>::const_iterator it;
     for (it = _channels.begin(); it != _channels.end(); ++it)
     {
-        if (it->first == name)
+        if (it->first == name && (it->second->isClientOnChannel(clientNick) || it->second->isMode("n") == false))
             return (RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
     }
     return "";
@@ -84,7 +84,10 @@ std::vector<std::string> Server::getChannelsReply(const std::string& clientNick)
     std::map<std::string, Channel*>::const_iterator it;
 
     for (it = _channels.begin(); it != _channels.end(); ++it)
-        channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    {
+        if (it->second->isClientOnChannel(clientNick) || it->second->isMode("n") == false)
+            channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getUsersCount(), it->second->getTopic()));
+    }
     return channelsList;
 }
 
