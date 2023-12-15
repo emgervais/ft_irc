@@ -159,6 +159,10 @@ bool Server::censor(std::string& str)
             if (vowel != std::string::npos)
             {
                 str[vowel] = '*';
+<<<<<<< HEAD
+                //censored = true;
+=======
+>>>>>>> 47b5805332d54d3ab0511bde2375814d6497d28b
             }
             found = lowerStr.find(swearWord, found + 1);
         }
