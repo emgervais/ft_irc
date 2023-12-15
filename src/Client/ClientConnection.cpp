@@ -66,6 +66,8 @@ void    Client::partChannel(const std::string& channel, const std::string& reaso
 
 void    Client::partAllChannels()
 {
+    if (_channels.size() == 0)
+        return;
     std::map<std::string, Channel*>::iterator it;
     for (it = _channels.begin(); it != _channels.end(); ++it)
         partChannel(it->first, "Disconnected from server");

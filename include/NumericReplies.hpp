@@ -39,7 +39,6 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_HELPSTART(nick, msg) SERVER_NAME + "704 " + nick + " :" + msg + CRLF
 #define RPL_HELPTXT(nick, msg) SERVER_NAME + "705 " + nick + " :" + msg + CRLF
 #define RPL_ENDOFHELP(nick) SERVER_NAME + "706 " + nick + " :End of /HELPOP." + CRLF
-#define ERR_HELPNOTFOUND(nick, topic) SERVER_NAME + "524 " + nick + topic + " :There is no help for the topic you searched for. Please try again." + CRLF
 
 // Errors
 #define ERR_PASSWREQ(nick) SERVER_NAME + "461 " + nick + " PASS :Password required" + CRLF
@@ -80,5 +79,6 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_SPECIFYOP(nick) SERVER_NAME + "696 " + nick + " o * :You must specify a parameter for the op mode. Syntax: <nick>." + CRLF
 #define ERR_INVALIDKEY(nick, channel, key) SERVER_NAME + "696 " + nick + channel + " k " + key + " :Invalid key mode parameter. Syntax: <key>." + CRLF
 #define ERR_INVALIDLIMIT(nick, channel, limit) SERVER_NAME + "696 " + nick + channel + " l " + limit + " :Invalid limit mode parameter. Syntax: <limit>." + CRLF
+#define ERR_HELPNOTFOUND(nick, topic) SERVER_NAME + "524 " + nick + topic + " :There is no help for the topic you searched for. Please try again." + CRLF
 
 #endif

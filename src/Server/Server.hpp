@@ -10,7 +10,6 @@
 #include <set>
 
 
-
 #define SIGNAL_QTY 5
 #define CHANGE_LIST_SIZE (SIGNAL_QTY + 1)
 #define MAX_EVENTS (CHANGE_LIST_SIZE + MAX_CLIENTS * 2)
@@ -24,10 +23,6 @@ class Server
         int                     _socket;
         int                     _port;
         std::string             _pass;
-        size_t                  _maxClients;
-        sockaddr_in             _addr;
-        fd_set                  _readFdSet;
-        fd_set                  _writeFdSet;
         std::map<int, Client*>  _clients;
         std::map<std::string, Channel*> _channels;
         struct kevent           _events[MAX_EVENTS];
@@ -37,14 +32,14 @@ class Server
 
         int     serverQueue();
         void    initSocket();
-        void    bindSocket();
         void    initKqueue();
+        void    bindSocket(sockaddr_in const& addr);
         void    addWriteKevent();
         void    editKevent(int socket, int filter, int flags, std::string msg);
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-        void    closeClient(int socket);
+        void    closeClient(int socket, bool serverClosing = false);
         void    handleMsg(int socket, ssize_t bytesRead);
         void    exitSignal(int sig);
 
@@ -56,6 +51,7 @@ class Server
         Server(const Server& rhs);
         Server& operator=(const Server& rhs);
         Server(int port, std::string const& password);
+
     public:
         static Server& getInstance(int port, std::string const& password);
         void    run();
