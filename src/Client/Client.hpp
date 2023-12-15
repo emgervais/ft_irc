@@ -42,9 +42,11 @@ class Client
         bool            isRegistered() const;
         void            setRegistered();
         bool            isWaitingForPong() const;
+        void            disableWaitingForPong();
 
         void            setNick(const std::string& nick);
         void            setUser(std::vector<std::string> params);
+        void            setHostName(const std::string& name);
         void            checkPassword(std::string password);
 
         void            joinChannel(const std::string& channel, const std::string& key);
