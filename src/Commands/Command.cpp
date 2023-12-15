@@ -24,7 +24,6 @@ void Command::initCmdHandler()
     _cmdHandler["KICK"] = &Command::cmdKick;
     _cmdHandler["MODE"] = &Command::cmdMode;
     _cmdHandler["PRIVMSG"] = &Command::cmdPrivMsg;
-    _cmdHandler["HELP"] = &Command::cmdHelp;
 }
 
 Command::Command(Client &client, Server &server, std::string const&raw)

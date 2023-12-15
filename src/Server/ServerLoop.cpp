@@ -15,7 +15,7 @@ void Server::run()
         {
             if (_events[i].filter == EVFILT_SIGNAL)
                 exitSignal(_events[i].ident);
-            else if ((int) _events[i].ident == _socket)
+            else if ((int) _events[i].ident == _socket && _clients.size() < MAX_CLIENTS)
                 registerNewClient();
             else if (_events[i].filter == EVFILT_READ)
                 readFromClient(_events[i].ident);
@@ -75,16 +75,19 @@ void Server::readFromClient(int socket)
 
 void Server::handleMsg(int socket, ssize_t bytesRead)
 {
-    if (_buffer[bytesRead - 2] != '\r' || _buffer[bytesRead - 1] != '\n')
+    std::vector<std::string> cmds;
+    if (_buffer[bytesRead - 1] == '\n' && _buffer[bytesRead - 2] == '\r')
+        cmds = splitString(_buffer, "\r\n");
+    else if (_buffer[bytesRead - 1] == '\n')
+        cmds = splitString(_buffer, "\n");
+    else
         return;
-    std::vector<std::string> cmds = splitString(_buffer, "\r\n");
     _buffer[0] = '\0';
-
     for (size_t i = 0; i < cmds.size(); ++i)
     {
         Command cmd(*_clients[socket], *this, cmds[i]);
         cmd.exec();
-    }    
+    }     
 }
 
 // -- send ----

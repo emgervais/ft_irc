@@ -25,7 +25,7 @@
 #define BUFF_SIZE 1024
 #define USAGE "Wrong usage : ./ircserv <port>(0-65535) <password>"
 
-#define MAX_CLIENTS 10
+#define MAX_CLIENTS 1024
 
 #define MSG_MAX_LEN 512
 
