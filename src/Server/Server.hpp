@@ -45,7 +45,6 @@ class Server
 
         std::set<std::string> swearWordsSet;
         void    loadSwearWords();
-        // void    initBot();
 
         Server(void);
         Server(const Server& rhs);

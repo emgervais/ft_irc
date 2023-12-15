@@ -124,9 +124,9 @@ void Server::swearPolice(Client *c) {
     msgs.push_back("Your language won't be tolerated for long!");
     msgs.push_back("Demande à ta mère de t'apprendre à parler.");
     targets.push_back(c->getNick());
-    const size_t maxWarnings = 3;
+    const int MAX_WARNINGS = 3;
     size_t i;
-    if (c->getWarning() < maxWarnings)
+    if (c->getWarning() < MAX_WARNINGS)
         i = 0;
     else
         i = msgs.size() - 1;
