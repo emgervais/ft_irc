@@ -6,7 +6,8 @@
 
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
-    : _name(name), _topic(""), _server(const_cast<Server&>(server)), _creationTime(getUnixTime())
+    : _name(name), _topic(""), _server(const_cast<Server&>(server)),
+    _creationTime(getUnixTime())
 {
     _clients.push_back(const_cast<Client*>(&client));
     addMode("o", client.getNick());

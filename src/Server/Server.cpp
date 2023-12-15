@@ -29,7 +29,7 @@ Server::Server(int port, std::string const& password)
     {
         std::cerr << e.what() << std::endl;
         exit(1);
-    }
+    } 
 }
 
 void Server::initSocket()
@@ -74,6 +74,34 @@ void Server::bindSocket()
     }
 }
 
+// void Server::initBot()
+// {
+//     delete _bot;
+//     int s = socket(AF_INET, SOCK_STREAM, 0);
+//     if (s == ERROR)
+//         throw std::runtime_error("socket() failed");
+//     int optval = 1;
+//     if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+//     {
+//         close(s);
+//         throw std::runtime_error("setsockopt() failed");
+//     }
+//     if (connect(s, (struct sockaddr*)&_addr, sizeof(_addr)) < 0) {
+//         close(s);
+//         throw std::runtime_error("connect() failed");
+//     }
+//     _bot = new Client(s, *this);
+//     _bot->checkPassword(_pass);
+//     _bot->setNick("JT");
+//     std::vector<std::string> user;
+//     user.push_back("JohnTravolta");
+//     user.push_back("*");
+//     user.push_back("0");
+//     user.push_back("John Travolta");
+//     _bot->setUser(user);
+//     _bot->disableWaitingForPong();
+// }
+
 // -- end ----
 Server::~Server()
 {
@@ -100,6 +128,7 @@ Server::~Server()
     try { editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting server socket read from kqueue"); }
     catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
 
+    // delete _bot;
     close(_socket);
     close(_kq);
 }

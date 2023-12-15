@@ -119,20 +119,29 @@ void Server::loadSwearWords()
 }
 
 void Server::swearPolice(Client *c) {
+    std::vector<std::string> targets;
+    std::vector<std::string> msgs;
+    msgs.push_back("Your language won't be tolerated for long!");
+    msgs.push_back("Demande à ta mère de t'apprendre à parler.");
+    targets.push_back(c->getNick());
+    const size_t maxWarnings = 3;
+    size_t i;
+    if (c->getWarning() < maxWarnings)
+        i = 0;
+    else
+        i = msgs.size() - 1;
     c->addWarning();
-    if(c->getWarning() >= 3) {
-        c->addReply("BadWordsPolice : Demande à ta mère de t'apprendre à parler");
+    c->addReply(RPL_PRIVMSG(BOT, BOT, BOT, c->getNick(), msgs[i]));
+    if (i == msgs.size() - 1)
+    {
         c->partAllChannels();
         c->setClosing();
     }
-    else {
-        c->addReply("BadWordsPolice : Your language wont be tolerated for long!");
-    }
 }
 
-void Server::censor(std::string& str, Client* c)
+bool Server::censor(std::string& str)
 {
-    bool Warned = false;
+    bool toWarn = false;
     if (swearWordsSet.empty())
         loadSwearWords();
     std::string lowerStr = str;
@@ -145,16 +154,14 @@ void Server::censor(std::string& str, Client* c)
         size_t found = lowerStr.find(swearWord);
         while (found != std::string::npos)
         {
-            Warned = true;
+            toWarn = true;
             size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
             if (vowel != std::string::npos)
             {
                 str[vowel] = '*';
-                censored = true;
             }
             found = lowerStr.find(swearWord, found + 1);
         }
     }
-    if(Warned)
-        swearPolice(c);
+    return toWarn;
 }

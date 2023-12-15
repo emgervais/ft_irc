@@ -110,6 +110,8 @@ void Server::writeToClient(int socket)
             _clients[socket]->removeReply();
         }
     }
+    if (_clients[socket]->isClosing())
+            closeClient(socket);
 }
 
 // -- exit ----

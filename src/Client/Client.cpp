@@ -56,6 +56,11 @@ bool            Client::isWaitingForPong() const
     return (_waitingForPong);
 }
 
+void            Client::disableWaitingForPong()
+{
+    _waitingForPong = false;
+}
+
 void            Client::addReply(std::string const& reply)
 {
     if (!_closing)

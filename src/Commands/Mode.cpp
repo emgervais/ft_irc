@@ -35,6 +35,10 @@ static std::string  getChangeModes(std::string modes[2])
         modes[1].insert(pos + 1, ":");
         changeModes += modes[1];
     }
+    else
+    {
+        changeModes.insert(0, ":");
+    }
     return (changeModes);
 }
 
