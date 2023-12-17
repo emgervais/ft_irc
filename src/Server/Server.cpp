@@ -24,7 +24,6 @@ Server::Server(int port, std::string const& password)
         initKqueue();
         Command::initCmdHandler();
     }
-
     catch (const std::runtime_error &e)
     {
         std::cerr << e.what() << std::endl;
@@ -87,6 +86,8 @@ Server::~Server()
         delete chanIt->second;
 
     try { editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting server socket read from kqueue"); }
+    catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
+    try { editKevent(fileno(stdin), EVFILT_READ, EV_DELETE, "deleting stdin read from kqueue"); }
     catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
     close(_socket);
     close(_kq);

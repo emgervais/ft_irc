@@ -49,7 +49,8 @@ noerr: CXXFLAGS := $(filter-out -Werror,$(CXXFLAGS))
 noerr: all
 
 leak:
-	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=vgsuppress.txt --log-file="valgrind.log" --gen-suppressions=all ./$(NAME) 1234 jambon
+	@make debug
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=vgsuppress.txt --log-file="valgrind.log" --gen-suppressions=all ./$(NAME) 6667 jambon
 
 
 kill:

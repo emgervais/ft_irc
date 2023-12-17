@@ -1,9 +1,10 @@
 #include "Client.hpp"
 #include "../Server/Server.hpp"
 #include "../util/util.hpp"
+#include "NumericReplies.hpp"
 
 Client::Client(int socket, Server &server)
-    : _socket(socket), _nick(""), _user(""), _realname(""), _hostname(""), _ping(randomToken()), _waitingForPong(false), _server(server), _registered(false), _passChecked(false), _closing(false), _warnings(0)
+    : _socket(socket), _nick(""), _user(""), _realname(""), _hostname(""), _ping(randomToken()), _waitingForPong(false), _server(server), _registered(false), _passChecked(false), _closing(false), _warnings(0), _mode("")
 {
 }
 
@@ -102,4 +103,40 @@ void            Client::addWarning() {
 
 int             Client::getWarning() {
     return _warnings;
+}
+
+void            Client::setMode(const std::string& mode)
+{
+    char sign = '+';
+    std::string modeChange = "";
+    std::string::const_iterator it = mode.begin();
+
+    while (it != mode.end())
+    {
+        if (*it == '+' || *it == '-')
+            sign = *it;
+        else if (*it == 'i' && ((sign == '+' && _mode.empty()) || (sign == '-' && _mode == "+i")))
+            modeChange = std::string(1, sign) + std::string(1, *it);
+        else
+            addReply(ERR_UMODEUNKNOWNFLAG(_nick, *it));
+        ++it;
+    }
+    if (mode.find('i') != std::string::npos)
+    {
+        addReply(RPL_UMODEIS(_nick, modeChange));
+        if (modeChange == "+i")
+            _mode = modeChange;
+        else
+            _mode = "";
+    }
+}
+
+bool            Client::isInvisible() const
+{
+    return (_mode == "+i");
+}
+
+std::string     Client::getMode() const
+{
+    return (_mode);
 }

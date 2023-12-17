@@ -11,8 +11,8 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_WELCOME(nick, user, host) SERVER_NAME + "001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host + CRLF
 #define RPL_YOURHOST(nick) SERVER_NAME + "002 " + nick + " :Your host is " + SERVER_NAME + ", running version ircserv-0.0.1" + CRLF
 #define RPL_CREATED(nick) SERVER_NAME + "003 " + nick + " :This server was created " + CREATION_DATE + CRLF
-#define RPL_MYINFO(nick) SERVER_NAME + "004 " + nick + " " + SERVER_NAME + " ircserv 0.0.1 o itkol" + CRLF
-#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " PREFIX=(o)@ CHANTYPES=# CHANMODES=iksn CHANLIMIT=#:10 NICKLEN=9 CHANNELLEN=50 TOPICLEN=100 KICKLEN=50 :are supported by this server" + CRLF
+#define RPL_MYINFO(nick) SERVER_NAME + "004 " + nick + " " + SERVER_NAME + " 0.0.1 i linst :klo" + CRLF
+#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " CHANMODES=o,k,l,inst CHANNELLEN=50 CHANTYPES=# HOSTLEN=50 LINELEN=512 NICKLEN=30 PREFIX=(o)@ TOPICLEN=100 USERLEN=50 USERMODES=,,,i :are supported by this server" + CRLF
 #define RPL_PINGUSE(nick) SERVER_NAME + "650 " + nick + " PING :<cookie> [<servername>]" + CRLF
 #define RPL_PONG(nick, server, token) SERVER_NAME + " PONG " + nick + server + " :" + token + CRLF
 #define RPL_YOUREOPER(nick) SERVER_NAME + "381 " + nick + " :You are now an IRC operator" + CRLF
@@ -36,9 +36,10 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_CREATIONTIME(nick, channel, creationtime) SERVER_NAME + "329 " + nick + " " + channel + " " + creationtime + CRLF
 #define RPL_PRIVMSG(nick, user, host, target, message) ":" + nick + "!" + user + "@" + host + " PRIVMSG " + target + " :" + message + CRLF
 #define RPL_MODE(nick, user, host, target, modes) ":" + nick + "!" + user + "@" + host + " MODE " + target + " " + modes + CRLF
-#define RPL_HELPSTART(nick, msg) SERVER_NAME + "704 " + nick + " :" + msg + CRLF
-#define RPL_HELPTXT(nick, msg) SERVER_NAME + "705 " + nick + " :" + msg + CRLF
-#define RPL_ENDOFHELP(nick) SERVER_NAME + "706 " + nick + " :End of /HELPOP." + CRLF
+#define RPL_HELPSTART(nick, command, msg) SERVER_NAME + "704 " + nick + " " + command + " :" + command + CRLF
+#define RPL_HELPTXT(nick, command, msg) SERVER_NAME + "705 " + nick + " " + command + " :" + msg + CRLF
+#define RPL_ENDOFHELP(nick, command) SERVER_NAME + "706 " + nick + " " + command + " :End of /HELP" + CRLF
+#define RPL_UMODEIS(nick, modes) SERVER_NAME + "221 " + nick + " " + modes + CRLF
 
 // Errors
 #define ERR_PASSWREQ(nick) SERVER_NAME + "461 " + nick + " PASS :Password required" + CRLF
@@ -80,5 +81,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define ERR_INVALIDKEY(nick, channel, key) SERVER_NAME + "696 " + nick + channel + " k " + key + " :Invalid key mode parameter. Syntax: <key>." + CRLF
 #define ERR_INVALIDLIMIT(nick, channel, limit) SERVER_NAME + "696 " + nick + channel + " l " + limit + " :Invalid limit mode parameter. Syntax: <limit>." + CRLF
 #define ERR_HELPNOTFOUND(nick, topic) SERVER_NAME + "524 " + nick + topic + " :There is no help for the topic you searched for. Please try again." + CRLF
+#define ERR_USERSDONTMATCH(nick) SERVER_NAME + "502 " + nick + " :Cant change mode for other users" + CRLF
+#define ERR_UMODEUNKNOWNFLAG(nick, mode) SERVER_NAME + "501 " + nick + " " + mode + " :is not a recognised user mode." + CRLF
 
 #endif

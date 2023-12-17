@@ -185,7 +185,7 @@ bool    Channel::isClientOnChannel(const std::string& nick) const
     std::vector<Client*>::const_iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
-        if ((*it)->getNick() == nick)
+        if (toUpper((*it)->getNick()) == toUpper(nick))
             return true;
     }
     return false;
@@ -217,13 +217,31 @@ std::string     Channel::getChanModes() const
     return (reply + params);
 }
 
-std::string     Channel::getNamesReply() const
+std::string     Channel::getNamesReply(const Client &client) const
 {
     std::string reply;
     std::vector<Client*>::const_iterator it;
     
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
+        if ((*it)->isInvisible() && !isClientOnChannel(client))
+            continue;
+        if (isMode("o", (*it)->getNick()))
+            reply += "@";
+        reply += (*it)->getNick() + " ";
+    }
+    return reply;
+}
+
+std::string     Channel::getNamesReply(const std::string& clientNick) const
+{
+    std::string reply;
+    std::vector<Client*>::const_iterator it;
+    
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if ((*it)->isInvisible() && !isClientOnChannel(clientNick))
+            continue;
         if (isMode("o", (*it)->getNick()))
             reply += "@";
         reply += (*it)->getNick() + " ";

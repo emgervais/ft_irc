@@ -19,7 +19,8 @@ void Server::initKqueue()
         signal(signalList[i], SIG_IGN);
     }
     EV_SET(_change+i, _socket, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    if (kevent(_kq, _change, signalCount+1, NULL, 0, NULL) == ERROR)
+    EV_SET(_change+i+1, fileno(stdin), EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
+    if (kevent(_kq, _change, signalCount+2, NULL, 0, NULL) == ERROR)
         throw std::runtime_error("Error: Kevent: Register server socket to KQueue");
 }
 

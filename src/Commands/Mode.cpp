@@ -2,10 +2,11 @@
 #include "../Channel/Channel.hpp"
 #include "../Client/Client.hpp"
 #include "../Server/Server.hpp"
+#include "../util/util.hpp"
 #include "NumericReplies.hpp"
 #include <iostream>
 
-const std::string OTHERMODES = "itns";
+const std::string OTHERMODES = "inst";
 
 static std::string  getChangeModes(std::string modes[2])
 {
@@ -50,7 +51,21 @@ void    Command::cmdMode()
         return;
     }
     Channel *channel = _server.getChannel(_params[0]);
-    if (!channel)
+    if (_params[0][0] != '#')
+    {
+        if (!_server.isNicknameTaken(_params[0]))
+            _client.addReply(ERR_NOSUCHNICK(_client.getNick(), _params[0]));
+        else if (toUpper(_params[0]) == toUpper(_client.getNick()))
+        {
+            if (_params.size() == 1)
+                _client.addReply(RPL_UMODEIS(_client.getNick(), _client.getMode()));
+            else
+                _client.setMode(_params[1]);
+        }
+        else if (_params[0][0] != '#')
+            _client.addReply(ERR_USERSDONTMATCH(_client.getNick()));
+    }
+    else if (!channel)
         _client.addReply(ERR_NOSUCHCHANNEL(_client.getNick(), _params[0]));
     else if (_params.size() == 1)
     {
@@ -131,6 +146,8 @@ bool    Command::cmdModeO(Channel *channel, char sign, const std::string& param)
     {
         if (param.empty())
             _client.addReply(ERR_SPECIFYOP(_client.getNick()));
+        else if (!_server.isNicknameTaken(param))
+            _client.addReply(ERR_NOSUCHNICK(_client.getNick(), param));
         else
         {
             if (!channel->isMode("o", param))
