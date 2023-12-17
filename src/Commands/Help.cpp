@@ -241,7 +241,7 @@ static void helpUserCmd(Client *client, const std::string &command)
 
 static void help(Client *client, const std::string &command)
 {
-    client->addReply(RPL_HELPSTART(client->getNick(), command, "Help System"));
+    client->addReply(RPL_HELPSTART(client->getNick(), command, "HELP [<command>]"));
     client->addReply(RPL_HELPTXT(client->getNick(), command, ""));
     client->addReply(RPL_HELPTXT(client->getNick(), command, "This system provides help for commands and modes."));
     client->addReply(RPL_HELPTXT(client->getNick(), command, "Specify one of the following parameters for more information:"));
