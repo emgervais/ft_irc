@@ -1,12 +1,13 @@
 *.txt
 !vgsuppress.txt
 valgrind.log
-!data/*.txt
+!swearWords/*.txt
 *.o
 *.d
 *.a
 a.out
 *.dSYM
+error
 
 .DS_Store
 .vscode/

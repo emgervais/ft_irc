@@ -112,20 +112,26 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
 
 void Server::loadSwearWords()
 {
-    std::ifstream file(SWEAR_WORDS_PATH);
-    if (!file.is_open())
-    {
-        std::cerr << "Error opening SWEAR_WORDS_PATH: " << SWEAR_WORDS_PATH << std::endl;
-        return;
-    }
+    const char *paths[] = {SWEAR_WORDS_EN, SWEAR_WORDS_FR};
+    const size_t pathsCount = sizeof(paths) / sizeof(paths[0]);
 
-    std::string swearWord;
-    while (std::getline(file, swearWord))
+    for (size_t i = 0; i < pathsCount; ++i)
     {
-        std::transform(swearWord.begin(), swearWord.end(), swearWord.begin(), ::tolower);
-        swearWordsSet.insert(swearWord);
+        std::ifstream file(paths[i]);
+        if (!file.is_open())
+        {
+            std::cerr << "Error opening SWEAR_WORDS_PATH: " << paths[i] << std::endl;
+            return;
+        }
+
+        std::string swearWord;
+        while (std::getline(file, swearWord))
+        {
+            std::transform(swearWord.begin(), swearWord.end(), swearWord.begin(), ::tolower);
+            swearWordsSet.insert(swearWord);
+        }
+        file.close();
     }
-    file.close();
 }
 
 void Server::swearPolice(Client *c) {
@@ -149,6 +155,12 @@ void Server::swearPolice(Client *c) {
 
 bool Server::censor(std::string& str)
 {
+    //////
+    ////// Ne pas itérer sur tous les swearWords
+    //////  .Isoler chaque mot du msg, voir s'il est dans le set
+    //////  .Filtrer les fichiers pour enlever les lignes avec espaces
+    //////
+    //////
     bool toWarn = false;
     if (swearWordsSet.empty())
         loadSwearWords();
