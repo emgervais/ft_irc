@@ -5,6 +5,15 @@
 #include <iostream>
 #include <unistd.h>
 
+#include <netinet/in.h>
+#include <sys/event.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 // -- loop ----
 void Server::run()
 {
@@ -15,6 +24,8 @@ void Server::run()
         {
             if (_events[i].filter == EVFILT_SIGNAL)
                 exitSignal(_events[i].ident);
+            else if ((int) _events[i].ident == fileno(stdin))
+                readFromStdin();
             else if ((int) _events[i].ident == _socket && _clients.size() < MAX_CLIENTS)
                 registerNewClient();
             else if (_events[i].filter == EVFILT_READ)
@@ -56,7 +67,8 @@ void Server::registerNewClient()
 void Server::readFromClient(int socket)
 {
     ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
-    if (bytesRead == -1)
+
+    if (bytesRead == ERROR)
     {
         std::cerr << "Error: reading from client" << std::endl;
         closeClient(socket);
@@ -113,6 +125,46 @@ void Server::writeToClient(int socket)
     }
     if (_clients[socket]->isClosing())
             closeClient(socket);
+}
+
+// -- Read from stdin ----
+void Server::readFromStdin()
+{
+    std::string cmd;
+    std::getline(std::cin, cmd);
+
+    if (std::cin.eof())
+        exitSignal(SIGINT);
+
+    if (cmd == "/exit" || cmd == "exit")
+    {
+        std::cout << "Shutting down server." << std::endl;
+        exit(0);
+    }
+    else if (cmd == "/clients" || cmd == "clients")
+    {
+        std::map<int, Client*>::iterator it;
+        std::cout << "Clients: " << _clients.size() << std::endl;
+        for (it = _clients.begin(); it != _clients.end(); ++it)
+            std::cout << it->second->getNick() << std::endl;
+    }
+    else if (cmd == "/channels" || cmd == "channels")
+    {
+        std::map<std::string, Channel*>::iterator it;
+        std::cout << "Channels: " << _channels.size() << std::endl;
+        for (it = _channels.begin(); it != _channels.end(); ++it)
+            std::cout << it->first << std::endl;
+    }
+    else if (cmd == "/help" || cmd == "help")
+    {
+        std::cout << "Available commands:" << std::endl;
+        std::cout << "/exit" << std::endl;
+        std::cout << "/clients" << std::endl;
+        std::cout << "/channels" << std::endl;
+        std::cout << "/help" << std::endl;
+    }
+    else
+        std::cout << "Unknown command. Type /help for a list of available commands." << std::endl;
 }
 
 // -- exit ----

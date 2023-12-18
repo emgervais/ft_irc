@@ -19,8 +19,7 @@
 #define NEW_CONNECTION_MSG(socket) std::cout << GREEN + std::string("New connection on socket ") + std::to_string(socket) + RESET_COLOR << std::endl
 #define CLOSE_CONNECTION_MSG(socket) std::cout << RED + std::string("Close connection on socket ") + std::to_string(socket) + RESET_COLOR << std::endl
 
-#define CREATION_DATE "2023-11-30"
-#define OPER_PASS "admin"
+#define CREATION_DATE "23:06:04 Dec 13 2023"
 
 #define BUFF_SIZE 1024
 #define USAGE "Wrong usage : ./ircserv <port>(0-65535) <password>"
@@ -38,7 +37,5 @@
 #define HOST_MAX_LEN 50
 #define CHANNEL_MAX_LEN 50
 #define TOPIC_MAX_LEN 100
-
-#define CHANNEL_MODES "itkol"
 
 #endif

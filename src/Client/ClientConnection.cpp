@@ -43,7 +43,7 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
         addReply(RPL_TOPICWHOTIME(_nick, channel, _user, _hostname, "Time not implemented yet"));
     }
     _channels[channel] = chan;
-    addReply(RPL_NAMREPLY(_nick, channel, chan->getNamesReply()));
+    addReply(RPL_NAMREPLY(_nick, channel, chan->getNamesReply(*this)));
     addReply(RPL_ENDOFNAMES(_nick, channel));
 }
 

@@ -24,6 +24,8 @@ class Client
         bool                            _closing;
         std::map<std::string, Channel*> _channels;
         int                             _warnings;
+        std::string                     _mode;
+        std::string                     _IP;
 
         std::queue<std::string>         _sendQueue;
     public:
@@ -46,7 +48,6 @@ class Client
 
         void            setNick(const std::string& nick);
         void            setUser(std::vector<std::string> params);
-        void            setHostName(const std::string& name);
         void            checkPassword(std::string password);
 
         void            joinChannel(const std::string& channel, const std::string& key);
@@ -61,6 +62,10 @@ class Client
         void            removeReply();
         void            addWarning();
         int             getWarning();
+
+        void            setMode(const std::string& mode);
+        bool            isInvisible() const;
+        std::string     getMode() const;
 };
 
 #endif

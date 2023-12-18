@@ -50,13 +50,13 @@ std::string randomToken()
     return token;
 }
 
-static tm *getUniversalTime()
+static tm *getLocalTime()
 {
     time_t rawtime;
-    tm *timeinfo;
+    struct tm *timeinfo;
 
     time(&rawtime);
-    timeinfo = gmtime(&rawtime);
+    timeinfo = localtime(&rawtime);
     return (timeinfo);
 }
 
@@ -64,7 +64,7 @@ std::string getUnixTime()
 {
     char buffer[80];
 
-    strftime(buffer, 80, "%s", getUniversalTime());
+    strftime(buffer, 80, "%s", getLocalTime());
     return (std::string(buffer));
 }
 
@@ -72,7 +72,7 @@ std::string getTimeOfDay()
 {
     char buffer[80];
 
-    strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", getUniversalTime());
+    strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", getLocalTime());
     return (std::string(buffer));
 }
 

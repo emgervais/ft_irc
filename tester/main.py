@@ -33,26 +33,26 @@ def noisy_chat(ncs):
 
 def connect_deconnect():
 	# 10 clients connect and deconnect 10 times
-	for _ in range(10):
-		ncs = [start_nc(HOST, PORT) for _ in range(10)]
+	for _ in range(100):
+		ncs = [start_nc(HOST, PORT) for _ in range(100)]
 		for i, nc in enumerate(ncs):
 			login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
-		# for nc in ncs:
-		# 	send_command(nc, f"JOIN {CHANNEL}")
+		for nc in ncs:
+			send_command(nc, f"JOIN {CHANNEL}")
 		# sleep(1)
-		# for i, nc in enumerate(ncs):
-		# 	msg = f"from client_{i}"
-		# 	send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")			
-		sleep(1)
+		for i, nc in enumerate(ncs):
+			msg = f"from client_{i}"
+			send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")			
+		# sleep(1)
 		for nc in ncs:
 			nc.terminate()
 
 # -- main ---------------------------------------------------------
-@server(PORT, PASS)
+# @server(PORT, PASS)
 def main():
-	chat_reception()
+	# chat_reception()
 	# noisy_chat()
-	# connect_deconnect()
+	connect_deconnect()
 
 if __name__ == "__main__":
 	main()

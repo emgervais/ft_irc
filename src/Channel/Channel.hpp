@@ -30,7 +30,8 @@ class Channel
         void    sendMessage(const std::string& msg, const std::string& sender="");
 
         std::string     getChanModes() const;
-        std::string     getNamesReply() const;
+        std::string     getNamesReply(const Client& client) const;
+        std::string     getNamesReply(const std::string& clientNick) const;
         std::string     getCreationTime() const;
         std::string     getName() const;
         std::string     getTopic() const;

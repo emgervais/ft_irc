@@ -20,7 +20,7 @@ void    Command::cmdNames()
         Channel* channel = _server.getChannel(channelName);
 
         if (channel && (!channel->isMode("s") || channel->isClientOnChannel(_client)))
-            _client.addReply(channel->getNamesReply());     
+            _client.addReply(channel->getNamesReply(_client));
         _client.addReply(RPL_ENDOFNAMES(_client.getNick(), channelName));
     }
 }

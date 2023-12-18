@@ -11,7 +11,7 @@
 
 
 #define SIGNAL_QTY 5
-#define CHANGE_LIST_SIZE (SIGNAL_QTY + 1)
+#define CHANGE_LIST_SIZE (SIGNAL_QTY + 2)
 #define MAX_EVENTS (CHANGE_LIST_SIZE + MAX_CLIENTS * 2)
 
 class Client;
@@ -39,6 +39,7 @@ class Server
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
+        void    readFromStdin();
         void    closeClient(int socket, bool eraseFromMap=true);
         void    handleMsg(int socket, ssize_t bytesRead);
         void    exitSignal(int sig);
@@ -68,7 +69,7 @@ class Server
         std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
         std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
         bool            censor(std::string& str);
-        void    swearPolice(Client *c);
+        void            swearPolice(Client *c);
 };
 
 #endif
