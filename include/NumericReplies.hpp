@@ -12,7 +12,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_YOURHOST(nick) SERVER_NAME + "002 " + nick + " :Your host is " + SERVER_NAME + ", running version ircserv-0.0.1" + CRLF
 #define RPL_CREATED(nick) SERVER_NAME + "003 " + nick + " :This server was created " + CREATION_DATE + CRLF
 #define RPL_MYINFO(nick) SERVER_NAME + "004 " + nick + " " + SERVER_NAME + " 0.0.1 i linst :klo" + CRLF
-#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " CHANMODES=o,k,l,inst CHANNELLEN=50 CHANTYPES=# HOSTLEN=50 LINELEN=512 NICKLEN=30 PREFIX=(o)@ TOPICLEN=100 USERLEN=50 USERMODES=,,,i :are supported by this server" + CRLF
+#define RPL_ISUPPORT(nick) SERVER_NAME + "005 " + nick + " CASEMAPPING=ascii CHANMODES=o,k,l,inst" + CHANNELLEN + " CHANTYPES=#" + HOSTLEN + LINELEN + MAXTARGETS + NICKLEN + " PREFIX=(o)@" + TOPICLEN + USERLEN + " USERMODES=,,,i :are supported by this server" + CRLF
 #define RPL_PINGUSE(nick) SERVER_NAME + "650 " + nick + " PING :<cookie> [<servername>]" + CRLF
 #define RPL_PONG(nick, server, token) SERVER_NAME + " PONG " + nick + server + " :" + token + CRLF
 #define RPL_YOUREOPER(nick) SERVER_NAME + "381 " + nick + " :You are now an IRC operator" + CRLF
@@ -21,21 +21,21 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_TOPICWHOTIME(nick, channel, user, host, creationtime) SERVER_NAME + "333 " + nick + " " + channel + " " + user + "!" + user + "@" + host + " " + creationtime + CRLF
 #define RPL_NAMREPLY(nick, channel, users) SERVER_NAME + "353 " + nick + " = " + channel + " :" + users + CRLF
 #define RPL_ENDOFNAMES(nick, channel) SERVER_NAME + "366 " + nick + " " + channel + " :End of /NAMES list" + CRLF
-#define RPL_JOIN(nick, user, host, channel) ":" + nick + "!" + user + "@" + host + " JOIN " + channel + CRLF
-#define RPL_PART(nick, user, host, channel, reason) ":" + nick + "!" + user + "@" + host + " PART " + channel + (reason.empty() ? "" : " :" + reason) + CRLF
+#define RPL_JOIN(prefix, channel) prefix + " JOIN " + channel + CRLF
+#define RPL_PART(prefix, channel, reason) prefix + " PART " + channel + (reason.empty() ? "" : " :" + reason) + CRLF
 #define RPL_NOTOPIC(nick, channel) SERVER_NAME + "331 " + nick + " " + channel + " :No topic is set" + CRLF
-#define RPL_SETTOPIC(nick, user, host, channel, topic) ":" + nick + "!" + user + "@" + host + " TOPIC " + channel + " :" + topic + CRLF
+#define RPL_SETTOPIC(prefix, channel, topic) prefix + " TOPIC " + channel + " :" + topic + CRLF
 #define RPL_LISTSTART(nick) SERVER_NAME + "321 " + nick + " Channel :Users Name" + CRLF
 #define RPL_LIST(nick, channel, usercount, topic) SERVER_NAME + "322 " + nick + " " + channel + " " + std::to_string(usercount) + " :" + topic + CRLF
 #define RPL_LISTEND(nick) SERVER_NAME + "323 " + nick + " :End of /LIST" + CRLF
 #define RPL_INVITING(nick, nickInvite, channel) SERVER_NAME + "341 " + nick + " " + nickInvite + " " + channel + CRLF
 #define RPL_INVITE(nick, nickInvite, channel) ":" + nick + " INVITE " + nickInvite + " " + channel + CRLF
-#define RPL_KICK(nick, user, host, channel, nickKick, reason) ":" + nick + "!" + user + "@" + host + " KICK " + channel + " " + nickKick + " :" + reason + CRLF
-#define RPL_AWAY(nick, user, host, target, message) SERVER_NAME + "301 " + nick + " " + target + " :" + message + CRLF
+#define RPL_KICK(prefix, channel, nickKick, reason) prefix + " KICK " + channel + " " + nickKick + " :" + reason + CRLF
+#define RPL_AWAY(prefix, target, message) SERVER_NAME + "301 " + nick + " " + target + " :" + message + CRLF
 #define RPL_CHANNELMODEIS(nick, channel, modes) SERVER_NAME + "324 " + nick + " " + channel + " :" + modes + CRLF
 #define RPL_CREATIONTIME(nick, channel, creationtime) SERVER_NAME + "329 " + nick + " " + channel + " " + creationtime + CRLF
-#define RPL_PRIVMSG(nick, user, host, target, message) ":" + nick + "!" + user + "@" + host + " PRIVMSG " + target + " :" + message + CRLF
-#define RPL_MODE(nick, user, host, target, modes) ":" + nick + "!" + user + "@" + host + " MODE " + target + " " + modes + CRLF
+#define RPL_PRIVMSG(prefix, target, message) prefix + " PRIVMSG " + target + " :" + message + CRLF
+#define RPL_MODE(prefix, target, modes) prefix + " MODE " + target + " " + modes + CRLF
 #define RPL_HELPSTART(nick, command, msg) SERVER_NAME + "704 " + nick + " " + command + " :" + command + CRLF
 #define RPL_HELPTXT(nick, command, msg) SERVER_NAME + "705 " + nick + " " + command + " :" + msg + CRLF
 #define RPL_ENDOFHELP(nick, command) SERVER_NAME + "706 " + nick + " " + command + " :End of /HELP" + CRLF

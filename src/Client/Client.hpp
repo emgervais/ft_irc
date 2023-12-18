@@ -25,13 +25,13 @@ class Client
         std::map<std::string, Channel*> _channels;
         int                             _warnings;
         std::string                     _mode;
-        std::string                     _IP;
 
         std::queue<std::string>         _sendQueue;
     public:
         Client(int socket, Server &server);
         ~Client();
 
+        std::string     getPrefix() const;
         std::string     getNick() const;
         std::string     getUser() const;
         int             getSocket() const;

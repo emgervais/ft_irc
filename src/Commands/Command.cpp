@@ -81,7 +81,7 @@ void    Command::splitRawCommand()
         ss >> _prefix;
     }
     ss >> _cmd;
-   
+    _cmd = toUpper(_cmd);
     std::string param;
     while (ss >> param)
     {

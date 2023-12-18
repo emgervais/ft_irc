@@ -29,7 +29,7 @@ void    Channel::addClient(Client *client)
             return;
     }
     _clients.push_back(client);
-    sendMessage(RPL_JOIN(client->getNick(), client->getUser(), client->getHostname(), _name), client->getNick());
+    sendMessage(RPL_JOIN(client->getPrefix(), _name), client->getNick());
 }
 
 void    Channel::removeClient(Client *client, const std::string& reason, Client *kicker)
@@ -41,11 +41,11 @@ void    Channel::removeClient(Client *client, const std::string& reason, Client 
         {
             if (kicker)
             {
-                sendMessage(RPL_KICK(kicker->getNick(), kicker->getUser(), kicker->getHostname(), _name, client->getNick(), reason), kicker->getNick());
-                sendMessage(RPL_KICK(kicker->getNick(), kicker->getUser(), kicker->getHostname(), _name, client->getNick(), reason), client->getNick());
+                sendMessage(RPL_KICK(kicker->getPrefix(), _name, client->getNick(), reason), kicker->getNick());
+                sendMessage(RPL_KICK(kicker->getPrefix(), _name, client->getNick(), reason), client->getNick());
             }
             else
-                sendMessage(RPL_PART(client->getNick(), client->getUser(), client->getHostname(), _name, reason), client->getNick());
+                sendMessage(RPL_PART(client->getPrefix(), _name, reason), client->getNick());
             removeAllModes(*client);
             _clients.erase(it);
             if (_clients.size() == 0)
@@ -72,6 +72,11 @@ std::string     Channel::getTopic() const
     return (_topic);
 }
 
+std::string     Channel::getTopicTime() const
+{
+    return (_topicTime);
+}
+
 int             Channel::getUsersCount() const
 {
     return (_clients.size());
@@ -84,6 +89,20 @@ void    Channel::sendMessage(const std::string& msg, const std::string& sender)
     for (it = _clients.begin(); it != _clients.end(); ++it)
     {
         if ((*it)->getNick() != sender)
+        {
+            (*it)->addReply(msg);
+        }
+    }
+}
+
+void    Channel::sendMessageToOps(const std::string& msg, const std::string& sender)
+{
+    std::vector<Client*>::iterator it;
+
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        std::cout << (*it)->getNick() << std::endl;
+        if ((*it)->getNick() != sender && isMode("o", (*it)->getNick()))
         {
             (*it)->addReply(msg);
         }
@@ -110,7 +129,7 @@ bool    Channel::isMode(const std::string& mode, const std::string& param) const
         {
             std::vector<std::string>::const_iterator it2;
             for (it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-                if (*it2 == param)
+                if (toUpper(*it2) == toUpper(param))
                     return true;
         }
     }

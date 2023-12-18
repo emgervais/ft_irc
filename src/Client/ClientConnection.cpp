@@ -36,11 +36,11 @@ void    Client::joinChannel(const std::string& channel, const std::string& key)
         _server.createChannel(channel, *this, key);
         chan = _server.getChannel(channel);
     }
-    addReply(RPL_JOIN(_nick, _user, _hostname, channel));
+    addReply(RPL_JOIN(getPrefix(), channel));
     if (chan->getTopic() != "")
     {
         addReply(RPL_TOPIC(_nick, channel, chan->getTopic()));
-        addReply(RPL_TOPICWHOTIME(_nick, channel, _user, _hostname, "Time not implemented yet"));
+        addReply(RPL_TOPICWHOTIME(_nick, channel, _user, chan->getTopic(), chan->getTopicTime()));
     }
     _channels[channel] = chan;
     addReply(RPL_NAMREPLY(_nick, channel, chan->getNamesReply(*this)));
@@ -55,7 +55,7 @@ void    Client::partChannel(const std::string& channel, const std::string& reaso
         if (_channels.find(channel) != _channels.end())
         {
             chan->removeClient(this, reason);
-            addReply(RPL_PART(_nick, _user, _hostname, channel, reason));
+            addReply(RPL_PART(getPrefix(), channel, reason));
         }
         else
             addReply(ERR_NOTONCHANNEL(_nick, channel));
@@ -77,13 +77,19 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
 {
     for (std::vector<std::string>::iterator it = targets.begin(); it != targets.end(); ++it)
     {
-        if (std::string(*it).find_first_of("#") == 0)
+        if (std::string(*it).find_first_of("#") == 0 || std::string(*it).find_first_of("@#") == 0)
         {
-            Channel* chan = _server.getChannel(*it);
+            std::string channelName = std::string(*it).find_first_of("@") == 0 ? std::string(*it).substr(1) : *it;
+            Channel* chan = _server.getChannel(channelName);
             if (!chan)
                 addReply(ERR_NOSUCHCHANNEL(_nick, *it));
             else if (chan->isClientOnChannel(*this) || chan->isMode("n") == false)
-                chan->sendMessage(RPL_PRIVMSG(_nick, _user, _hostname, *it, message), _nick);
+            {
+                if (std::string(*it).find_first_of("@") == 0)
+                    chan->sendMessageToOps(RPL_PRIVMSG(getPrefix(), *it, message), _nick);
+                else
+                    chan->sendMessage(RPL_PRIVMSG(getPrefix(), *it, message), _nick);
+            }
             else
                 addReply(ERR_CANNOTSENDTOCHAN(_nick, *it));
         }
@@ -92,7 +98,7 @@ void    Client::sendMessage(std::vector<std::string> targets, const std::string&
             if (_server.isNicknameTaken(*it) && *it != _nick)
             {
                 Client* target = _server.getClient(*it);
-                target->addReply(RPL_PRIVMSG(_nick, _user, _hostname, *it, message));
+                target->addReply(RPL_PRIVMSG(getPrefix(), *it, message));
             }
             else
                 addReply(ERR_NOSUCHNICK(_nick, *it));

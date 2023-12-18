@@ -20,15 +20,15 @@ class Channel;
 class Server
 {
     private:
-        int                     _socket;
-        int                     _port;
-        std::string             _pass;
-        std::map<int, Client*>  _clients;
+        int                         _socket;
+        int                         _port;
+        std::string                 _pass;
+        std::map<int, Client*>      _clients;
         std::map<std::string, Channel*> _channels;
-        struct kevent           _events[MAX_EVENTS];
-        struct kevent           _change[CHANGE_LIST_SIZE];
-        char                    _buffer[BUFF_SIZE];
-        int                     _kq;
+        struct kevent               _events[MAX_EVENTS];
+        struct kevent               _change[CHANGE_LIST_SIZE];
+        char                        _buffer[BUFF_SIZE];
+        int                         _kq;
 
         int     serverQueue();
         void    initSocket();
@@ -43,6 +43,8 @@ class Server
         void    closeClient(int socket, bool eraseFromMap=true);
         void    handleMsg(int socket, ssize_t bytesRead);
         void    exitSignal(int sig);
+
+        std::string     getClientIpAddr(int socket) const;
 
         std::set<std::string> swearWordsSet;
         void    loadSwearWords();

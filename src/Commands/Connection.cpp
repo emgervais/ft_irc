@@ -24,7 +24,9 @@ void Command::cmdJoin()
         std::stringstream ssk(_params.size() == 2 ? _params[1] : "");
         std::string channel;
         std::string key;
-        while (std::getline(ssc, channel, ','))
+        size_t targets = 0;
+
+        while (std::getline(ssc, channel, ',') && targets < MAX_TARGETS)
         {
             if (std::getline(ssk, key, ','))
                 channels[channel] = key;
@@ -32,12 +34,12 @@ void Command::cmdJoin()
                 channels[channel] = "";
             if (channel[0] != '#')
                 _client.addReply(ERR_NOSUCHCHANNEL(_client.getNick(), channel));
+            else
+                targets++;
         }
         std::map<std::string, std::string>::iterator it;
         for (it = channels.begin(); it != channels.end(); ++it)
-        {
             _client.joinChannel(it->first, it->second);
-        }
     }
     else
         _client.addReply(ERR_NEEDMOREPARAMS(_client.getNick(), _cmd));
@@ -47,13 +49,17 @@ void Command::cmdPart()
 {
     std::vector<std::string> lastParams(_params.begin() + 1, _params.end());
     std::string reason = contcatParams(lastParams);
+    size_t targets = 0;
 
     if (_params.size() > 0)
     {
         std::stringstream ss(_params[0]);
         std::string channel;
-        while (std::getline(ss, channel, ','))
+        while (std::getline(ss, channel, ',') && targets < MAX_TARGETS)
+        {
             _client.partChannel(channel, reason);
+            targets++;
+        }
     }
 }
 

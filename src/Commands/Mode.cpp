@@ -30,16 +30,8 @@ static std::string  getChangeModes(std::string modes[2])
             changeModes += *it;
         ++it;
     }
-    if (!modes[1].empty())
-    {
-        ssize_t pos = modes[1].find_last_of(' ');
-        modes[1].insert(pos + 1, ":");
-        changeModes += modes[1];
-    }
-    else
-    {
-        changeModes.insert(0, ":");
-    }
+    changeModes += modes[1];
+    changeModes.insert(0, ":");
     return (changeModes);
 }
 
@@ -126,7 +118,7 @@ void    Command::cmdModeLoop(Channel *channel)
     }
     if (!modeChanges[0].empty())
     {
-        std::string changeModes = RPL_MODE(_client.getNick(), _client.getUser(), _client.getHostname(), channel->getName(), getChangeModes(modeChanges));
+        std::string changeModes = RPL_MODE(_client.getPrefix(), channel->getName(), getChangeModes(modeChanges));
         _client.addReply(changeModes);
         channel->sendMessage(changeModes, _client.getNick());
     }

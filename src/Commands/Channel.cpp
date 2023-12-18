@@ -3,6 +3,7 @@
 #include "../Channel/Channel.hpp"
 #include "../Client/Client.hpp"
 #include "../util/util.hpp"
+#include "IRC.hpp"
 #include "NumericReplies.hpp"
 #include <sstream>
 
@@ -14,6 +15,8 @@ void    Command::cmdPrivMsg()
 		return;
 	}
 	std::vector<std::string> targets = splitString(_params[0], ",");
+    if (targets.size() > MAX_TARGETS)
+        targets.resize(MAX_TARGETS);
 	std::vector<std::string> msgParts(_params.begin() + 1, _params.end());
 	std::string msg = contcatParams(msgParts);
 	if (_server.censor(msg))
@@ -43,8 +46,7 @@ void    Command::cmdTopic()
                 _client.addReply(ERR_INPUTTOOLONG(_client.getNick()));
             }
             channel->setTopic(topic);
-            _client.addReply(RPL_SETTOPIC(_client.getNick(), _client.getUser(), _client.getHostname(),
-                                        _params[0], _server.getChannel(_params[0])->getTopic()));
+            _client.addReply(RPL_SETTOPIC(_client.getPrefix(), _params[0], topic));
         }
     }
     else if (_params.size() == 1)
@@ -84,6 +86,7 @@ void    Command::cmdKick()
         _client.addReply(ERR_NEEDMOREPARAMS(_client.getNick(), "KICK"));
     else
     {
+        size_t targets = 0;
         Channel* channel = _server.getChannel(_params[0]);
         std::string reason = (_params.size() > 2) ? contcatParams(std::vector<std::string>(_params.begin() + 2, _params.end())) : "Stop being a jerk";
         std::stringstream ss(_params[1]);
@@ -97,7 +100,7 @@ void    Command::cmdKick()
         else
         {
             std::string nick;
-            while (std::getline(ss, nick, ','))
+            while (std::getline(ss, nick, ',') && targets < MAX_TARGETS)
             {
                 if (!channel->isClientOnChannel(nick))
                     _client.addReply(ERR_USERNOTINCHANNEL(_client.getNick(), nick, _params[0]));
@@ -105,8 +108,10 @@ void    Command::cmdKick()
                 {
                     Client* client = _server.getClient(nick);
                     channel->removeClient(client, reason, &_client);
+                    targets++;
                 }
             }
         }
     }
 }
+

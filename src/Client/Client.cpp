@@ -12,6 +12,11 @@ Client::~Client()
 {
 }
 
+std::string     Client::getPrefix() const
+{
+    return (":" + _nick + "!" + _user + "@" + _hostname);
+}
+
 std::string     Client::getNick() const
 {
     return (_nick);
