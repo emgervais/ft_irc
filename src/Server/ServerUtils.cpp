@@ -152,6 +152,13 @@ bool Server::censor(std::string& str)
     {
         std::string swearWord = *it;
         size_t found = lowerStr.find(swearWord);
+        // check if space before and after
+        //
+        //
+        // TODO
+        //
+        //
+        //
         while (found != std::string::npos)
         {
             toWarn = true;
