@@ -98,6 +98,7 @@ void Server::closeClient(int socket, bool eraseFromMap)
     delete _clients[socket];
     if (eraseFromMap)
         _clients.erase(socket);
+
     try
     {
         editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");

@@ -144,10 +144,7 @@ void Server::swearPolice(Client *c) {
     c->addWarning();
     c->addReply(RPL_PRIVMSG(prefix, c->getNick(), msgs[i]));
     if (i == msgs.size() - 1)
-    {
-        c->partAllChannels();
         c->setClosing();
-    }
 }
 
 bool Server::censor(std::string& str)

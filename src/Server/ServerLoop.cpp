@@ -57,6 +57,8 @@ void Server::registerNewClient()
 
 void Server::readFromClient(int socket)
 {
+    if (_clients.find(socket) == _clients.end())
+        return;
     ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
 
     if (bytesRead == ERROR)
@@ -96,6 +98,9 @@ void Server::handleMsg(int socket, ssize_t bytesRead)
 // -- send ----
 void Server::writeToClient(int socket)
 {
+    if (_clients.find(socket) == _clients.end())
+        return;
+    
     size_t repliesQty = _clients[socket]->getRepliesQty();
     for (size_t i = 0; i < repliesQty; ++i)
     {

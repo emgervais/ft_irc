@@ -10,6 +10,7 @@ Client::Client(int socket, Server &server)
 
 Client::~Client()
 {
+    partAllChannels();
 }
 
 std::string     Client::getPrefix() const

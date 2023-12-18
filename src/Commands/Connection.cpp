@@ -11,7 +11,6 @@ void Command::cmdQuit()
         _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), contcatParams(_params)));
     else
         _client.addReply(RPL_QUIT(_client.getUser(), _client.getHostname(), _params[0]));
-    _client.partAllChannels();
     _client.setClosing();
 }
 
