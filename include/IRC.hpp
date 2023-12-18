@@ -24,7 +24,7 @@
 #define BUFF_SIZE 1024
 #define USAGE "Wrong usage : ./ircserv <port>(0-65535) <password>"
 
-#define MAX_CLIENTS 512
+#define MAX_CLIENTS 2048 //512
 
 #define NICK_NOT_CONTAIN " ,.*!?@/"
 #define NICK_NOT_START "0123456789$:#&+-"

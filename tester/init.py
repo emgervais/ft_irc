@@ -91,7 +91,7 @@ def netcat(host, port, num_connections):
 				login(nc, PASS, f"{NICK}_{i}", LOGIN, REAL_NAME)
 			if all(ncs):
 				func(ncs)
-				wait_user("Press enter to stop connections")
+				# wait_user("Press enter to stop connections")
 				for nc in ncs:
 					nc.terminate()
 		return wrapper

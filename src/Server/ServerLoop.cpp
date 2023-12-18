@@ -35,6 +35,11 @@ void Server::registerNewClient()
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
 
+    // if (_clients.size() >= MAX_CLIENTS)
+    // {
+        // close(clientSocket);
+    //     return;
+    // }
     if (clientSocket == ERROR)
     {
         std::cerr << "Error: accepting new client" << std::endl;
@@ -134,7 +139,7 @@ void Server::readFromStdin()
 
     if (cmd == "/exit" || cmd == "exit")
     {
-        std::cout << "Shutting down server." << std::endl;
+        std::cerr << "Shutting down server." << std::endl;
         exit(0);
     }
     else if (cmd == "/clients" || cmd == "clients")
@@ -168,11 +173,11 @@ void Server::exitSignal(int sig)
 {
     const char *signal_name = strsignal(sig);
 
-    std::cout << std::endl << "Quitting due to signal reception: ";
+    std::cerr << std::endl << "Quitting due to signal reception: ";
     if (signal_name != nullptr)
-        std::cout << signal_name << " (" << sig << ")" << std::endl;
+        std::cerr << signal_name << " (" << sig << ")" << std::endl;
     else
-        std::cout << "Unknown Signal (" << sig << ")" << std::endl;
+        std::cerr << "Unknown Signal (" << sig << ")" << std::endl;
 
     exit(128 + sig);
 }

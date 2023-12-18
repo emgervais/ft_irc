@@ -95,10 +95,12 @@ Server::~Server()
 
 void Server::closeClient(int socket, bool eraseFromMap)
 {
+    CLOSE_CONNECTION_MSG(socket);
     delete _clients[socket];
     if (eraseFromMap)
         _clients.erase(socket);
-
+    else
+        _clients[socket] = NULL;
     try
     {
         editKevent(socket, EVFILT_READ, EV_DELETE, "deleting client read from kqueue");
@@ -110,5 +112,4 @@ void Server::closeClient(int socket, bool eraseFromMap)
         exit(1);
     }
     close(socket);
-    CLOSE_CONNECTION_MSG(socket);
 }
