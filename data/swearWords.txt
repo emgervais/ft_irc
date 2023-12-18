@@ -14,6 +14,7 @@ putain
 pute
 criss
 esti
+osti
 sapristi
 flute
 mille sabords
@@ -89,10 +90,6 @@ Occult
 Voodoo
 Hex
 Curse
-Racist
-Sexist
-Homophobic
-Xenophobic
 Bigot
 Nazi
 Supremacist

@@ -3,7 +3,6 @@ from time import sleep
 from init import netcat, server, send_command, login, receive_response, start_nc, wait_user
 from define import *
 
-
 # -- tests --------------------------------------------------------
 @netcat(HOST, PORT, num_connections=500)
 def chat_reception(ncs):

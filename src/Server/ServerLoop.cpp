@@ -5,15 +5,6 @@
 #include <iostream>
 #include <unistd.h>
 
-#include <netinet/in.h>
-#include <sys/event.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 // -- loop ----
 void Server::run()
 {
@@ -44,7 +35,7 @@ void Server::registerNewClient()
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
 
-    if (clientSocket == -1)
+    if (clientSocket == ERROR)
     {
         std::cerr << "Error: accepting new client" << std::endl;
         return;
@@ -127,7 +118,7 @@ void Server::writeToClient(int socket)
             closeClient(socket);
 }
 
-// -- Read from stdin ----
+// -- read from stdin ----
 void Server::readFromStdin()
 {
     std::string cmd;

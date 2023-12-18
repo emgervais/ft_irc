@@ -4,6 +4,8 @@
 #include "../Client/Client.hpp"
 #include "NumericReplies.hpp"
 #include <fstream>
+#include <iostream>
+#include <arpa/inet.h>
 
 // -- misc ----
 std::string Server::getPass() const
@@ -24,6 +26,14 @@ bool Server::isNicknameTaken(const std::string& nickname)
         i++;
     }
     return false;
+}
+
+std::string Server::getClientIpAddr(int socket) const
+{
+    struct sockaddr_in addr;
+    socklen_t addrSize = sizeof(addr);
+    getpeername(socket, (struct sockaddr *)&addr, &addrSize);
+    return inet_ntoa(addr.sin_addr);
 }
 
 Channel* Server::getChannel(const std::string& name) const
@@ -121,6 +131,7 @@ void Server::loadSwearWords()
 void Server::swearPolice(Client *c) {
     std::vector<std::string> targets;
     std::vector<std::string> msgs;
+    std::string prefix = ":Kevin!Kevin@localhost";
     msgs.push_back("Your language won't be tolerated for long!");
     msgs.push_back("Demande à ta mère de t'apprendre à parler.");
     targets.push_back(c->getNick());
@@ -131,7 +142,7 @@ void Server::swearPolice(Client *c) {
     else
         i = msgs.size() - 1;
     c->addWarning();
-    c->addReply(RPL_PRIVMSG(BOT, BOT, BOT, c->getNick(), msgs[i]));
+    c->addReply(RPL_PRIVMSG(prefix, c->getNick(), msgs[i]));
     if (i == msgs.size() - 1)
     {
         c->partAllChannels();

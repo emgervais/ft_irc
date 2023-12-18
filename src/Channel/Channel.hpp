@@ -28,6 +28,7 @@ class Channel
         void    removeClient(Client *client, const std::string& reason, Client *kicker=NULL);
         void    setTopic(const std::string& topic);
         void    sendMessage(const std::string& msg, const std::string& sender="");
+        void    sendMessageToOps(const std::string& msg, const std::string& sender="");
 
         std::string     getChanModes() const;
         std::string     getNamesReply(const Client& client) const;
@@ -35,6 +36,7 @@ class Channel
         std::string     getCreationTime() const;
         std::string     getName() const;
         std::string     getTopic() const;
+        std::string     getTopicTime() const;
         int             getUsersCount() const;
         bool            canJoin() const;
 
