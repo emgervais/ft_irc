@@ -82,11 +82,13 @@ void Command::cmdPong()
         if (_params.size() != 0 && _client.getPing() == _params[0])
         {
             _client.setRegistered();
-            _client.addReply(RPL_WELCOME(_client.getNick(), _client.getUser(), _client.getHostname()));
-            _client.addReply(RPL_YOURHOST(_client.getNick()));
-            _client.addReply(RPL_CREATED(_client.getNick()));
-            _client.addReply(RPL_MYINFO(_client.getNick()));
-            _client.addReply(RPL_ISUPPORT(_client.getNick()));
+            _client.addReply(
+                std::string(RPL_WELCOME(_client.getNick(), _client.getUser(), _client.getHostname()))
+                + std::string(RPL_YOURHOST(_client.getNick()))
+                + std::string(RPL_CREATED(_client.getNick()))
+                + std::string(RPL_MYINFO(_client.getNick()))
+                + std::string(RPL_ISUPPORT(_client.getNick()))
+            );
             return;
         }
         else

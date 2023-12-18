@@ -4,6 +4,7 @@
 #include "../Client/Client.hpp"
 #include <iostream>
 #include <unistd.h>
+#include <sys/socket.h>
 
 // -- loop ----
 void Server::run()
@@ -34,12 +35,6 @@ void Server::registerNewClient()
     sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
     int clientSocket = accept(_socket, reinterpret_cast<sockaddr*>(&clientAddr), &clientLen);
-
-    // if (_clients.size() >= MAX_CLIENTS)
-    // {
-        // close(clientSocket);
-    //     return;
-    // }
     if (clientSocket == ERROR)
     {
         std::cerr << "Error: accepting new client" << std::endl;
@@ -64,13 +59,11 @@ void Server::readFromClient(int socket)
 {
     if (_clients.find(socket) == _clients.end())
         return;
+        
     ssize_t bytesRead = recv(socket, _buffer, sizeof(_buffer) - 1, 0);
 
     if (bytesRead == ERROR)
-    {
-        std::cerr << "Error: reading from client" << std::endl;
         closeClient(socket);
-    }
     else if (bytesRead == 0)
         closeClient(socket);
     else
@@ -105,19 +98,18 @@ void Server::writeToClient(int socket)
 {
     if (_clients.find(socket) == _clients.end())
         return;
-    
     size_t repliesQty = _clients[socket]->getRepliesQty();
     for (size_t i = 0; i < repliesQty; ++i)
     {
         std::string msg = _clients[socket]->getReply();
         ssize_t bytesSent = send(socket, msg.c_str(), msg.size(), 0);
-        if (bytesSent == ERROR)
+        if (bytesSent == 0 || bytesSent == ERROR)
         {
-            std::cerr << "Error: sending to client" << std::endl;
+            if (bytesSent == ERROR)
+                std::cerr << "Error: sending to client" << std::endl;
             closeClient(socket);
+            return;
         }
-        else if (bytesSent == 0)
-            closeClient(socket);
         else
         {
             FROM_SERVER(std::string(msg));
@@ -125,7 +117,7 @@ void Server::writeToClient(int socket)
         }
     }
     if (_clients[socket]->isClosing())
-            closeClient(socket);
+        closeClient(socket);
 }
 
 // -- read from stdin ----

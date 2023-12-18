@@ -47,9 +47,8 @@ def send_command(nc_process, text):
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
-		sleep(1000)
 		# kill_processes_by_name(NAME)
-		exit(1)
+		# exit(1)
 
 def receive_response(nc_process, keyword=""):
 	if not nc_process:

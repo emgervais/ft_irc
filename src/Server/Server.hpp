@@ -3,7 +3,6 @@
 
 #include "IRC.hpp"
 #include <sys/event.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <string>
 #include <map>

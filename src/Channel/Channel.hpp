@@ -17,7 +17,6 @@ class Channel
         Server                  &_server;
         std::string             _creationTime;
         std::string             _topicTime;
-        // l: nombre de users
         std::map<std::string, std::vector<std::string> > _modes;
 
     public:

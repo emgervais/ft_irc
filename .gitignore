@@ -1,7 +1,7 @@
 *.txt
 !vgsuppress.txt
-!valgrind.log
-!data/*
+valgrind.log
+!data/*.txt
 *.o
 *.d
 *.a

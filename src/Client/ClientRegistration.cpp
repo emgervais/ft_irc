@@ -13,9 +13,9 @@ static std::string    getHostName(int socket)
     socklen_t           len = sizeof(addr);
     char                hostname[NI_MAXHOST];
 
-    if (getpeername(socket, (struct sockaddr *)&addr, &len) == -1)
+    if (getpeername(socket, (struct sockaddr *)&addr, &len) == ERROR)
         return ("Unknown");
-    if (getnameinfo((struct sockaddr *)&addr, len, hostname, sizeof(hostname), NULL, 0, 0) == -1)
+    if (getnameinfo((struct sockaddr *)&addr, len, hostname, sizeof(hostname), NULL, 0, 0) == ERROR)
         return ("Unknown");
     return (std::string(hostname));
 }

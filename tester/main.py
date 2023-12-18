@@ -21,22 +21,27 @@ def chat_reception(ncs):
 			print(f"client {i} couldn't receive msg. ______________________ERROR___")
 		assert(success)
 
-@netcat(HOST, PORT, num_connections=5)
+@netcat(HOST, PORT, num_connections=1000)
 def noisy_chat(ncs):
-	for nc in ncs:
+	print("in")
+	send_command(ncs[0], f"JOIN {CHANNEL}")
+	print("after send_command")
+	for i, nc in enumerate(ncs):
 		send_command(nc, f"JOIN {CHANNEL}")
-	# wait_user(f"connect to {PORT} {PASS} {CHANNEL}")
-	# for i, nc in enumerate(ncs):
-	# 	msg = f"from client_{i}"
-	# 	send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")
+		print("after send_command")
 
+	# wait_user(f"connect to {PORT} {PASS} {CHANNEL}")
+	for i, nc in enumerate(ncs):
+		msg = f"from client_{i}"
+		send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")
+		print("after send_command")
+	print("out")
 
 # -- main ---------------------------------------------------------
 # @server(PORT, PASS)
 def main():
-	for _ in range(10):
+	for _ in range(1000):
 		noisy_chat()
-		break
 
 if __name__ == "__main__":
 	main()

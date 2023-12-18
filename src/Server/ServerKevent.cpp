@@ -13,6 +13,7 @@ void Server::initKqueue()
     const size_t signalCount = sizeof(signalList) / sizeof(signalList[0]);
     size_t i;
     
+    signal(SIGPIPE, SIG_IGN);
     for (i = 0; i < signalCount; ++i)
     {
         EV_SET(_change+i, signalList[i], EVFILT_SIGNAL, EV_ADD, 0, 0, NULL);

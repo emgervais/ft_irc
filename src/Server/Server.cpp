@@ -4,6 +4,7 @@
 #include "../Commands/Command.hpp"
 #include <thread>
 #include <unistd.h>
+#include <fcntl.h>
 
 // -- singleton ----
 Server& Server::getInstance(int port, std::string const& password)
@@ -47,6 +48,7 @@ void Server::initSocket()
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(_port);
 
+    fcntl(_socket, F_SETFL, O_NONBLOCK);        
     bindSocket(addr);
     if (listen(_socket, MAX_CLIENTS) == ERROR)
         throw std::runtime_error("listen() failed");
@@ -81,14 +83,22 @@ Server::~Server()
     for (clientIt = _clients.begin(); clientIt != _clients.end(); ++clientIt)
         closeClient(clientIt->first, false);
 
-    std::map<std::string, Channel*>::iterator chanIt;
-    for (chanIt = _channels.begin(); chanIt != _channels.end(); ++chanIt)
-        delete chanIt->second;
-
-    try { editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting server socket read from kqueue"); }
-    catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
-    try { editKevent(fileno(stdin), EVFILT_READ, EV_DELETE, "deleting stdin read from kqueue"); }
-    catch(const std::exception& e)  { std::cerr << e.what() << '\n'; }
+    try
+    {
+        editKevent(_socket, EVFILT_READ, EV_DELETE, "deleting server socket read from kqueue");
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    try
+    {
+        editKevent(fileno(stdin), EVFILT_READ, EV_DELETE, "deleting stdin read from kqueue");
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
     close(_socket);
     close(_kq);
 }
