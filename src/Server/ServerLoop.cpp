@@ -150,6 +150,11 @@ void Server::readFromStdin()
         for (it = _channels.begin(); it != _channels.end(); ++it)
             std::cout << it->first << std::endl;
     }
+    else if (cmd == "/censor" || cmd == "censor")
+    {
+        _censoring = !_censoring;
+        std::cout << "Censoring is now " << (_censoring ? "enabled" : "disabled") << std::endl;
+    }
     else if (cmd == "/help" || cmd == "help")
     {
         std::cout << "Available commands:" << std::endl;
@@ -157,6 +162,7 @@ void Server::readFromStdin()
         std::cout << "/clients" << std::endl;
         std::cout << "/channels" << std::endl;
         std::cout << "/help" << std::endl;
+        std::cout << "/censor" << std::endl;
     }
     else
         std::cout << "Unknown command. Type /help for a list of available commands." << std::endl;

@@ -198,6 +198,8 @@ static std::string replaceVowels(std::string& str)
 
 std::string Server::censor(const std::string& str, Client *client)
 {
+    if (!_censoring)
+        return str;
     std::stringstream ss(str);
     std::string word;
     std::string lowerWord;

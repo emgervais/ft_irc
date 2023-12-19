@@ -17,7 +17,7 @@ Server& Server::getInstance(int port, std::string const& password)
 
 // -- init ----
 Server::Server(int port, std::string const& password)
-    : _port(port), _pass(password)
+    : _port(port), _pass(password), _censoring(true)
 {
     try
     {

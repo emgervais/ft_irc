@@ -28,6 +28,7 @@ class Server
         struct kevent               _change[CHANGE_LIST_SIZE];
         char                        _buffer[BUFF_SIZE];
         int                         _kq;
+        bool                        _censoring;
         std::set<std::string>       _swearWords;
         std::map<char, char>        _equivalentChars;
 
