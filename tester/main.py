@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-from init import netcat, send_command, receive_response, wait_user
 from define import *
+from init import netcat, send_command, receive_response, wait_user, server
+import modes
 
 # -- tests --------------------------------------------------------
 @netcat(HOST, PORT, num_connections=500)
@@ -29,11 +30,25 @@ def noisy_chat(ncs):
 		send_command(nc, f"PRIVMSG {CHANNEL} :{msg}")
 		print("after send_command")
 
+# initial replies
+
+
+# user: i (invisible) (pas de param)
+
+
+# swearWords
+
 # -- main ---------------------------------------------------------
 # @server(PORT, PASS)
 def main():
-	for _ in range(1000):
-		noisy_chat()
+	# modes.operator()
+	# modes.key()
+	# modes.limit()
+	# modes.invite()
+	# modes.no_ext_msg()
+	modes.secret()
+	# for _ in range(1000):
+		# noisy_chat()
 
 if __name__ == "__main__":
 	main()

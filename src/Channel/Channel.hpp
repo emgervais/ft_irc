@@ -39,6 +39,7 @@ class Channel
         std::string     getName() const;
         std::string     getTopic() const;
         std::string     getTopicTime() const;
+        int             getNbClients() const;
 
         std::string     getChanModes() const;
         void            removeAllModes(const Client& client);
