@@ -25,29 +25,28 @@ class Channel
 
         void    addClient(Client *client);
         void    removeClient(Client *client, const std::string& reason, Client *kicker=NULL);
+        bool    isClientOnChannel(const Client& client) const;
+        bool    isClientOnChannel(const std::string& nick) const;
+        bool    canJoin() const;
+
         void    setTopic(const std::string& topic);
         void    sendMessage(const std::string& msg, const std::string& sender="");
         void    sendMessageToOps(const std::string& msg, const std::string& sender="");
 
-        std::string     getChanModes() const;
         std::string     getNamesReply(const Client& client) const;
         std::string     getNamesReply(const std::string& clientNick) const;
         std::string     getCreationTime() const;
         std::string     getName() const;
         std::string     getTopic() const;
         std::string     getTopicTime() const;
-        int             getUsersCount() const;
-        bool            canJoin() const;
 
+        std::string     getChanModes() const;
         void            removeAllModes(const Client& client);
         bool            isMode(const std::string& mode) const;
         bool            isMode(const std::string& mode, const std::string& param) const;
         void            addMode(const std::string& mode, const std::string& param);
         void            removeMode(const std::string& mode);
         void            removeMode(const std::string& mode, const std::string& param);
-
-        bool            isClientOnChannel(const Client& client) const;
-        bool            isClientOnChannel(const std::string& nick) const;
 };
 
 #endif

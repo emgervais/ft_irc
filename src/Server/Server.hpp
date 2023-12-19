@@ -28,6 +28,7 @@ class Server
         struct kevent               _change[CHANGE_LIST_SIZE];
         char                        _buffer[BUFF_SIZE];
         int                         _kq;
+        std::set<std::string>       _swearWords;
 
         int     serverQueue();
         void    initSocket();
@@ -44,9 +45,8 @@ class Server
         void    exitSignal(int sig);
 
         std::string     getClientIpAddr(int socket) const;
-
-        std::set<std::string> swearWordsSet;
-        void    loadSwearWords();
+        void            loadSwearWords();
+        bool            checkEquivalentWords(std::string const& word);
 
         Server(void);
         Server(const Server& rhs);
@@ -69,7 +69,7 @@ class Server
 
         std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
         std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
-        bool            censor(std::string& str);
+        std::string     censor(std::string& str, int socket);
         void            swearPolice(Client *c);
 };
 

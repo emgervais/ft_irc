@@ -10,8 +10,7 @@
 #define BLUE "\033[34m"
 #define RESET_COLOR "\033[0m"
 #define ERROR -1
-#define SWEAR_WORDS_EN "swearWords/en.txt"
-#define SWEAR_WORDS_FR "swearWords/fr.txt"
+#define SWEAR_WORDS_PATH "swearWords/swearWords.txt"
 #define BOT std::string("Kevin")
 
 #define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET_COLOR << msg << std::endl
@@ -39,6 +38,7 @@
 #define USER_MAX_LEN 50
 #define REALNAME_MAX_LEN 50
 
+#define MAX_WARNINGS 3
 
 #define CHANNELLEN std::string(" CHANNELLEN") + std::to_string(CHANNEL_MAX_LEN)
 #define HOSTLEN std::string(" HOSTLEN") + std::to_string(HOST_MAX_LEN)

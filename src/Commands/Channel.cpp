@@ -19,8 +19,7 @@ void    Command::cmdPrivMsg()
         targets.resize(MAX_TARGETS);
 	std::vector<std::string> msgParts(_params.begin() + 1, _params.end());
 	std::string msg = contcatParams(msgParts);
-	if (_server.censor(msg))
-        _server.swearPolice(&_client);
+	msg = _server.censor(msg, _client.getSocket());
 	_client.sendMessage(targets, msg);
 }
 

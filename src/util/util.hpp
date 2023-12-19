@@ -11,5 +11,6 @@ std::string randomToken();
 std::string getUnixTime();
 std::string getTimeOfDay();
 std::string toUpper(const std::string& str);
+std::string toLower(const std::string& str);
 
 #endif

@@ -3,9 +3,13 @@
 #include "../Channel/Channel.hpp"
 #include "../Client/Client.hpp"
 #include "NumericReplies.hpp"
+#include "IRC.hpp"
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <arpa/inet.h>
+#include <map>
+#include <string>
 
 // -- misc ----
 std::string Server::getPass() const
@@ -112,36 +116,28 @@ void    Server::writeToClients(std::vector<int> sockets, const std::string& msg)
 
 void Server::loadSwearWords()
 {
-    const char *paths[] = {SWEAR_WORDS_EN, SWEAR_WORDS_FR};
-    const size_t pathsCount = sizeof(paths) / sizeof(paths[0]);
+    std::ifstream file(SWEAR_WORDS_PATH);
+    std::string line;
 
-    for (size_t i = 0; i < pathsCount; ++i)
+    if (!file.is_open())
     {
-        std::ifstream file(paths[i]);
-        if (!file.is_open())
-        {
-            std::cerr << "Error opening SWEAR_WORDS_PATH: " << paths[i] << std::endl;
-            return;
-        }
-
-        std::string swearWord;
-        while (std::getline(file, swearWord))
-        {
-            std::transform(swearWord.begin(), swearWord.end(), swearWord.begin(), ::tolower);
-            swearWordsSet.insert(swearWord);
-        }
-        file.close();
+        std::cerr << "Error opening SWEAR_WORDS_PATH: " << SWEAR_WORDS_PATH << std::endl;
+        return;
     }
+    while (std::getline(file, line))
+        if (!line.empty())
+            _swearWords.insert(line);
 }
 
-void Server::swearPolice(Client *c) {
+void Server::swearPolice(Client *c)
+{
     std::vector<std::string> targets;
     std::vector<std::string> msgs;
     std::string prefix = ":Kevin!Kevin@localhost";
     msgs.push_back("Your language won't be tolerated for long!");
     msgs.push_back("Demande à ta mère de t'apprendre à parler.");
     targets.push_back(c->getNick());
-    const int MAX_WARNINGS = 3;
+
     size_t i;
     if (c->getWarning() < MAX_WARNINGS)
         i = 0;
@@ -153,42 +149,65 @@ void Server::swearPolice(Client *c) {
         c->setClosing();
 }
 
-bool Server::censor(std::string& str)
+bool Server::checkEquivalentWords(const std::string& word)
 {
-    //////
-    ////// Ne pas itérer sur tous les swearWords
-    //////  .Isoler chaque mot du msg, voir s'il est dans le set
-    //////  .Filtrer les fichiers pour enlever les lignes avec espaces
-    //////
-    //////
-    bool toWarn = false;
-    if (swearWordsSet.empty())
-        loadSwearWords();
-    std::string lowerStr = str;
-    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    static std::map<char, char> equialentChars = {
+        {'@', 'a'},
+        {'4', 'a'},
+        {'8', 'b'},
+        {'3', 'e'},
+        {'1', 'i'},
+        {'!', 'i'},
+        {'|', 'i'},
+        {'9', 'g'},
+        {'1', 'l'},
+        {'!', 'l'},
+        {'|', 'l'},
+        {'0', 'o'},
+        {'$', 's'},
+        {'5', 's'},
+        {'+', 't'},
+        {'2', 'z'}
+    };
+    std::string::const_iterator it = word.begin();
+    std::string newWord(word);
 
-    std::set<std::string>::iterator it;
-    for (it = swearWordsSet.begin(); it != swearWordsSet.end(); ++it)
+    for (; it != word.end(); ++it)
     {
-        std::string swearWord = *it;
-        size_t found = lowerStr.find(swearWord);
-        // check if space before and after
-        //
-        //
-        // TODO
-        //
-        //
-        //
-        while (found != std::string::npos)
-        {
-            toWarn = true;
-            size_t vowel = str.find_first_of("aeiouyAEIOUY", found);
-            if (vowel != std::string::npos)
-            {
-                str[vowel] = '*';
-            }
-            found = lowerStr.find(swearWord, found + 1);
-        }
+        if (equialentChars.find(*it) != equialentChars.end())
+            newWord[it - word.begin()] = equialentChars[*it];
     }
-    return toWarn;
+    return _swearWords.find(newWord) != _swearWords.end();
+}
+
+static std::string replaceVowels(std::string& str)
+{
+    std::string vowels = "aeiouy";
+    std::string newStr(str);
+
+    for (size_t i = 0; i < str.length(); ++i)
+    {
+        if (vowels.find(str[i]) != std::string::npos)
+            newStr[i] = '*';
+    }
+    return newStr;
+}
+
+std::string Server::censor(std::string& str, int socket)
+{
+    std::stringstream ss(str);
+    std::string word;
+    std::string newStr;
+
+    while (ss >> word)
+    {
+        word = toLower(word);
+        if (_swearWords.find(word) != _swearWords.end() || checkEquivalentWords(word))
+        {
+            word = replaceVowels(word);
+            swearPolice(_clients[socket]);
+        }
+        newStr += word + " ";
+    }
+    return newStr;
 }

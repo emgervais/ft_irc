@@ -3,6 +3,7 @@
 #include "../Server/Server.hpp"
 #include "../util/util.hpp"
 #include "NumericReplies.hpp"
+#include <sstream>
 
 
 Channel::Channel(const std::string& name, const Client& client, const Server& server, const std::string& key)
@@ -24,10 +25,8 @@ void    Channel::addClient(Client *client)
     std::vector<Client*>::iterator it;
 
     for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
         if (*it == client)
             return;
-    }
     _clients.push_back(client);
     sendMessage(RPL_JOIN(client->getPrefix(), _name), client->getNick());
 }
@@ -55,11 +54,38 @@ void    Channel::removeClient(Client *client, const std::string& reason, Client 
     }
 }
 
-void    Channel::setTopic(const std::string& topic)
+bool    Channel::isClientOnChannel(const Client& client) const
 {
-    _topic = topic;
-    _topicTime = getUnixTime();
-    sendMessage(RPL_TOPIC(_clients[0]->getNick(), _name, _topic), _clients[0]->getNick());
+    std::vector<Client*>::const_iterator it;
+
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+        if (*it == &client)
+            return true;
+    return false;
+}
+
+bool    Channel::isClientOnChannel(const std::string& nick) const
+{
+    std::vector<Client*>::const_iterator it;
+
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+        if (toUpper((*it)->getNick()) == toUpper(nick))
+            return true;
+    return false;
+}
+
+bool    Channel::canJoin() const
+{
+    if (isMode("l"))
+    {
+        std::stringstream ss(_modes.find("l")->second[0]);
+        int limit;
+        
+        ss >> std::noskipws >> limit;
+        if (!(ss.eof() && !ss.fail()) || _clients.size() >= static_cast<size_t>(limit))
+            return false;
+    }
+    return true;
 }
 
 std::string     Channel::getName() const
@@ -77,163 +103,11 @@ std::string     Channel::getTopicTime() const
     return (_topicTime);
 }
 
-int             Channel::getUsersCount() const
+void    Channel::setTopic(const std::string& topic)
 {
-    return (_clients.size());
-}
-
-void    Channel::sendMessage(const std::string& msg, const std::string& sender)
-{
-    std::vector<Client*>::iterator it;
-
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if ((*it)->getNick() != sender)
-        {
-            (*it)->addReply(msg);
-        }
-    }
-}
-
-void    Channel::sendMessageToOps(const std::string& msg, const std::string& sender)
-{
-    std::vector<Client*>::iterator it;
-
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        std::cout << (*it)->getNick() << std::endl;
-        if ((*it)->getNick() != sender && isMode("o", (*it)->getNick()))
-        {
-            (*it)->addReply(msg);
-        }
-    }
-}
-
-bool    Channel::isMode(const std::string& mode) const
-{
-    std::map<std::string, std::vector<std::string> >::const_iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
-    {
-        if (it->first == mode && it->second.size() > 0)
-            return true;
-    }
-    return false;
-}
-
-bool    Channel::isMode(const std::string& mode, const std::string& param) const
-{
-    std::map<std::string, std::vector<std::string> >::const_iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
-    {
-        if (it->first == mode)
-        {
-            std::vector<std::string>::const_iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-                if (toUpper(*it2) == toUpper(param))
-                    return true;
-        }
-    }
-    return false;
-}
-
-void    Channel::addMode(const std::string& mode, const std::string& param)
-{
-    if (isMode(mode, param))
-        return;
-    std::map<std::string, std::vector<std::string> >::iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
-    {
-        if (it->first == mode)
-        {
-            it->second.push_back(param);
-            return;
-        }
-    }
-    std::vector<std::string> v;
-    v.push_back(param);
-    _modes[mode] = v;
-}
-
-void    Channel::removeMode(const std::string& mode)
-{
-    std::map<std::string, std::vector<std::string> >::iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
-    {
-        if (it->first == mode)
-        {
-            if (mode != "o")
-                _modes.erase(it);
-            return;
-        }
-    }
-}
-
-void    Channel::removeMode(const std::string& mode, const std::string& param)
-{
-    std::map<std::string, std::vector<std::string> >::iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
-    {
-        if (it->first == mode)
-        {
-            std::vector<std::string>::iterator it2;
-            for (it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-            {
-                if (*it2 == param)
-                {
-                    it->second.erase(it2);
-                    return;
-                }
-            }
-        }
-    }
-}
-
-bool    Channel::isClientOnChannel(const Client& client) const
-{
-    std::vector<Client*>::const_iterator it;
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if (*it == &client)
-            return true;
-    }
-    return false;
-}
-
-bool    Channel::isClientOnChannel(const std::string& nick) const
-{
-    std::vector<Client*>::const_iterator it;
-    for (it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        if (toUpper((*it)->getNick()) == toUpper(nick))
-            return true;
-    }
-    return false;
-}
-
-std::string     Channel::getChanModes() const
-{
-    std::string reply = "+";
-    std::string params;
-
-    std::map<std::string, std::vector<std::string> >::const_iterator it;
-    for (it = _modes.begin(); it != _modes.end(); ++it)
-    {
-        if (it->first != "o")
-        {
-            reply += it->first;
-            if (it->first == "k" || it->first == "l")
-            {
-                if (it->second.size() > 0)
-                    params += " " + it->second[0];
-            }
-        }
-    }
-    if (!params.empty())
-    {
-        ssize_t pos = params.find_last_of(' ');
-        params.insert(pos + 1, ":");
-    }
-    return (reply + params);
+    _topic = topic;
+    _topicTime = getUnixTime();
+    sendMessage(RPL_TOPIC(_clients[0]->getNick(), _name, _topic), _clients[0]->getNick());
 }
 
 std::string     Channel::getNamesReply(const Client &client) const
@@ -273,28 +147,20 @@ std::string     Channel::getCreationTime() const
     return _creationTime;
 }
 
-void    Channel::removeAllModes(const Client& client)
+void    Channel::sendMessage(const std::string& msg, const std::string& sender)
 {
-    char    mode[3] = {'o', 'i', '\0'};
+    std::vector<Client*>::iterator it;
 
-    for (int i = 0; mode[i]; ++i)
-        removeMode(std::string(1, mode[i]), client.getNick());
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+        if ((*it)->getNick() != sender)
+            (*it)->addReply(msg);
 }
 
-bool    Channel::canJoin() const
+void    Channel::sendMessageToOps(const std::string& msg, const std::string& sender)
 {
-    if (isMode("l"))
-    {
-        try
-        {
-            std::cout << atoi(_modes.find("l")->second[0].c_str()) << std::endl;
-            if (getUsersCount() >= atoi(_modes.find("l")->second[0].c_str()))
-                return false;
-        }
-        catch (std::exception& e)
-        {
-            return false;
-        }
-    }
-    return true;
+    std::vector<Client*>::iterator it;
+
+    for (it = _clients.begin(); it != _clients.end(); ++it)
+        if ((*it)->getNick() != sender && isMode("o", (*it)->getNick()))
+            (*it)->addReply(msg);
 }

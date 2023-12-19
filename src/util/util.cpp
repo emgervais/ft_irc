@@ -79,9 +79,17 @@ std::string getTimeOfDay()
 std::string toUpper(const std::string& str)
 {
     std::string upper;
+
     for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
-    {
         upper += toupper(*it);
-    }
     return (upper);
+}
+
+std::string toLower(const std::string& str)
+{
+    std::string lower;
+    
+    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+        lower += tolower(*it);
+    return (lower);
 }
