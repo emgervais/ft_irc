@@ -26,7 +26,7 @@ const std::string SERVER_NAME = ":irc.localhost ";
 #define RPL_NOTOPIC(nick, channel) SERVER_NAME + "331 " + nick + " " + channel + " :No topic is set" + CRLF
 #define RPL_SETTOPIC(prefix, channel, topic) prefix + " TOPIC " + channel + " :" + topic + CRLF
 #define RPL_LISTSTART(nick) SERVER_NAME + "321 " + nick + " Channel :Users Name" + CRLF
-#define RPL_LIST(nick, channel, users, topic) SERVER_NAME + "322 " + nick + " " + channel + " " + users + " :" + topic + CRLF
+#define RPL_LIST(nick, channel, userCount, topic) SERVER_NAME + "322 " + nick + " " + channel + " " + std::to_string(userCount) + " :" + topic + CRLF
 #define RPL_LISTEND(nick) SERVER_NAME + "323 " + nick + " :End of /LIST" + CRLF
 #define RPL_INVITING(nick, nickInvite, channel) SERVER_NAME + "341 " + nick + " " + nickInvite + " " + channel + CRLF
 #define RPL_INVITE(nick, nickInvite, channel) ":" + nick + " INVITE " + nickInvite + " " + channel + CRLF
