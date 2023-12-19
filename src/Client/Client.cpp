@@ -156,7 +156,7 @@ std::string     Client::addBuff(const std::string& input)
 void            Client::chopBuff()
 {
     if(_buff.find("\r\n") != std::string::npos)
-        _buff = _buff.substr(_buff.find_last_of("\r\n") + 2);
+        _buff = _buff.substr(_buff.find_last_of("\r\n"));
     else
-        _buff = _buff.substr(_buff.find_last_of("\n") + 1);
+        _buff = _buff.substr(_buff.find_last_of("\n"));
 }
