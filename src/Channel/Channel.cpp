@@ -164,3 +164,8 @@ void    Channel::sendMessageToOps(const std::string& msg, const std::string& sen
         if ((*it)->getNick() != sender && isMode("o", (*it)->getNick()))
             (*it)->addReply(msg);
 }
+
+int     Channel::getNbClients() const
+{
+    return _clients.size();
+}
