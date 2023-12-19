@@ -87,7 +87,7 @@ std::string Server::getChannelReply(const std::string& name, const std::string& 
     for (it = _channels.begin(); it != _channels.end(); ++it)
     {
         if (it->first == name && (it->second->isClientOnChannel(clientNick) || it->second->isMode("s") == false))
-            return it->second->getNamesReply(clientNick);
+            return RPL_LIST(clientNick, it->second->getName(), it->second->getNbClients(), it->second->getTopic());
     }
     return "";
 }
@@ -100,7 +100,7 @@ std::vector<std::string> Server::getChannelsReply(const std::string& clientNick)
     for (it = _channels.begin(); it != _channels.end(); ++it)
     {
         if (it->second->isClientOnChannel(clientNick) || it->second->isMode("s") == false)
-            channelsList.push_back(it->second->getNamesReply(clientNick));
+            channelsList.push_back(RPL_LIST(clientNick, it->second->getName(), it->second->getNbClients(), it->second->getTopic()));
     }
     return channelsList;
 }
