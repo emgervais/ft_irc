@@ -123,7 +123,7 @@ std::string     Channel::getNamesReply(const Client &client) const
             reply += "@";
         reply += (*it)->getNick() + " ";
     }
-    return reply;
+    return RPL_NAMREPLY(client.getNick(), _name, reply);
 }
 
 std::string     Channel::getNamesReply(const std::string& clientNick) const
@@ -139,7 +139,7 @@ std::string     Channel::getNamesReply(const std::string& clientNick) const
             reply += "@";
         reply += (*it)->getNick() + " ";
     }
-    return reply;
+    return RPL_NAMREPLY(clientNick, _name, reply);
 }
 
 std::string     Channel::getCreationTime() const
