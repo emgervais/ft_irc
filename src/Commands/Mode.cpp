@@ -75,14 +75,14 @@ void    Command::cmdModeLoop(Channel *channel)
 {
     std::string::iterator it = _params[1].begin();
     std::string mode = _params[1];
-    std::vector<std::string>::iterator params;
+    std::vector<std::string>::iterator params = _params.begin();
     std::string param = "";
     char sign = '+';
     std::string modeChanges[2] = {"", ""};
     bool    modeChanged = false;
 
     if (_params.size() > 2)
-        params = _params.begin() + 2;
+        params += 2;
     while (it != _params[1].end())
     {
         if (*it == '+' || *it == '-')

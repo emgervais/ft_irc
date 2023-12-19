@@ -506,3 +506,54 @@
    match-leak-kinds: reachable
    fun:getnameinfo
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:tzsetwall_basic
+   fun:localtime
+   fun:_ZL12getLocalTimev
+   fun:_Z11getUnixTimev
+   fun:_ZN7ChannelC2ERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERK6ClientRK6ServerS8_
+   fun:_ZN7ChannelC1ERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERK6ClientRK6ServerS8_
+   fun:_ZN6Server13createChannelERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERK6ClientS8_
+   fun:_ZN6Client11joinChannelERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEES8_
+   fun:_ZN7Command7cmdJoinEv
+   fun:_ZN7Command4execEv
+   fun:_ZN6Server9handleMsgEi
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:__smakebuf
+   fun:__srefill0
+   fun:__srefill
+   fun:__srget
+   fun:getc
+   fun:_ZNSt3__110__stdinbufIcE9__getcharEb
+   fun:_ZNSt3__115basic_streambufIcNS_11char_traitsIcEEE6sbumpcEv
+   fun:_ZNSt3__17getlineIcNS_11char_traitsIcEENS_9allocatorIcEEEERNS_13basic_istreamIT_T0_EES9_RNS_12basic_stringIS6_S7_T1_EES6_
+   fun:_ZNSt3__1L7getlineIcNS_11char_traitsIcEENS_9allocatorIcEEEERNS_13basic_istreamIT_T0_EES9_RNS_12basic_stringIS6_S7_T1_EE
+   fun:_ZN6Server13readFromStdinEv
+   fun:_ZN6Server3runEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:localtime
+   fun:_ZL12getLocalTimev
+   fun:_Z11getUnixTimev
+   fun:_ZN7ChannelC2ERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERK6ClientRK6ServerS8_
+   fun:_ZN7ChannelC1ERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERK6ClientRK6ServerS8_
+   fun:_ZN6Server13createChannelERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEERK6ClientS8_
+   fun:_ZN6Client11joinChannelERKNSt3__112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEES8_
+   fun:_ZN7Command7cmdJoinEv
+   fun:_ZN7Command4execEv
+   fun:_ZN6Server9handleMsgEi
+   fun:_ZN6Server14readFromClientEi
+}

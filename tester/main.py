@@ -46,10 +46,10 @@ def nasty_chat(ncs):
 # -- main ---------------------------------------------------------
 # @server(PORT, PASS)
 def main():
-	chat_reception()
-	for _ in range(3):
-		noisy_chat()
-	nasty_chat()
+	# chat_reception()
+	# for _ in range(3):
+	# 	noisy_chat()
+	# nasty_chat()
 	modes.operator()
 	modes.key()
 	modes.limit()
