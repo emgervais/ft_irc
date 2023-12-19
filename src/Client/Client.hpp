@@ -25,6 +25,7 @@ class Client
         std::map<std::string, Channel*> _channels;
         int                             _warnings;
         std::string                     _mode;
+        std::string                     _buff;
 
         std::queue<std::string>         _sendQueue;
     public:
@@ -38,6 +39,8 @@ class Client
         std::string     getRealname() const;
         std::string     getHostname() const;
         std::string     getPing() const;
+        std::string     addBuff(const std::string input);
+        void            chopBuff();
 
         void            setClosing();
         bool            isClosing() const;

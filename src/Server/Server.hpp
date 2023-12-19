@@ -42,7 +42,7 @@ class Server
         void    writeToClient(int socket);
         void    readFromStdin(void);
         void    closeClient(int socket, bool eraseFromMap=true);
-        void    handleMsg(int socket, ssize_t bytesRead);
+        void    handleMsg(int socket);
         void    exitSignal(int sig);
 
         std::string     getClientIpAddr(int socket) const;

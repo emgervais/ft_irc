@@ -72,25 +72,27 @@ void Server::readFromClient(int socket)
         std::string msg(_buffer);
         if (msg.find("PONG") == std::string::npos)
             FROM_CLIENT(std::string(_buffer));
-        handleMsg(socket, bytesRead);
+        handleMsg(socket);
     }
 }
 
-void Server::handleMsg(int socket, ssize_t bytesRead)
+void Server::handleMsg(int socket)
 {
+    std::string input = _clients[socket]->addBuff(_buffer);
     std::vector<std::string> cmds;
-    if (_buffer[bytesRead - 1] == '\n' && _buffer[bytesRead - 2] == '\r')
-        cmds = splitString(_buffer, "\r\n");
-    else if (_buffer[bytesRead - 1] == '\n')
-        cmds = splitString(_buffer, "\n");
+    _buffer[0] = '\0';
+    if (input.find("\r\n") != std::string::npos)
+        cmds = splitString(input, "\r\n");
+    else if (input.find("\n") != std::string::npos)
+        cmds = splitString(input, "\n");
     else
         return;
-    _buffer[0] = '\0';
+    _clients[socket]->chopBuff();
     for (size_t i = 0; i < cmds.size(); ++i)
     {
         Command cmd(*_clients[socket], *this, cmds[i]);
         cmd.exec();
-    }     
+    } 
 }
 
 // -- send ----
