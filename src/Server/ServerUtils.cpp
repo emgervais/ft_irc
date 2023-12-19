@@ -205,16 +205,19 @@ std::string Server::censor(const std::string& str, Client *client)
     std::string lowerWord;
     std::string newStr;
 
+    bool toWarn = false;
     while (ss >> word)
     {
         lowerWord = toLower(word);
         if (_swearWords.find(lowerWord) != _swearWords.end() || checkEquivalentWords(lowerWord))
         {
             word = replaceVowels(word);
-            swearPolice(client);
+            toWarn = true;
         }
 
         newStr += word + " ";
     }
+    if (toWarn)
+        swearPolice(client);
     return newStr;
 }

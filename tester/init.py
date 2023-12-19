@@ -1,5 +1,5 @@
 import subprocess
-import select
+import random
 import os
 import fcntl
 import signal
@@ -47,9 +47,13 @@ def send_command(nc_process, text, sleep=0):
 		print("Netcat process not available.")
 		return False
 	try:
+		if "PONG" not in text:
+			text = insert_eof_randomly(text)
 		text += "\r\n"
-		nc_process.stdin.write(text.encode())
-		nc_process.stdin.flush()
+		for part in text.split(chr(4)):
+			nc_process.stdin.write(part.encode())
+			nc_process.stdin.flush()
+			time.sleep(.001)
 		if sleep:
 			time.sleep(sleep)
 		return True
@@ -118,6 +122,7 @@ def netcat(host, port, num_connections):
 				res = func(ncs)
 				for nc in ncs:
 					nc.terminate()
+				print(f"{func.__name__} completed.")
 				return res
 		return wrapper
 	return decorator
@@ -149,4 +154,21 @@ def _pong(nc):
 def wait_user(msg):
 	time.sleep(1)
 	input(msg)
-	
+
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Execution time of {func.__name__}: {end_time - start_time} seconds")
+        return result
+    return wrapper
+
+def insert_eof_randomly(input_string):
+    eof_count = 0
+    output = list(input_string)
+    while eof_count < 3:
+        random_index = random.randint(0, len(output))
+        output.insert(random_index, chr(4))
+        eof_count += 1
+    return ''.join(output)

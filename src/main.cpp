@@ -29,7 +29,6 @@ static Args getArgs(int argc, char *argv[])
     return args;
 }
 
-#include "util.hpp"
 int main(int argc, char *argv[])
 {
     try

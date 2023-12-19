@@ -1,7 +1,7 @@
 import random
 import string
 import time
-from init import netcat, send_command, receive_response, receive_all_responses
+from init import netcat, send_command, receive_response, receive_all_responses, measure_time
 from define import *
 
 # Channel modes only set by operator
@@ -40,8 +40,7 @@ def operator(ncs):
 	send_command(ncs[2], f"MODE {channel} +s", DELAY) 
 	assert(not receive_response(ncs[1], "482"))
 	time.sleep(1)
-	# assert(receive_response(ncs[2], "482"))
-	receive_all_responses(ncs[2], True)
+	assert(receive_response(ncs[2], "482"))
 	time.sleep(1)
 
 # k: -k or k newPassword

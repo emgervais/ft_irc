@@ -74,7 +74,10 @@ void    Command::splitRawCommand()
 {
     std::stringstream ss(_raw);
     if (_raw.length() > MSG_MAX_LEN)
+    {
         _client.addReply(ERR_INPUTTOOLONG(_client.getNick()));
+        return;
+    }
     if (_raw[0] == ':')
     {
         ss.ignore(1);
