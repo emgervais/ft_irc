@@ -1,10 +1,11 @@
 import subprocess
+import select
 import os
+import fcntl
 import signal
-from time import sleep
+import time
 from define import *
 
-NAME = "ircserv"
 # -- init ----
 def start_server(port, password):
 	kill_processes_by_name(NAME)
@@ -28,15 +29,20 @@ def stop_server():
 	except Exception as e:
 		print(f"Error stopping server: {e}")
 
+def make_non_blocking(fd):
+    flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+
 def start_nc(host, port):
 	try:
 		nc_process = subprocess.Popen(['nc', host, str(port)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		make_non_blocking(nc_process.stdout.fileno())
 		return nc_process
 	except FileNotFoundError:
 		print("Netcat (nc) command not found. Please make sure it's installed and in your PATH.")
 		return None
 
-def send_command(nc_process, text):
+def send_command(nc_process, text, sleep=0):
 	if not nc_process:
 		print("Netcat process not available.")
 		return False
@@ -44,18 +50,23 @@ def send_command(nc_process, text):
 		text += "\r\n"
 		nc_process.stdin.write(text.encode())
 		nc_process.stdin.flush()
+		if sleep:
+			time.sleep(sleep)
 		return True
 	except Exception as e:
 		print(f"Error sending text: {e}")
 
-def receive_response(nc_process, keyword=""):
+def receive_response(nc_process, keyword="", print_output=False):
 	if not nc_process:
 		print("Netcat process not available.")
 		return None
 	try:
 		while True:
 			output = nc_process.stdout.readline().decode().strip()
-			if not keyword or (keyword and keyword.lower() in output.lower()):
+			if print_output:
+				print("output:", output)
+			if not output or not keyword \
+			   or (keyword and keyword.lower() in output.lower()):
 				break
 		if keyword not in output:
 			return ""
@@ -63,6 +74,23 @@ def receive_response(nc_process, keyword=""):
 	except Exception as e:
 		print(f"Error receiving response: {e}")
 		return None
+
+def receive_all_responses(nc_process, print_output):
+	if not nc_process:
+		print("Netcat process not available.")
+		return None
+	res = []
+	try:
+		while True:
+			output = nc_process.stdout.readline().decode().strip()
+			if print_output:
+				print("output:", output)
+			if not output:
+				break
+			res.append(output)
+	except Exception as e:
+		print(f"Error receiving response: {e}")
+	return res
 
 def kill_processes_by_name(name):
 	try:
@@ -101,7 +129,7 @@ def server(port, password):
 				print("Can't start server.")
 				exit(1)
 			func()
-			sleep(1)
+			time.sleep(1)
 			stop_server()
 		return wrapper
 	return decorator
@@ -119,6 +147,6 @@ def _pong(nc):
 
 # -- util ----
 def wait_user(msg):
-	sleep(1)
+	time.sleep(1)
 	input(msg)
 	
