@@ -39,7 +39,7 @@ class Client
         std::string     getRealname() const;
         std::string     getHostname() const;
         std::string     getPing() const;
-        std::string     addBuff(const std::string input);
+        std::string     addBuff(const std::string& input);
         void            chopBuff();
 
         void            setClosing();

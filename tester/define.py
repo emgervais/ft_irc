@@ -8,3 +8,4 @@ LOGIN = "a_login"
 REAL_NAME = "Real Name"
 CHANNEL = "#test"
 NAME = "ircserv"
+DELAY = .1

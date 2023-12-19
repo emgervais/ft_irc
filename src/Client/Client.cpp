@@ -147,7 +147,7 @@ std::string     Client::getMode() const
     return (_mode);
 }
 
-std::string     Client::addBuff(const std::string input)
+std::string     Client::addBuff(const std::string& input)
 {
     _buff += input;
     return _buff;
