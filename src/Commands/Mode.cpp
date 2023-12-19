@@ -6,8 +6,6 @@
 #include "NumericReplies.hpp"
 #include <iostream>
 
-const std::string OTHERMODES = "inst";
-
 static std::string  getChangeModes(std::string modes[2])
 {
     std::string::iterator it = modes[0].begin();
@@ -173,7 +171,8 @@ bool    Command::cmdModeK(Channel *channel, char sign, const std::string& param)
         {
             if (!channel->isMode("k"))
             {
-                if (param.find(' ') == std::string::npos)
+                bool validKey = param.find(' ') == std::string::npos;
+                if (validKey)
                 {
                     channel->addMode("k", param);
                     return true;
@@ -182,7 +181,7 @@ bool    Command::cmdModeK(Channel *channel, char sign, const std::string& param)
                     _client.addReply(ERR_INVALIDKEY(_client.getNick(), channel->getName(), param));
             }
             else
-                std::cout << "Already has a key" << std::endl;
+                _client.addReply(ERR_INVALIDKEY(_client.getNick(), channel->getName(), param));
         }
     }
     return false;
@@ -198,7 +197,8 @@ bool    Command::cmdModeL(Channel *channel, char sign, const std::string& param)
     }
     else
     {
-        if (param.find_first_not_of("0123456789") == std::string::npos)
+        bool validLimit = param.find_first_not_of("0123456789") == std::string::npos;
+        if (validLimit)
         {
             channel->removeMode("l");
             channel->addMode("l", param);
@@ -212,6 +212,7 @@ bool    Command::cmdModeL(Channel *channel, char sign, const std::string& param)
 
 bool    Command::cmdModeOther(Channel *channel, char sign, char mode)
 {
+    static const std::string OTHERMODES = "inst";
     if (OTHERMODES.find(mode) == std::string::npos)
     {
         _client.addReply(ERR_UNKNOWNMODE(_client.getNick(), mode));

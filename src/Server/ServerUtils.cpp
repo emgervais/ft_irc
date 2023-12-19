@@ -129,6 +129,26 @@ void Server::loadSwearWords()
             _swearWords.insert(line);
 }
 
+void Server::initEquivalentChars(void)
+{
+    _equivalentChars['@'] = 'a';
+    _equivalentChars['4'] = 'a';
+    _equivalentChars['8'] = 'b';
+    _equivalentChars['3'] = 'e';
+    _equivalentChars['1'] = 'i';
+    _equivalentChars['!'] = 'i';
+    _equivalentChars['|'] = 'i';
+    _equivalentChars['9'] = 'g';
+    _equivalentChars['1'] = 'l';
+    _equivalentChars['!'] = 'l';
+    _equivalentChars['|'] = 'l';
+    _equivalentChars['0'] = 'o';
+    _equivalentChars['$'] = 's';
+    _equivalentChars['5'] = 's';
+    _equivalentChars['+'] = 't';
+    _equivalentChars['2'] = 'z';            
+}
+
 void Server::swearPolice(Client *c)
 {
     std::vector<std::string> targets;
@@ -151,38 +171,21 @@ void Server::swearPolice(Client *c)
 
 bool Server::checkEquivalentWords(const std::string& word)
 {
-    static std::map<char, char> equialentChars = {
-        {'@', 'a'},
-        {'4', 'a'},
-        {'8', 'b'},
-        {'3', 'e'},
-        {'1', 'i'},
-        {'!', 'i'},
-        {'|', 'i'},
-        {'9', 'g'},
-        {'1', 'l'},
-        {'!', 'l'},
-        {'|', 'l'},
-        {'0', 'o'},
-        {'$', 's'},
-        {'5', 's'},
-        {'+', 't'},
-        {'2', 'z'}
-    };
+
     std::string::const_iterator it = word.begin();
     std::string newWord(word);
 
     for (; it != word.end(); ++it)
     {
-        if (equialentChars.find(*it) != equialentChars.end())
-            newWord[it - word.begin()] = equialentChars[*it];
+        if (_equivalentChars.find(*it) != _equivalentChars.end())
+            newWord[it - word.begin()] = _equivalentChars[*it];
     }
     return _swearWords.find(newWord) != _swearWords.end();
 }
 
 static std::string replaceVowels(std::string& str)
 {
-    std::string vowels = "aeiouy";
+    std::string vowels = "aeiouyAEIOUY";
     std::string newStr(str);
 
     for (size_t i = 0; i < str.length(); ++i)
@@ -193,20 +196,22 @@ static std::string replaceVowels(std::string& str)
     return newStr;
 }
 
-std::string Server::censor(std::string& str, int socket)
+std::string Server::censor(const std::string& str, Client *client)
 {
     std::stringstream ss(str);
     std::string word;
+    std::string lowerWord;
     std::string newStr;
 
     while (ss >> word)
     {
-        word = toLower(word);
-        if (_swearWords.find(word) != _swearWords.end() || checkEquivalentWords(word))
+        lowerWord = toLower(word);
+        if (_swearWords.find(lowerWord) != _swearWords.end() || checkEquivalentWords(lowerWord))
         {
             word = replaceVowels(word);
-            swearPolice(_clients[socket]);
+            swearPolice(client);
         }
+
         newStr += word + " ";
     }
     return newStr;

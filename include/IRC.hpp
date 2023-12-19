@@ -10,7 +10,7 @@
 #define BLUE "\033[34m"
 #define RESET_COLOR "\033[0m"
 #define ERROR -1
-#define SWEAR_WORDS_PATH "swearWords/swearWords.txt"
+#define SWEAR_WORDS_PATH "data/swearWords.txt"
 #define BOT std::string("Kevin")
 
 #define FROM_SERVER(msg) std::cout << BLUE + std::string("Server: ") + RESET_COLOR << msg << std::endl

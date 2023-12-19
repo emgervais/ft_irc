@@ -1,7 +1,7 @@
 *.txt
 !vgsuppress.txt
 valgrind.log
-!swearWords/*.txt
+!data/*.txt
 *.o
 *.d
 *.a

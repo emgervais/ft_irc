@@ -29,23 +29,25 @@ class Server
         char                        _buffer[BUFF_SIZE];
         int                         _kq;
         std::set<std::string>       _swearWords;
+        std::map<char, char>        _equivalentChars;
 
-        int     serverQueue();
-        void    initSocket();
-        void    initKqueue();
+        int     serverQueue(void);
+        void    initSocket(void);
+        void    initKqueue(void);
         void    bindSocket(sockaddr_in const& addr);
-        void    addWriteKevent();
+        void    addWriteKevent(void);
         void    editKevent(int socket, int filter, int flags, std::string msg);
         void    registerNewClient();
         void    readFromClient(int socket);
         void    writeToClient(int socket);
-        void    readFromStdin();
+        void    readFromStdin(void);
         void    closeClient(int socket, bool eraseFromMap=true);
         void    handleMsg(int socket, ssize_t bytesRead);
         void    exitSignal(int sig);
 
         std::string     getClientIpAddr(int socket) const;
-        void            loadSwearWords();
+        void            loadSwearWords(void);
+        void            initEquivalentChars(void);
         bool            checkEquivalentWords(std::string const& word);
 
         Server(void);
@@ -55,11 +57,11 @@ class Server
 
     public:
         static Server& getInstance(int port, std::string const& password);
-        void    run();
-        ~Server();
+        void    run(void);
+        ~Server(void);
 
         void            writeToClients(std::vector<int> sockets, const std::string& msg);
-        std::string     getPass() const;
+        std::string     getPass(void) const;
         Channel*        getChannel(const std::string& name) const;
         Client*         getClient(const std::string& nick) const;
 
@@ -69,7 +71,7 @@ class Server
 
         std::string     getChannelReply(const std::string& name, const std::string& clientNick) const;
         std::vector<std::string>    getChannelsReply(const std::string& clientNick) const;
-        std::string     censor(std::string& str, int socket);
+        std::string     censor(const std::string& str, Client *client);
         void            swearPolice(Client *c);
 };
 

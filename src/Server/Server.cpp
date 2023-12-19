@@ -23,6 +23,8 @@ Server::Server(int port, std::string const& password)
     {
         initSocket();
         initKqueue();
+        loadSwearWords();
+        initEquivalentChars();
         Command::initCmdHandler();
     }
     catch (const std::runtime_error &e)

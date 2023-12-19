@@ -8,20 +8,21 @@ CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -MMD $(INCLUDES)
 
 SRC = Channel/Channel.cpp \
+	Channel/ChannelMode.cpp \
 	Client/Client.cpp \
 	Client/ClientConnection.cpp \
 	Client/ClientRegistration.cpp \
 	Commands/Channel.cpp \
 	Commands/Command.cpp \
 	Commands/Connection.cpp \
-	Commands/Registration.cpp \
-	Commands/Mode.cpp \
-	Commands/Utils.cpp \
 	Commands/Help.cpp \
+	Commands/Mode.cpp \
+	Commands/Registration.cpp \
+	Commands/Utils.cpp \
 	main.cpp \
 	Server/Server.cpp \
-	Server/ServerLoop.cpp \
 	Server/ServerKevent.cpp \
+	Server/ServerLoop.cpp \
 	Server/ServerUtils.cpp \
 	util/util.cpp
 	
