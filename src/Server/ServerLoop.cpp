@@ -87,7 +87,6 @@ void Server::handleMsg(int socket)
         cmds = splitString(input, "\n");
     else
         return;
-    std::cerr << "input: " << input << std::endl;
     _clients[socket]->chopBuff();
     for (size_t i = 0; i < cmds.size(); ++i)
     {

@@ -7,7 +7,7 @@ valgrind.log
 *.a
 a.out
 *.dSYM
-error
+*.png
 
 .DS_Store
 .vscode/
