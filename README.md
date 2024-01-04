@@ -1,7 +1,6 @@
 # ft_irc
 
-This chat server follows the [IRC protocol](https://modern.ircdocs.horse/) and was implemented as part of *our studies at 42.
-
+This chat server follows the [IRC protocol](https://modern.ircdocs.horse/) and was implemented as part of *our studies at 42.<br>
 It is compatible with most IRC clients.<br>
 
 Supported [modes](https://modern.ircdocs.horse/#oper-user-mode) are o, k, l, i, n, s, t. <br>
