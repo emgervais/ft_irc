@@ -49,10 +49,8 @@ undefined: all
 noerr: CXXFLAGS := $(filter-out -Werror,$(CXXFLAGS))
 noerr: all
 
-leak:
-	@make debug
+leak: debug
 	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --suppressions=vgsuppress.txt --log-file="valgrind.log" --gen-suppressions=all ./$(NAME) 6667 jambon
-
 
 kill:
 	kill $(shell pgrep $(NAME))
@@ -76,6 +74,6 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re debug sanit undefined noerr leak kill
 
 -include $(DEP)
