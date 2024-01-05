@@ -8,6 +8,6 @@ Supported [commands](https://modern.ircdocs.horse/#command) are PASS, NICK, USER
 The server can also censor inappropriate words and a bot will kick recidivists. <br>
 
 The tester asserts that hundreds of simultaneous connections are sucsessful, all clients receives the expected messages and specific functionnalities work as intended. <br>
-[![irc-chat2.gif](https://i.postimg.cc/FzCG4BkC/irc-chat2.gif)](https://postimg.cc/K3Lt7QNt)
- 
+![alt text](https://i.postimg.cc/FzCG4BkC/irc-chat2.gif)
+
 Authors: [Emile Gervais](https://github.com/emgervais), [Émile Le Sage](https://github.com/ele-sage), [François Martineau](https://github.com/francoismartineau)
