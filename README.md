@@ -7,7 +7,10 @@ Supported [modes](https://modern.ircdocs.horse/#oper-user-mode) are o, k, l, i, 
 Supported [commands](https://modern.ircdocs.horse/#command) are PASS, NICK, USER, PING, PONG, QUIT, JOIN, PART, TOPIC, NAMES, LIST, INVITE, KICK, MODE, PRIVMSG, HELP. <br>
 The server can also censor inappropriate words and a bot will kick recidivists. <br>
 
-The tester asserts that hundreds of simultaneous connections are sucsessful, all clients receives the expected messages and specific functionnalities work as intended. <br>
+The tester asserts that:
+- Hundreds of simultaneous connections are sucsessful
+- All clients receives the expected messages
+- Specific functionnalities work as intended. <br>
 
 ![alt text](https://i.postimg.cc/FzCG4BkC/irc-chat2.gif)
 ![alt text](https://i.postimg.cc/X7nCg8ht/irc-chat.gif)
