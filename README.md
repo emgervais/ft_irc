@@ -37,6 +37,7 @@ CHANNEL MODES :
         - t : topic locked
         - k : key locked
         - l : user limit
+        - s : secret channel
 ```
 
 The server can also censor inappropriate words and a bot will kick recidivists. <br>
