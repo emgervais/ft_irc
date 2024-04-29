@@ -28,7 +28,6 @@ COMMANDS :
 
 ```
 CHANNEL MODES :
-
 for users :
     - o : channel operator
 for channels :
