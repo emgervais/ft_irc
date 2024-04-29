@@ -7,36 +7,36 @@ It is compatible with most IRC clients.<br>
 
 ```
 COMMANDS :
-- INVITE
-- JOIN
-- KICK
-- LIST
-- NAMES
-- PART
-- TOPIC
-- MODE
-- NICK
-- QUIT
-- USER
-- PING
-- PONG
-- PRIVMSG
-- HELP
+    - INVITE
+    - JOIN
+    - KICK
+    - LIST
+    - NAMES
+    - PART
+    - TOPIC
+    - MODE
+    - NICK
+    - QUIT
+    - USER
+    - PING
+    - PONG
+    - PRIVMSG
+    - HELP
 ```
 
 ## Supported [modes](https://modern.ircdocs.horse/#oper-user-mode)
 
 ```
 CHANNEL MODES :
-for users :
-    - o : channel operator
-for channels :
-    - i : invite only
-    - n : outside privmsg disabled
-    - p : private
-    - t : topic locked
-    - k : key locked
-    - l : user limit
+    for users :
+        - o : channel operator
+    for channels :
+        - i : invite only
+        - n : outside privmsg disabled
+        - p : private
+        - t : topic locked
+        - k : key locked
+        - l : user limit
 ```
 
 The server can also censor inappropriate words and a bot will kick recidivists. <br>
