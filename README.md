@@ -5,9 +5,8 @@ It is compatible with most IRC clients.<br>
 
 ## Supported [commands](https://modern.ircdocs.horse/#command)
 
-This following list of commands are handled on our server, since most of them were not asked by the subject there is certain masks and parameters we may have ommited for our convinience, some commands might not be perfect aswell so if you find any issues feel free to let us know  :
-
 ```
+COMMANDS :
 - INVITE
 - JOIN
 - KICK
@@ -27,10 +26,9 @@ This following list of commands are handled on our server, since most of them we
 
 ## Supported [modes](https://modern.ircdocs.horse/#oper-user-mode)
 
-The following list of modes are handled by the server, yet again there may be omitted functionnality or errors :
-
 ```
 CHANNEL MODES :
+
 for users :
     - o : channel operator
 for channels :
