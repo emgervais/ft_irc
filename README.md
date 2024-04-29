@@ -3,8 +3,45 @@
 This chat server follows the [IRC protocol](https://modern.ircdocs.horse/) and was implemented as part of our studies at 42.<br>
 It is compatible with most IRC clients.<br>
 
-Supported [modes](https://modern.ircdocs.horse/#oper-user-mode) are o, k, l, i, n, s, t. <br>
-Supported [commands](https://modern.ircdocs.horse/#command) are PASS, NICK, USER, PING, PONG, QUIT, JOIN, PART, TOPIC, NAMES, LIST, INVITE, KICK, MODE, PRIVMSG, HELP. <br>
+## Supported [commands](https://modern.ircdocs.horse/#command)
+
+This following list of commands are handled on our server, since most of them were not asked by the subject there is certain masks and parameters we may have ommited for our convinience, some commands might not be perfect aswell so if you find any issues feel free to let us know  :
+
+```
+- INVITE
+- JOIN
+- KICK
+- LIST
+- NAMES
+- PART
+- TOPIC
+- MODE
+- NICK
+- QUIT
+- USER
+- PING
+- PONG
+- PRIVMSG
+- HELP
+```
+
+## Supported [modes](https://modern.ircdocs.horse/#oper-user-mode)
+
+The following list of modes are handled by the server, yet again there may be omitted functionnality or errors :
+
+```
+CHANNEL MODES :
+for users :
+    - o : channel operator
+for channels :
+    - i : invite only
+    - n : outside privmsg disabled
+    - p : private
+    - t : topic locked
+    - k : key locked
+    - l : user limit
+```
+
 The server can also censor inappropriate words and a bot will kick recidivists. <br>
 If for some reason a client sends messages in parts, the server can reassemble them when the command delimiter is received. <br>
 
